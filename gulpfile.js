@@ -26,11 +26,11 @@ gulp.task('zip', () =>
 gulp.task('test', function () {
 return gulp.src(webpackFile.proDirectory+'/**')
         .pipe(vsftp({
-            host: '192.168.60.199',
+            host: '10.11.62.99',
             user: 'root',
             pass: 'ztjkadmin',
             cleanFiles: true,
-            remotePath: '/usr/local/apache-tomcat-8.0.51/webapps/davao/',
+            remotePath: '/home/local/apache-tomcat-8.0.51/webapps/davao/',
         }));
 });
 /* 上传生产目录到生产环境 */
