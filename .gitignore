@@ -5,6 +5,7 @@ backup/
 davao/
 davao-test/
 dist/
+entryBuild/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
