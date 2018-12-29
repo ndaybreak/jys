@@ -1,0 +1,253 @@
+option java_package = "com.ztjk.davao.quot.entity";
+option java_outer_classname = "QuotModule";
+
+// 业务类型
+enum BizType
+{
+	// 请求
+	RealTimeQuotByTargetPairsReqBiz = 1; 	//根据标的对列表实时行情查询请求
+	RealTimeQuotByTargetPairsSubBiz=2;		//根据标的对的列表订阅对应的实时行情
+	RealTimeQuotByMainCoinCodeReqBiz = 3; 	//根据主币Code市场实时行情查询请求
+	RealTimeQuotByMainCoinCodeSubBiz=4;  	//根据主币Code订阅对应标的列表的实时行情
+	RiseListReqBiz = 5; 			//涨幅榜请求
+	RiseListSubBiz=6; 				//涨幅榜实时行情订阅
+	DeclinesReqBiz = 7; 			//跌幅榜请求
+	DeclinesSubBiz=8; 			//跌幅榜实时行情订阅
+	IntervalQuotReqBiz = 9; 			//分时行情查询请求
+	IntervalQuotSubBiz=10; 			//分时行情订阅
+	CommissionReqBiz = 11; 			//委托订单查询请求
+	CommissionSubBiz=12; 			//委托订阅
+	LatestDealQuotReqBiz = 13; 		//最新成交查询请求
+	LatestDealQuotSubBiz = 14; 		//最新成交查询请求
+	CancelSubReqBiz = 15; 			//取消订阅
+	NewCoinListReqBiz = 16; 			//新币榜请求
+	NewCoinListSubBiz=17; 			//新币榜实时行情订阅
+	RecommendCoinListReqBiz = 18; 			//推荐币实时行情请求
+	RecommendCoinListSubBiz=19; 			//推荐币实时行情订阅
+	priceBtcByCoinListReqBiz=20;			// 币种列表BTC实时价格查询
+	priceUsdtByCoinListReqBiz=21;			// 币种列表USDT实时价格查询
+
+	// 响应
+	RealTimeQuotByTargetPairsRespBiz = 51; 	//根据标的对列表实时行情查询响应
+	RealTimeQuotByTargetPairsPushBiz=52; 	//根据标的对的列表订阅对应的实时行情推送
+	RealTimeQuotByMainCoinCodeRespBiz = 53; 	//根据主币Code市场实时行情查询响应
+	RealTimeQuotByMainCoinCodePushBiz=54;  	//根据主币Code订阅对应标的列表的实时行情推送
+	RiseListRespBiz = 55; 			//涨幅榜响应
+	RiseListPushBiz=56; 			//涨幅榜实时行情推送
+	DeclinesRespBiz = 57; 			//跌幅榜响应
+	DeclinesPushBiz=58; 			//跌幅榜实时行情推送
+	IntervalQuotRespBiz = 59; 			//分时行情查询响应
+	IntervalQuotPushBiz=60; 			//分时行情推送
+	CommissionRespBiz = 61; 			//委托订单查询响应
+	CommissionPushBiz=62; 			//委托推送
+	LatestDealQuotRespBiz = 63; 		//最新成交查询响应
+	LatestDealQuotPushBiz = 64; 		//最新成交查询推送
+	CancelSubRespBiz = 65; 			//取消订阅响应
+	NewCoinListRespBiz = 66; 			//新币榜响应
+	NewCoinListPushBiz=67; 			//新币榜实时行情推送
+	RecommendCoinListRespBiz = 68; 			//推荐币实时行情响应
+	RecommendCoinListPushBiz=69; 			//推荐币实时行情推送
+	priceBtcByCoinListRespBiz=70;			// 币种列表BTC实时价格响应
+	priceUsdtByCoinListRespBiz=71;			// 币种列表USDT实时价格响应
+}
+
+// 移动设备信息
+message DeviceInfo {
+        	optional string		mac = 1;
+        	optional string		imei = 2;
+        	optional string		imsi = 3;
+        	optional string		deviceId = 4;
+        	optional string		ip = 5;
+        	optional string		x = 6;
+        	optional string		y = 7;
+}
+
+// 请求头
+message Header {
+	optional int32		reqId=1;
+	optional string		rsaKey = 2;
+	optional string		aesKey = 3;
+	optional string		exchangeKeyResult = 4;
+	optional string		version = 5;
+	optional string		appVersion = 6;
+	optional string		appType = 7;
+	required BizType	bizType = 8;
+	optional string		reqTime = 9;
+	optional string		responseCode = 10;
+	optional string		responseMsg = 11;
+	optional string		loginToken = 12;
+	optional DeviceInfo	deviceInfo = 13;
+}
+
+// 标的币种Code和主币种组成的一对，代表标的ID
+message TargetPair {
+	required	string		targetCoinCode=1;	// 标的币种Code
+	required	string		mainCoinCode=2;		// 主币Code
+}
+
+// 实时行情
+message RealTimeQuot {
+	required		TargetPair	targetPair=1;	//标的对
+	required		int64		currTime=2;		//当前时间
+	required		double		price=3;		//价格
+	optional		double		lastPrice=4;	//前一价格
+	required		double		volumes=5;		//成交量
+	required		double		legalTenderPrice=6;	//法币价格（单位：美元）
+	required		double		riseAmount24h=7;	//24H涨跌额
+	required		double		risePercent24h=8;	//24H涨跌福
+	required		double		startPrice=9;		//今开
+	required		double		lowestPrice=10;		//最低
+	required		double		highestPrice=11;	//最高
+	optional		double		rmbPrice=12;	//法币价格（单位：人民币）
+}
+
+// 分时行情数据
+message IntervalQuotData {
+	required		int64		endTime=1;	//结束时间
+	required		double		highest=2;	//最高
+	required		double		lowest=3;	//最低
+	required		double		start=4;		//开盘
+	required		double		end=5;		//收盘
+	required		double		quantitiy=6;	//成交量
+	required		double		amount=7;	//成交额
+}
+
+// 委托档位数据
+message CommissionData {
+	required		double		price=1;			//价格
+	required		double		quantity=2;		//数量
+}
+
+// 成交数据
+message DealData {
+	required		int64	time=1;			//订单时间
+	required		double	price=2;			//价格
+	required		double	quantity=3;		//数量
+	// 买卖方向：买入：Buy，卖出：Sell
+	optional		string	direction=4;
+}
+
+// 实时行情响应
+message RealTimeQuotResp{
+	repeated		RealTimeQuot		realTimeQuots=1;	//实时行情列表
+}
+
+// 根据标的对列表实时行情请求
+message RealTimeQuotByTargetPairsReq{
+	repeated 	TargetPair		targetPairs=1;		//标的对列表
+}
+
+
+// 根据主币Code实时行情请求
+message RealTimeQuotByMainCoinCodeReq{
+	required 	string		mainCoinCode=1;		//主币Code
+}
+
+// 分时行情请求
+message IntervalQuotReq {
+	required		TargetPair	targetPair=1;	//标的对
+	required		string		interval=2;	//时间间隔类型（5分钟，1小时，等）
+	required		int64		latestTime=3;	//最后一个分时的结束时间
+	required		int32		number=4;	//分时个数
+}
+
+// 分时行情响应
+message IntervalQuotResp {
+	required		TargetPair			targetPair=1;		//标的对
+	repeated		IntervalQuotData	data=2;			//分时数据数组
+}
+
+// 分时行情订阅
+message IntervalQuotSub {
+	required		TargetPair	targetPair=1;	//标的对
+	required		string		interval=2;	//时间间隔类型（5分钟，1小时，等）
+	required		int32		number=4;	//分时个数
+}
+
+// 分时行情推送
+message IntervalQuotPush {
+	required		TargetPair			targetPair=1;	//标的对
+	repeated		IntervalQuotData	data=2;			//分时数据数组
+}
+
+// 委托行情请求
+message CommissionReq {
+	required		TargetPair	targetPair=1;	//标的对
+	optional		string		scale=2;		//深度
+}
+
+// 委托行情响应
+message CommissionResp {
+	required		TargetPair		targetPair=1;		//标的对
+	required		double			price=2;			//实时价格
+	repeated		CommissionData	buyOrders=3;		//买单数组
+	repeated		CommissionData	saleOrders=4;		//卖单数组
+	optional		double			usdPrice=5;		//美元价格
+	optional		double			rmbPrice=6;		//人民币价格
+}
+
+// 最新成交行情请求
+message LatestDealQuotReq {
+	required		TargetPair	targetPair=1;		//标的对
+	required		int32		orderQuantity=2;	//请求订单数量
+}
+
+// 最新成交行情响应
+message LatestDealQuotResp {
+	required		TargetPair	targetPair=1;	//标的对
+	repeated		DealData	data=2;		//跌幅榜实时行情列表
+}
+
+// 实时价格数据
+message RealTimePriceData {
+	required		string		coinCode=1;		// 币种CODE
+	required		double		price=2;		// 价格
+}
+
+// 实时价格查询请求
+message RealTimePriceReq {
+	repeated		string		coinCode=1;		// 币种CODE列表
+}
+
+// 实时价格查询响应
+message RealTimePriceResp {
+	repeated		RealTimePriceData	priceData=1;	// 币种价格列表
+}
+
+// 请求
+message Request
+{
+	optional RealTimeQuotByTargetPairsReq realTimeQuotByTargetPairsReq = 1;  	
+	optional RealTimeQuotByMainCoinCodeReq realTimeQuotByMainCoinCodeReq = 2; 	 
+	optional IntervalQuotReq intervalQuotReq = 3; 		//分时行情查询请求
+	optional IntervalQuotSub intervalQuotSub =4; 		//分时行情订阅
+	optional CommissionReq commissionReq = 5; 			//委托订单请求
+	optional LatestDealQuotReq latestDealQuotReq = 6; 	//最新成交请求
+	optional RealTimePriceReq	realTimePriceReq = 7;	//实时价格请求
+}
+
+// 响应
+message Response
+{
+	optional RealTimeQuotResp realTimeQuotResp = 1; 	
+	optional IntervalQuotResp intervalQuotResp = 2; 		//分时行情查询响应
+	optional IntervalQuotPush intervalQuotPush =3; 		//分时行情推送
+	optional CommissionResp commissionResp = 4; 			//委托订单查询响应
+	optional LatestDealQuotResp latestDealQuotResp = 5; 	//最新成交查询响应
+	optional RealTimePriceResp	realTimePriceResp = 6;		//实时价格查询响应
+}
+
+// 消息内容
+message Content
+{
+      	optional Request		request  = 1;
+      	optional Response		response = 2;
+}
+
+// 行情消息
+message QuotMessage
+{
+	required	Header	header=1;
+	optional	Content	content=2;
+}
+

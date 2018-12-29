@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="telephone=no" name="format-detection">
+    <!--<title><%= htmlWebpackPlugin.options.title %></title>-->
+    <title>HK STex</title>
+</head>
+<body>
+<div id="app"></div>
+<% JSON.stringify(htmlWebpackPlugin) %>
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+    <% if (chunk === 'index' || chunk === 'user' || chunk === 'deal') { %>
+        <script type="text/javascript" src="<%=webpackConfig.output.publicPath %>plugin/protobuf/Long.min.js"></script>
+        <script type="text/javascript" src="<%=webpackConfig.output.publicPath %>plugin/protobuf/ByteBufferAB.min.js"></script>
+        <script type="text/javascript" src="<%=webpackConfig.output.publicPath %>plugin/protobuf/ProtoBuf.min.js"></script>
+    <% } %>
+<% } %>
+</body>
+</html>
