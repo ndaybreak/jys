@@ -11,6 +11,7 @@
   "isSelectErrorMsg": "请选择",
   "emailErrorMsg": "邮箱地址不正确",
   "passwordErrorMsg": "8~12位密码，必须包含大写字母和数字",
+  "sixDigitNumberErrorMsg": "请输入六位数字",
 
   "market": "市场",
   "price": "价格",

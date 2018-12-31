@@ -17,7 +17,7 @@ const getEnvFile = () => {
     switch(env) {
         case 'test':
             return require('../env/test')
-        case 'production':
+        case 'prod':
             return require('../env/prod')
         default:
             return require('../env/test')
@@ -81,16 +81,19 @@ let config = merge(baseWebpackConfig, {
     ],
     module: {
         rules: [
-            {
-                test: /\.(js|jsx)$/,
-                use: [
-                    'babel-loader'
-                ],
-            },
+            // {
+            //     test: /\.(js|jsx)$/,
+            //     use: [
+            //         'babel-loader'
+            //     ],
+            // },
             {
                 test: /\.(js|jsx)$/,
                 loader: 'babel-loader',
                 exclude: /node_modules/,
+                options: {
+                    presets: ['es2015']
+                }
             },
             {
                 test: /\.(css|pcss)$/,

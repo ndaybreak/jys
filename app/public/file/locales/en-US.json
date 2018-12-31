@@ -11,6 +11,8 @@
   "isSelectErrorMsg": "Please select ",
   "emailErrorMsg": "email invalid",
   "passwordErrorMsg": "8~12 bits must contain uppercase letters and numbers",
+  "sixDigitNumberErrorMsg": "Please enter 6 digits",
+
   "market": "Market",
   "price": "Price",
   "dayChg": "24h Chg",

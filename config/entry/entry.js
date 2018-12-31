@@ -132,4 +132,9 @@ module.exports = [{
     path: 'validate-code/Index.jsx',
     title: '验证码',
     keywords: '验证码'
+}, {
+    name: 'set-capital-password',
+    path: 'set-capital-password/Index.jsx',
+    title: '资金密码',
+    keywords: '验证码'
 }]

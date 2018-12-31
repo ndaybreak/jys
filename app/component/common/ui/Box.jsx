@@ -50,10 +50,10 @@ class Box extends React.Component {
     }
 
     render() {
-        const {placeholder, className, defaultValue} = this.props
+        const {placeholder, className, defaultValue, type} = this.props
         return (
             <div className={'box-wrap ' + className}>
-                <input className={'box ' + (this.state.isValid ? '' : 'box-invalid')} type="text" placeholder={placeholder}
+                <input className={'box ' + (this.state.isValid ? '' : 'box-invalid')} type={type ? type : 'text'} placeholder={placeholder}
                        value={this.state.value} onChange={this.boxChange.bind(this)}/>
                 <div className="box-error">
                     {!this.state.isValid && (

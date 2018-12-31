@@ -6,7 +6,7 @@ import ReactCodeInput from 'react-code-input'
 import { jumpUrl, validate, getSearchPara, ui } from '@/utils'
 import { setToken } from '@/utils/auth'
 import { setSessionData, getSessionData, removeSessionData } from '@/data'
-import { sendEmailValidateCode, registerByEmail, entrustmentTrade } from '@/api'
+import { sendEmailValidateCode, registerByEmail, entrustmentTrade, setCapitalPwd } from '@/api'
 import emailImg from '@/public/img/邮件.png'
 
 const SEND_FLAG = 'isValidateCodeSend'
@@ -34,6 +34,9 @@ class Index extends React.Component {
         } else if(getSearchPara('from') === 'deal') {
             data = getSessionData('dealOrder')
             type = 6
+        } else if(getSearchPara('from') === 'set-capital-password') {
+            data = getSessionData('capitalPassword')
+            type = 5
         }
 
         if(getSearchPara('from') === 'register') {
@@ -98,6 +101,8 @@ class Index extends React.Component {
             this.registerSubmit()
         } else if(getSearchPara('from') === 'deal') {
             this.dealOrderSubmit()
+        } else if(getSearchPara('from') === 'set-capital-password') {
+            this.capitalPwdSubmit()
         }
     }
     registerSubmit() {
@@ -138,6 +143,23 @@ class Index extends React.Component {
             jumpUrl('deal.html', {
                 base: getSearchPara('base'),
                 target: getSearchPara('target')
+            })
+        })
+    }
+
+    capitalPwdSubmit() {
+        const para = Object.assign({}, data, {verifyCode: this.state.verifyCode})
+        setCapitalPwd(para).then(res => {
+            ui.tip({
+                msg: intl.get('successTip'),
+                callback: () => {
+                    jumpUrl('user.html')
+                }
+            })
+        }, error => {
+            this.setState({
+                submitLoading: false,
+                errorMsg: error
             })
         })
     }

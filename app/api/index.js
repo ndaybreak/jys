@@ -319,3 +319,11 @@ export function getAuthTypeList() {
         }
     })
 }
+// 设置资金密码
+export function setCapitalPwd(para) {
+    return request({
+        url: '/account/updateMoneyPasswordByEmail',
+        method: 'post',
+        params: para
+    })
+}

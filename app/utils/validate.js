@@ -81,6 +81,11 @@ _c.notAllPunctuation = function (val) {
     val = val.replace(REGEXP, '')
     return !!val.length
 }
+// 六位数字
+_c.sixDigitNumber = function (val) {
+    var re = /^\d{6}\b/
+    return re.test(val)
+}
 
 // 身份证校验
 _c.isIdCardNo = function(num) {
