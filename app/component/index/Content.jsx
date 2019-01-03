@@ -89,7 +89,7 @@ class Content extends React.Component {
                 </div>
                 <div className="market-category clearfix">
                     {/*<span className={`category ${this.state.activeCategory === 'MY' ? 'active' : ''}`} onClick={this.changeCategory.bind(this, 'MY')}>自选</span>*/}
-                    <span className={`category ${this.state.activeCategory === 'USDT' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'USDT')}>USDT</span>
+                    <span className={`category ${this.state.activeCategory === 'HKD' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'HKD')}>HKD</span>
                     <span className={`category ${this.state.activeCategory === 'BTC' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'BTC')}>BTC</span>
                     <span className={`category ${this.state.activeCategory === 'ETH' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'ETH')}>ETH</span>
                 </div>

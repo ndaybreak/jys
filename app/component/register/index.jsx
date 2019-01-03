@@ -1,6 +1,6 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import { Icon, Modal, Button } from 'antd'
+import { Icon, Modal, Button, Radio } from 'antd'
 import { jumpUrl, validate, getSearchPara } from '@/utils'
 import { setSessionData, getSessionData, removeSessionData } from '@/data'
 import '@/public/css/register.pcss';
@@ -10,6 +10,8 @@ import recommendImg from '@/public/img/推荐人.png'
 import checkedImg from '@/public/img/勾选.png'
 import unCheckedImg from '@/public/img/未勾选.png'
 import { getCodeForEmail, validateRegisterInfo } from '@/api'
+
+const RadioGroup = Radio.Group;
 
 const SEND_FLAG = 'isValidateCodeSend'
 // let copyData = {}
@@ -30,7 +32,8 @@ class Index extends React.Component {
             codeErrorMsg: '',
             serverCode: '',
             invitedCode: '',
-            isChecked: true
+            isChecked: false,
+            type: 1
             // showValidatePage: false
         }
     }
@@ -183,6 +186,7 @@ class Index extends React.Component {
 
             validateRegisterInfo(para).then(res => {
                 const copyData = {
+                    type: this.state.type,
                     email:  this.state.userName,
                     password: this.state.password,
                     invitedCode: this.state.invitedCode,
@@ -214,12 +218,23 @@ class Index extends React.Component {
         })
     }
 
+    radioChange(e) {
+        console.log('radio checked', e.target.value)
+        this.setState({
+            type: e.target.value
+        })
+    }
+
     render() {
         return (
             <div>
                 <div className="register-page">
                     <div className="title">{intl.get('welcomeRegister')}</div>
                     <div className="error-wrap">{this.state.errorMsg}</div>
+                    <RadioGroup className="radio-wrap" onChange={this.radioChange.bind(this)} value={this.state.type}>
+                        <Radio value={1}>Individual</Radio>
+                        <Radio value={2}>Corporate</Radio>
+                    </RadioGroup>
                     {/*邮箱*/}
                     <div className="item-wrap username-wrap">
                         <img src={userImg} alt=""/>
@@ -235,12 +250,12 @@ class Index extends React.Component {
                                 onKeyUp={this.inputKeyUp.bind(this)} onBlur={this.passwordBlur.bind(this)}/>
                     </div>
                     {/*推荐人*/}
-                    <div className="item-wrap recommend-wrap">
-                        <img src={recommendImg} alt=""/>
-                        <input  className={'recommend'} autoComplete="new-password" type="text" placeholder={intl.get('referralId')}
-                                value={this.state.invitedCode} onChange={this.recommendChange.bind(this)}
-                                onKeyUp={this.inputKeyUp.bind(this)}/>
-                    </div>
+                    {/*<div className="item-wrap recommend-wrap">*/}
+                        {/*<img src={recommendImg} alt=""/>*/}
+                        {/*<input  className={'recommend'} autoComplete="new-password" type="text" placeholder={intl.get('referralId')}*/}
+                                {/*value={this.state.invitedCode} onChange={this.recommendChange.bind(this)}*/}
+                                {/*onKeyUp={this.inputKeyUp.bind(this)}/>*/}
+                    {/*</div>*/}
                     {/*协议*/}
                     <div className="checkbox-wrap">
                         <label style={{width: '30px', display: 'inline-block'}}>
@@ -257,7 +272,7 @@ class Index extends React.Component {
                         <span>{intl.get('readAndAgree')} <a className="protocol" href="protocol.html" target="_blank">《{intl.get('platformProtocol')}》</a></span>
                     </div>
                     <div className="item-wrap btn-wrap">
-                        <button className="btn-login-big" onClick={this.register.bind(this)}>{intl.get('register')}</button>
+                        <button className={'btn-login-big ' + (this.state.userName && this.state.password && this.state.isUserNameValid && this.state.isPasswordValid && this.state.isChecked ? '' : 'btn-disabled')} onClick={this.register.bind(this)}>{intl.get('register')}</button>
                     </div>
                     <div className="item-wrap other-wrap">
                         {intl.get('existAccount')}<a className="login-link" href="login.html">{intl.get('loginNow')}</a>

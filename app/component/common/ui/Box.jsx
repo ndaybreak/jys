@@ -54,7 +54,7 @@ class Box extends React.Component {
         return (
             <div className={'box-wrap ' + className}>
                 <input className={'box ' + (this.state.isValid ? '' : 'box-invalid')} type={type ? type : 'text'} placeholder={placeholder}
-                       value={this.state.value} onChange={this.boxChange.bind(this)}/>
+                       value={this.state.value || ''} onChange={this.boxChange.bind(this)}/>
                 <div className="box-error">
                     {!this.state.isValid && (
                         <span>{this.state.errorMsg}</span>

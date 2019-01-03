@@ -122,7 +122,12 @@ class User extends React.Component {
     }
 
     goAuth() {
-        // jumpUrl('auth.html')
+        const user = getSessionData('user')
+        if(user.type == 1) {
+            jumpUrl('auth.html?from=register')
+        } else {
+            jumpUrl('auth-corporate.html?from=register')
+        }
     }
 
     showLevel() {

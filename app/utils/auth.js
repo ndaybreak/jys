@@ -18,6 +18,15 @@ export function setToken(token) {
   })
 }
 
+export function refreshAccountInfo() {
+    return new Promise((resolve, reject) => {
+        getAccountInfo().then(res => {
+            setSessionData('user', res.data)
+            resolve()
+        })
+    })
+}
+
 export function removeToken() {
   removeSessionData('user')
   return Cookies.remove(TokenKey)

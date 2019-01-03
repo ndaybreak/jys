@@ -96,7 +96,7 @@ class User extends React.Component {
 
     render() {
         const saleOrders = this.state.typeValue === 1 ? this.state.saleOrders.slice(0, 16).reverse() : this.state.saleOrders.slice(0, 8).reverse()
-        const buyOrders = this.state.typeValue === 2 ? this.state.buyOrders.slice(-16) : this.state.buyOrders.slice(-8)
+        const buyOrders = this.state.typeValue === 2 ? this.state.buyOrders.slice(0, 16) : this.state.buyOrders.slice(0, 8)
         return (
             <div className="quot-left">
                 <div className="quot-title clearfix">

@@ -3,7 +3,7 @@ import intl from 'react-intl-universal'
 import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
 import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH} from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
-import '@/public/css/auth.pcss';
+import '@/public/css/auth-corporate.pcss';
 import previewImg from '@/public/img/放大镜up.png'
 import deleteImg from '@/public/img/删除.png'
 import videoDemoImg from '@/public/img/register-video-demo.png'
@@ -11,7 +11,6 @@ import {getCountryList, saveBasicAuthInfo, savePicAuthInfo, queryAuthInfo, getAu
 import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
-import { refreshAccountInfo } from '@/utils/auth'
 
 const uploadUrl = process.env.BASE_API + '/file/public/uploadImg?'
 
@@ -45,7 +44,11 @@ class Index extends React.Component {
         this.state = {
             loading: false,
             def: {
-                authType: 1
+                authType: 1,
+                source_funds: 'aa',
+                nature_work: 'bb',
+                organization_name: 'cc',
+                tax_identification_number: 'dd'
             },
             countryList: [],
             authTypeList: [],
@@ -67,7 +70,8 @@ class Index extends React.Component {
             from: '',
             videoUrl: '',
             videoError: '',
-            videoCode: ''
+            videoCode: '',
+            infoList: [{}]
         }
     }
 
@@ -157,12 +161,15 @@ class Index extends React.Component {
         const workNatureValid = this.refs['workNature'].validate()
         const companyNameValid = this.refs['companyName'].validate()
         const tinValid = this.refs['tin'].validate()
+        const corporationTypeValid = this.refs['corporationType'].validate()
+        const bankValid = this.refs['bank'].validate()
+        const registerNumberValid = this.refs['registerNumber'].validate()
         // const sssNoValid = this.refs['sssNo'].validate()
         //
         // const picSignValid = !!this.state.picSignImgUrl
 
         return fullNameValid && birthdayValid && postalCodeValid && birthPlaceValid && presentAddrValid && premanentAddrValid &&
-            workNatureValid && companyNameValid && tinValid && fundsSourceValid && nationalityValid
+            workNatureValid && companyNameValid && tinValid && fundsSourceValid && nationalityValid && corporationTypeValid && bankValid && registerNumberValid
     }
 
     validateHighInfo() {
@@ -196,7 +203,7 @@ class Index extends React.Component {
             taxIdentificationNumber: this.refs['tin'].getValue(),
             // sssGsis: this.refs['sssNo'].getValue(),
             postalCode: this.refs['postalCode'].getValue(),
-            countryAreaId: this.refs['nationality'].getValue()
+            countryAreaId: this.refs['nationality'].getValue(),
             // specimenSignature: this.state.picSignImgUrl,
         }
         setSessionData('authBasicData', para)
@@ -240,19 +247,18 @@ class Index extends React.Component {
                 loading: true
             })
             this.submitInfo().then(() => {
-                return this.submitPic()
-            // }).then(() => {
-            //     return refreshAccountInfo()
-            }).then(() => {
-                this.setState({
-                    loading: false
-                })
-                ui.tip({
-                    msg: 'Register success!',
-                    width: 230,
-                    callback: () => {
+                this.submitPic().then((info) => {
+                    ui.tip({
+                        // msg: info,
+                        msg: 'Register success!',
+                        width: 230
+                    })
+                    this.setState({
+                        loading: false
+                    })
+                    setTimeout(() => {
                         jumpUrl('index.html')
-                    }
+                    }, 3000)
                 })
             })
         }
@@ -296,6 +302,12 @@ class Index extends React.Component {
         });
     }
 
+    addTr() {
+        this.setState({
+            infoList: this.state.infoList.concat([{}])
+        })
+    }
+
     render() {
         const {picSignImgUrl, picOneImgUrl, picTwoImgUrl, picThreeImgUrl, previewVisible, previewImage, videoUrl} = this.state
 
@@ -306,39 +318,42 @@ class Index extends React.Component {
                         <div>
                             <div className="info-part">
                                 {/*<div className="tip">{intl.get('auth_1')}</div>*/}
-                                <div className="label">{intl.get('auth_2')}</div>
+                                <div className="label">Basic Company Information</div>
                                 {/*基本信息*/}
                                 <div className="clearfix">
-                                    <Box ref="fullName" className="auth-box-left" placeholder={intl.get('fullNameTip')}
+                                    <Box ref="fullName" className="auth-box-left" placeholder="Name"
                                          validates={['notNull']} defaultValue={this.state.def.full_name}/>
-                                    <BoxDate ref="birthday" className="auth-box-right"
-                                             placeholder={intl.get('birthDateTip')} validates={['isSelect']}
-                                             defaultValue={this.state.def.birthday}/>
+                                    <BoxSelect ref="nationality" className="auth-box-right"
+                                               placeholder="Please select the nature"
+                                               validates={['isSelect']} defaultValue={this.state.def.country_area_id}
+                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
                                 </div>
                                 <div className="clearfix">
-                                    <Box ref="birthPlace" className="auth-box-left" placeholder={intl.get('birthPlace')}
+                                    <Box ref="birthPlace" className="auth-box-left" placeholder="Liaison person"
                                          validates={['notNull']} defaultValue={this.state.def.place_birth}/>
                                     <Box ref="presentAddr" className="auth-box-right"
-                                         placeholder={intl.get('presentAddr')} validates={['notNull']}
+                                         placeholder="Registered address" validates={['notNull']}
                                          defaultValue={this.state.def.address}/>
                                 </div>
                                 <div className="clearfix">
-                                    <Box ref="premanentAddr" className="auth-box"
-                                         placeholder={intl.get('premanentAddr')} validates={['notNull']}
-                                         defaultValue={this.state.def.premanent_address}/>
+                                    <BoxDate ref="birthday" className="auth-box-left"
+                                             placeholder="Date of company registration" validates={['isSelect']}
+                                             defaultValue={this.state.def.birthday}/>
+                                    <Box ref="registerNumber" className="auth-box-right"
+                                         placeholder="Company Registration Number" validates={['notNull']}
+                                         defaultValue=""/>
                                 </div>
                                 <div className="clearfix">
-                                    <BoxSelect ref="nationality" className="auth-box-left"
-                                               placeholder={intl.get('nationality')}
-                                               validates={['isSelect']} defaultValue={this.state.def.country_area_id}
-                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
-                                    <Box ref="postalCode" className="auth-box-right" placeholder={intl.get('auth_6')}
+                                    <Box ref="premanentAddr" className="auth-box-left"
+                                         placeholder="Contract address" validates={['notNull']}
+                                         defaultValue={this.state.def.premanent_address}/>
+                                    <Box ref="postalCode" className="auth-box-right" placeholder="Contract number"
                                          validates={['notNull']} defaultValue={this.state.def.postal_code}/>
                                 </div>
 
                                 {/*财务信息*/}
-                                <div className="label">{intl.get('financeInfo')}</div>
-                                <div className="clearfix">
+                                <div className="label hide">{intl.get('financeInfo')}</div>
+                                <div className="clearfix hide">
                                     <Box ref="fundsSource" className="auth-box-left"
                                          placeholder={intl.get('fundsSource')} validates={['notNull']}
                                          defaultValue={this.state.def.source_funds}/>
@@ -346,7 +361,7 @@ class Index extends React.Component {
                                          placeholder={intl.get('workNature')} validates={['notNull']}
                                          defaultValue={this.state.def.nature_work}/>
                                 </div>
-                                <div className="clearfix">
+                                <div className="clearfix hide">
                                     <Box ref="companyName" className="auth-box-left"
                                          placeholder={intl.get('companyName')} validates={['notNull']}
                                          defaultValue={this.state.def.organization_name}/>
@@ -387,68 +402,70 @@ class Index extends React.Component {
                                 {/*</div>*/}
                             </div>
 
-                            <div className="asset-part">
-                                {/*Upload Asset Certificate Documents*/}
-                                <div className="label">Upload Asset Certificate Documents</div>
-                                <div className="tip">In principle, all electronic certification materials require
-                                    Chinese or English versions. If they are not in the above two languages, please
-                                    provide the official version issued by the formal translation company with personal
-                                    signature or seal.
+                            <div className="list-one-part">
+                                <div className="label">Information on directors and all shareholders holding more than 10% shares
+                                    <a className="link" href="javascript:" onClick={this.addTr.bind(this)} style={{float: 'right','textDecoration': 'underline'}}>Add</a>
                                 </div>
-                                <div className="asset-info">
-                                    <div>For a trust corporation, individual, corporation or partnership, any one or
-                                        more of the following documents issued or submitted within 12 months before the
-                                        relevant date—
+                                <div className="auth-table">
+                                    <div className="auth-tr clearfix">
+                                        <div className="auth-th cell-first">Name</div>
+                                        <div className="auth-th">Residential Address</div>
+                                        <div className="auth-th">Place of incorporation</div>
+                                        <div className="auth-th">Director/Shareholder</div>
+                                        <div className="auth-th">Shareholding (%)</div>
                                     </div>
-                                    <div>(1) a statement of account or a certificate issued by a custodian;</div>
-                                    <div>(2) a certificate issued by an auditor or a certified public accountant;</div>
-                                    <div>(3) a public filing submitted by or on behalf of the trust corporation (whether
-                                        on its own behalf or in respect of a trust of which it acts as a trustee),
-                                        individual, corporation or partnership.
-                                    </div>
+                                    {this.state.infoList.map((item, i) => {
+                                        return (
+                                            <div className="auth-tr clearfix" key={i}>
+                                                <div className="auth-td cell-first"><input type="text"/></div>
+                                                <div className="auth-td"><input type="text"/></div>
+                                                <div className="auth-td"><input type="text"/></div>
+                                                <div className="auth-td"><input type="text"/></div>
+                                                <div className="auth-td"><input type="text"/></div>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
+                            </div>
 
-                                <div className="clearfix upload-wrap">
-                                    <div className="pic-list">
-                                        {this.state.picList.map((pic, i) => {
-                                            return (
-                                                <div className="pic-item" key={i}>
-                                                    <div className="pic-wrap">
-                                                        <img className="pic-value" src={pic}/>
-                                                    </div>
-                                                    <span className="preview-btn"
-                                                          onClick={this.handlePreview.bind(this, pic)}>
-                                                <img src={previewImg} title={intl.get('clickToPreview')}/>
-                                            </span>
-                                                    <span className="preview-btn btn-delete"
-                                                          onClick={this.handleDelete.bind(this, i)}>
-                                                <img src={deleteImg} title={intl.get('delete')}/>
-                                            </span>
-                                                </div>
-                                            )
-                                        })}
+                            <div className="list-two-part">
+                                <div className="label">Information of the person(s) authorized to give instruction on Customer's behalf
+                                </div>
+                                <div className="auth-table">
+                                    <div className="auth-tr clearfix">
+                                        <div className="auth-th cell-first">Name</div>
+                                        <div className="auth-th">Position</div>
+                                        <div className="auth-th">Phone/Mobile No.</div>
+                                        <div className="auth-th">Passport/I.D. no.</div>
                                     </div>
-
-                                    <div className="pic-item">
-                                        <div className={'pic '}>
-                                            <Upload
-                                                name="file"
-                                                listType="picture-card"
-                                                className={'pic-uploader'}
-                                                showUploadList={false}
-                                                action={uploadUrl + 'type=4'}
-                                                beforeUpload={beforeUpload}
-                                                onChange={this.handleAssetChange.bind(this)}
-                                            >
-                                                <span></span>
-                                            </Upload>
-                                        </div>
+                                    <div className="auth-tr clearfix">
+                                        <div className="auth-td cell-first"><input type="text"/></div>
+                                        <div className="auth-td"><input type="text"/></div>
+                                        <div className="auth-td"><input type="text"/></div>
+                                        <div className="auth-td"><input type="text"/></div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="text-center">
-                                    <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>
+                            <div className="info-part">
+                                <div className="label">Type of Corporation</div>
+                                <div className="clearfix">
+                                    <BoxSelect ref="corporationType" className="auth-box-left"
+                                               placeholder="Please select financial institution"
+                                               validates={['isSelect']} defaultValue={this.state.def.financial_institution}
+                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
+                                    <BoxSelect ref="bank" className="auth-box-right"
+                                               placeholder="Please select bank"
+                                               validates={['isSelect']} defaultValue={this.state.def.bank}
+                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
                                 </div>
+                            </div>
+
+                            <div className="list-one-part">
+                                <div className="label">Are there serving or veteran soldiers, government employees and officials among the shareholders who hold more than 25% of the shares? Or the immediate family members of more than one person? If yes, please note:</div>
+                                <textarea className="big-box" name="" id="" cols="30" rows="6" style={{width: '100%',padding: '10px'}} placeholder="Example: 1. (The shareholders themselves meet the above requirements) Shareholder name ,shareholding ratio , position , certificate type , certificate number. &#10;Example: 2. (The immediate relatives of shareholders meet the above requirements) Shareholder name + shareholding ratio + family relationship with shareholders + position + certificate type + certificate number"></textarea>
+
+                                <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>
                             </div>
                         </div>
                     )}
@@ -534,32 +551,32 @@ class Index extends React.Component {
 
                                 {/*面部照片*/}
                                 {/*<div className="pic-item pic-three">*/}
-                                    {/*<div className="label">{intl.get('auth_14')}</div>*/}
-                                    {/*<div className="sub-label">{intl.get('auth_15')}</div>*/}
-                                    {/*<div className="pic" onMouseEnter={this.picEnter.bind(this, 'picThreeHover')}*/}
-                                         {/*onMouseLeave={this.picLeave.bind(this, 'picThreeHover')}>*/}
-                                        {/*<Upload*/}
-                                            {/*name="file"*/}
-                                            {/*listType="picture-card"*/}
-                                            {/*className="pic-uploader"*/}
-                                            {/*showUploadList={false}*/}
-                                            {/*action={uploadUrl + 'type=4'}*/}
-                                            {/*beforeUpload={beforeUpload}*/}
-                                            {/*onChange={this.handleChange.bind(this, 'picThreeImgUrl')}*/}
-                                        {/*>*/}
-                                            {/*{picThreeImgUrl ? <img className="pic-value" src={picThreeImgUrl}/> :*/}
-                                                {/*<span></span>}*/}
-                                            {/*<div*/}
-                                                {/*className={'pic-tool ' + (this.state.picThreeHover ? 'hover' : '')}>{intl.get('clickToUpload')}</div>*/}
-                                        {/*</Upload>*/}
-                                        {/*{picThreeImgUrl && (*/}
-                                            {/*<span className={'preview-btn ' + (this.state.picThreeHover ? 'hover' : '')}*/}
-                                                  {/*onClick={this.handlePreview.bind(this, picThreeImgUrl)}>*/}
-                                        {/*<img src={previewImg} title={intl.get('clickToPreview')}/>*/}
-                                    {/*</span>*/}
-                                        {/*)}*/}
-                                    {/*</div>*/}
-                                    {/*<div className="pic-tip">{this.state.picThreeError}</div>*/}
+                                {/*<div className="label">{intl.get('auth_14')}</div>*/}
+                                {/*<div className="sub-label">{intl.get('auth_15')}</div>*/}
+                                {/*<div className="pic" onMouseEnter={this.picEnter.bind(this, 'picThreeHover')}*/}
+                                {/*onMouseLeave={this.picLeave.bind(this, 'picThreeHover')}>*/}
+                                {/*<Upload*/}
+                                {/*name="file"*/}
+                                {/*listType="picture-card"*/}
+                                {/*className="pic-uploader"*/}
+                                {/*showUploadList={false}*/}
+                                {/*action={uploadUrl + 'type=4'}*/}
+                                {/*beforeUpload={beforeUpload}*/}
+                                {/*onChange={this.handleChange.bind(this, 'picThreeImgUrl')}*/}
+                                {/*>*/}
+                                {/*{picThreeImgUrl ? <img className="pic-value" src={picThreeImgUrl}/> :*/}
+                                {/*<span></span>}*/}
+                                {/*<div*/}
+                                {/*className={'pic-tool ' + (this.state.picThreeHover ? 'hover' : '')}>{intl.get('clickToUpload')}</div>*/}
+                                {/*</Upload>*/}
+                                {/*{picThreeImgUrl && (*/}
+                                {/*<span className={'preview-btn ' + (this.state.picThreeHover ? 'hover' : '')}*/}
+                                {/*onClick={this.handlePreview.bind(this, picThreeImgUrl)}>*/}
+                                {/*<img src={previewImg} title={intl.get('clickToPreview')}/>*/}
+                                {/*</span>*/}
+                                {/*)}*/}
+                                {/*</div>*/}
+                                {/*<div className="pic-tip">{this.state.picThreeError}</div>*/}
                                 {/*</div>*/}
 
                                 <div className="video-wrap">
@@ -601,10 +618,6 @@ class Index extends React.Component {
                             </div>
                         </div>
                     )}
-
-                    {/*<div className="submit-part">*/}
-                        {/**/}
-                    {/*</div>*/}
 
                     <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel.bind(this)}>
                         <img alt="example" style={{width: '100%'}} src={previewImage}/>

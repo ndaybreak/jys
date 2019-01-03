@@ -108,13 +108,33 @@ class Index extends React.Component {
     registerSubmit() {
         const para = Object.assign({}, data, {verifyCode: this.state.verifyCode})
         registerByEmail(para).then(res => {
-            setToken(res.data.token)
-            ui.tip({
-                msg: intl.get('registerSuccess'),
-                callback: () => {
-                    jumpUrl('index.html')
+            setToken(res.data.token).then(res => {
+                if(data.type == 1) {
+                    jumpUrl('auth.html', {
+                        from: 'register'
+                    })
+                } else {
+                    jumpUrl('auth-corporate.html', {
+                        from: 'register'
+                    })
                 }
             })
+            // ui.tip({
+            //     msg: intl.get('registerSuccess'),
+            //     callback: () => {
+            //         // jumpUrl('index.html')
+            //         console.log(data)
+            //         if(data.type == 1) {
+            //             jumpUrl('auth.html', {
+            //                 from: 'register'
+            //             })
+            //         } else {
+            //             jumpUrl('auth-corporate.html', {
+            //                 from: 'register'
+            //             })
+            //         }
+            //     }
+            // })
         }, error => {
             this.setState({
                 submitLoading: false,

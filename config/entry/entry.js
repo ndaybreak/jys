@@ -137,4 +137,24 @@ module.exports = [{
     path: 'set-capital-password/Index.jsx',
     title: '资金密码',
     keywords: '验证码'
+}, {
+    name: 'commitment-letter',
+    path: 'commitment-letter/Index.jsx',
+    title: '承诺书',
+    keywords: '承诺书'
+}, {
+    name: 'register-questionnaire',
+    path: 'register-questionnaire/Index.jsx',
+    title: '问卷调查',
+    keywords: '问卷调查'
+}, {
+    name: 'auth-corporate',
+    path: 'auth-corporate/Index.jsx',
+    title: 'corporate',
+    keywords: 'corporate'
+}, {
+    name: 'protocol',
+    path: 'protocol/Index.jsx',
+    title: 'protocol',
+    keywords: 'protocol'
 }]

@@ -207,7 +207,8 @@ export function getAccountInfo(para) {
             merchantLevel:true,
             agentLevel:true,
             icon:true,
-            authApplicationStatus:true
+            authApplicationStatus:true,
+            type: true
         }, para)
     })
 }
@@ -325,5 +326,12 @@ export function setCapitalPwd(para) {
         url: '/account/updateMoneyPasswordByEmail',
         method: 'post',
         params: para
+    })
+}
+// 设置资金密码
+export function getAuthVideoCode() {
+    return request({
+        url: '/identity/queryHeadingCode',
+        method: 'post'
     })
 }
