@@ -1,9 +1,9 @@
 import React from 'react';
-import { validate } from '@/utils'
+import {validate} from '@/utils'
 
 const getPrecision = (val) => {
-    let decimals =(val + '').split('.')[1]
-    return decimals ?  decimals.length : 0
+    let decimals = (val + '').split('.')[1]
+    return decimals ? decimals.length : 0
 }
 
 class Box extends React.Component {
@@ -22,12 +22,12 @@ class Box extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(this.props.step !== prevProps.step) {
+        if (this.props.step !== prevProps.step) {
             this.setState({
                 precision: getPrecision(this.props.step)
             })
         }
-        if(this.props.value !== prevProps.value) {
+        if (this.props.value !== prevProps.value) {
             this.setState({
                 value: this.formatValue(this.props.value)
             })
@@ -38,8 +38,8 @@ class Box extends React.Component {
     }
 
     formatValue(val) {
-        if(val && !isNaN(val)) {
-            return parseFloat(parseFloat(val).toFixed(this.state.precision))
+        if (val && !isNaN(val)) {
+            return parseFloat(parseFloat(val).toFixed(this.state.precision));
         } else {
             return ''
         }
@@ -47,15 +47,23 @@ class Box extends React.Component {
 
     boxChange(e) {
         let value = e.target.value
-        value = value.substring(0, value.split('.')[0].length + this.state.precision + 1)
-        if(value == this.state.value) {
+        if (value == this.getValue() || value === undefined) {
             return
         }
-
+        let array = value.split(".");
+        if (array.length > 2) {
+            value = array[0] + "." + array[1];
+        } else if (array.length > 1) {
+            value = value.substring(0, value.split('.')[0].length + this.state.precision + 1);
+        }
+        if (parseFloat(value) < 0) {
+            value = undefined
+        }
+        e.target.value = value;
         this.setState({
             value: value
         }, () => {
-            this.props.onChange && this.props.onChange(value ? parseFloat(value) : 0)
+            this.props.onChange && this.props.onChange(value ? parseFloat(value) : 0);
         })
     }
 
@@ -81,14 +89,28 @@ class Box extends React.Component {
         })
     }
 
+    onKeyUp(e) {
+        let value = e.target.value;
+        if (value == undefined) return;
+        let array = value.split(".");
+        if (array.length > 2) {
+            value = array[0] + "." + array[1];
+        }
+        value = value.replace("-", "");
+        e.target.value = value;
+    }
+
     render() {
         const {placeholder, className, label, unit, step} = this.props
         return (
             <div className={'box-number-wrap ' + (className ? className : '')}>
                 <span className="label">{label}</span>
                 <div className={'box-number'}>
-                    <input className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number" placeholder={placeholder}
-                           value={this.state.value} onChange={this.boxChange.bind(this)} step={step}/>
+                    <input className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number"
+                           placeholder={placeholder}
+                           onKeyUp={this.onKeyUp.bind(this)}
+                           onChange={this.boxChange.bind(this)}
+                           min={0} value={this.state.value} step={step}/>
                     <span className="box-number-unit">{unit}</span>
                 </div>
             </div>

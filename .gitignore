@@ -24,3 +24,6 @@ selenium-debug.log
 .cache-loader/
 
 package-lock.json
+
+davao_web.properties
+davao_web.xml
