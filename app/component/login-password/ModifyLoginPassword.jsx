@@ -20,7 +20,7 @@ class ModifyLoginPassword extends React.Component {
                 path: 'user.html',
                 val: intl.get('personalCenter')
             }, {
-                val: intl.get('Modify Password')
+                val: intl.get('Modify login password')
             }],
             errorMsg: ''
         }
@@ -118,4 +118,4 @@ class ModifyLoginPassword extends React.Component {
     }
 }
 
-export default Index;
+export default ModifyLoginPassword;
