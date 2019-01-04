@@ -192,6 +192,10 @@ class Index extends React.Component {
         this.setState({ modalVisible: false });
     }
 
+    onClickModifyLoginPassword(e){
+        jumpUrl('forget-login-password.html');
+    }
+
     render() {
         return (
             <div className="login-page">
@@ -214,7 +218,7 @@ class Index extends React.Component {
                 </div>
                 <div className="item-wrap other-wrap">
                     <a className="register-link" href="register.html">{intl.get('register')}</a>
-                    <a className="forget-link" href="forget.html">{intl.get('forgetPwd')}</a>
+                    <a className="forget-link" onClick={this.onClickModifyLoginPassword.bind(this)}>{intl.get('forgetPwd')}</a>
                 </div>
 
                 <Modal

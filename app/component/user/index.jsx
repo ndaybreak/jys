@@ -140,6 +140,8 @@ class User extends React.Component {
     openModifyPage(page) {
         if(page === 'capitalPassword') {
             jumpUrl('set-capital-password.html')
+        }else if('modifyLoginPassword' === page){
+            jumpUrl('modify-login-password.html');
         }
     }
 
@@ -187,7 +189,7 @@ class User extends React.Component {
                         <div className="content-item item-left">
                             <img src={userPwdImg} alt=""/>
                             <span>{intl.get('loginPwd')}</span>
-                            <button className="btn btn-primary btn-update">{intl.get('modify')}</button>
+                            <button className="btn btn-primary btn-update" onClick={this.openModifyPage.bind(this, 'modifyLoginPassword')}>{intl.get('modify')}</button>
                         </div>
                         <div className="content-item">
                             <img src={userPwdImg} alt=""/>

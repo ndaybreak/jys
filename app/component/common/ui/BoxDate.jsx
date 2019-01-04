@@ -61,6 +61,7 @@ class BoxDate extends React.Component {
                 {this.state.defaultValue && (
                     <DatePicker className={'box-time ' + (this.state.isValid ? '' : 'box-invalid')} placeholder={placeholder}
                                 defaultValue={moment(this.state.value, dateFormat)}
+
                                 format={dateFormat} onChange={this.boxChange.bind(this)} />
                 )}
                 {!this.state.defaultValue && (

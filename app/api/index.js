@@ -327,3 +327,12 @@ export function setCapitalPwd(para) {
         params: para
     })
 }
+
+// 修改登录密码
+export function modifyLoginPwd(para) {
+    return request({
+        url: '/account/updatePassword',
+        method: 'post',
+        params: para
+    })
+}

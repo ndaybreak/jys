@@ -220,8 +220,11 @@
   "questionType6": "Favoritor issues",
   "questionType7": "Login issues",
   "questionType8": "Other questions/suggestions",
-  "": "",
-  "": "",
+  "Modify login password": "Modify login password",
+  "Please enter the old password": "Please enter the old password",
+  "Please set new login password": "Please set new login password",
+  "Confirm the new login password": "Confirm the new login password",
+  "Different about the two new password": "Different about the two new password",
   "": "",
   "": "",
   "": ""
