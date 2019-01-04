@@ -139,12 +139,13 @@ module.exports = [{
     keywords: '验证码'
 }, {
     name: 'forget-login-password',
-    path: 'forget-login-password/Index.jsx',
+    path: 'login-password/ForgetLoginPassword.jsx',
     title: '忘记密码',
     keywords: '忘记密码'
-},{
+}, {
     name: 'modify-login-password',
-    path: 'modify-login-password/Index.jsx',
+    path: 'login-password/ModifyLoginPassword.jsx',
     title: '修改密码',
     keywords: '修改密码'
-}]
+}
+]

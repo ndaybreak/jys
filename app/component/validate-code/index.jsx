@@ -1,13 +1,14 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import { Icon, Modal, Button } from 'antd'
+import {Button} from 'antd'
 import '@/public/css/validate-code.pcss';
 import ReactCodeInput from 'react-code-input'
-import { jumpUrl, validate, getSearchPara, ui } from '@/utils'
-import { setToken } from '@/utils/auth'
-import { setSessionData, getSessionData, removeSessionData } from '@/data'
-import { sendEmailValidateCode, registerByEmail, entrustmentTrade, setCapitalPwd } from '@/api'
+import {getSearchPara, jumpUrl, ui, validate} from '@/utils'
+import {setToken} from '@/utils/auth'
+import {getSessionData, removeSessionData, setSessionData} from '@/data'
+import {entrustmentTrade, registerByEmail, sendEmailValidateCode, setCapitalPwd, resetLoginPwd} from '@/api'
 import emailImg from '@/public/img/邮件.png'
+import {removeToken} from "../../utils/auth";
 
 const SEND_FLAG = 'isValidateCodeSend'
 const REMAIN_TIME = 'validate_code_remain_time'
@@ -28,30 +29,33 @@ class Index extends React.Component {
     }
 
     componentDidMount() {
-        if(getSearchPara('from') === 'register') {
-            data = getSessionData('registerInfo')
+        let fromPage = getSearchPara('from');
+        if (fromPage === 'register') {
+            data = getSessionData('registerInfo');
+            email = data.email;
             type = 2
-        } else if(getSearchPara('from') === 'deal') {
-            data = getSessionData('dealOrder')
+        } else if (fromPage === 'deal') {
+            data = getSessionData('dealOrder');
+            email = getSessionData('user').email;
             type = 6
-        } else if(getSearchPara('from') === 'set-capital-password') {
-            data = getSessionData('capitalPassword')
+        } else if (fromPage === 'set-capital-password') {
+            data = getSessionData('capitalPassword');
+            email = getSessionData('user').email;
             type = 5
+        } else if (fromPage === 'forget-login-password') {
+            data = getSessionData('forgetLoginPassword');
+            email = data.email;
+            type = 4;
         }
 
-        if(getSearchPara('from') === 'register') {
-            email = data.email
-        } else {
-            email = getSessionData('user').email
-        }
-        if(!getSessionData(SEND_FLAG)) {
+        if (!getSessionData(SEND_FLAG)) {
             this.sendEmailValidateCode()
         } else {
             let time = parseInt(getSessionData(REMAIN_TIME) || 0)
             this.setState({
                 remainingTime: time
             })
-            if(time > 0) {
+            if (time > 0) {
                 this.startValidateCodeTime()
             }
         }
@@ -69,7 +73,7 @@ class Index extends React.Component {
 
     startValidateCodeTime() {
         const interval = setInterval(() => {
-            if(this.state.remainingTime === 0) {
+            if (this.state.remainingTime === 0) {
                 clearInterval(interval)
             } else {
                 let time = --this.state.remainingTime
@@ -88,7 +92,7 @@ class Index extends React.Component {
     }
 
     submit() {
-        if(this.state.verifyCode.length < 6) {
+        if (this.state.verifyCode.length < 6) {
             this.setState({
                 errorMsg: intl.get('loginCodeTip')
             })
@@ -97,14 +101,36 @@ class Index extends React.Component {
         this.setState({
             submitLoading: true
         })
-        if(getSearchPara('from') === 'register') {
+        let fromPage = getSearchPara('from');
+        if (fromPage === 'register') {
             this.registerSubmit()
-        } else if(getSearchPara('from') === 'deal') {
+        } else if (fromPage === 'deal') {
             this.dealOrderSubmit()
-        } else if(getSearchPara('from') === 'set-capital-password') {
+        } else if (fromPage === 'set-capital-password') {
             this.capitalPwdSubmit()
+        }else if(fromPage === 'forget-login-password'){
+            this.setLoginPasswordSubmit();
         }
     }
+
+    setLoginPasswordSubmit(){
+        const para = Object.assign({}, data, {verifyCode: this.state.verifyCode})
+        resetLoginPwd(para).then(res => {
+           removeToken();
+            ui.tip({
+                msg: intl.get('Login password modify successfully'),
+                callback: () => {
+                    jumpUrl('login.html')
+                }
+            })
+        }, error => {
+            this.setState({
+                submitLoading: false,
+                errorMsg: error
+            })
+        })
+    }
+
     registerSubmit() {
         const para = Object.assign({}, data, {verifyCode: this.state.verifyCode})
         registerByEmail(para).then(res => {
@@ -174,17 +200,20 @@ class Index extends React.Component {
                 <div className="title"><img src={emailImg} alt=""/>{intl.get('verifyEmail')}</div>
                 <div className="sub-title">{intl.get('register_txt_1')}</div>
                 <div className="error-wrap">{this.state.errorMsg}</div>
-                <ReactCodeInput className="email-code" type='text' fields={6} onChange={this.emailCodeChange.bind(this)}/>
+                <ReactCodeInput className="email-code" type='text' fields={6}
+                                onChange={this.emailCodeChange.bind(this)}/>
                 <div className="item-wrap clearfix">
                     {this.state.remainingTime > 0 && (
                         <span className="remaining-time">{this.state.remainingTime} {intl.get('timeResend')}</span>
                     )}
                     {this.state.remainingTime == 0 && (
-                        <a className="re-send" href="javascript:" onClick={this.reSend.bind(this)}>{intl.get('resendCode')}</a>
+                        <a className="re-send" href="javascript:"
+                           onClick={this.reSend.bind(this)}>{intl.get('resendCode')}</a>
                     )}
                 </div>
                 <div className="item-wrap btn-wrap">
-                    <Button className="btn-login-big" key="submit" type="primary" loading={this.state.submitLoading} onClick={this.submit.bind(this)}>
+                    <Button className="btn-login-big" key="submit" type="primary" loading={this.state.submitLoading}
+                            onClick={this.submit.bind(this)}>
                         {intl.get('submit')}
                     </Button>
                 </div>

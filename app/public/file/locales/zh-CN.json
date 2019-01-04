@@ -228,7 +228,8 @@
   "Confirm the new login password": "请再次输入新的密码",
   "Modify Password": "修改密码",
   "Different about the two new password": "两次输入的新密码不同",
-  "": "",
+  "Forget password": "忘记密码",
+  "Login password modify successfully": "登录密码修改成功",
   "": "",
   "": ""
 }

@@ -336,3 +336,12 @@ export function modifyLoginPwd(para) {
         params: para
     })
 }
+
+// 重置登录密码
+export function resetLoginPwd(para) {
+    return request({
+        url: '/account/public/resetPasswordByEmail',
+        method: 'post',
+        params: para
+    })
+}

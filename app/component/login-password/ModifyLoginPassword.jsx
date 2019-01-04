@@ -2,8 +2,8 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import {getSearchPara, isLangZH, jumpUrl, kebabCaseData2Camel, ui, validate} from '@/utils'
 import {getSessionData, removeSessionData, setSessionData} from '@/data'
-import {Button } from 'antd'
-import { removeToken } from '@/utils/auth'
+import {Button} from 'antd'
+import {removeToken} from '@/utils/auth'
 import '@/public/css/set-capital-password.pcss';
 import {modifyLoginPwd} from '@/api'
 import Box from '@/component/common/ui/Box'
@@ -11,7 +11,7 @@ import Breadcrumb from '@/component/common/Breadcrumb'
 import userPwdImg from '@/public/img/user_pwd.png'
 
 
-class Index extends React.Component {
+class ModifyLoginPassword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,7 +20,7 @@ class Index extends React.Component {
                 path: 'user.html',
                 val: intl.get('personalCenter')
             }, {
-                val: intl.get( 'Modify Password')
+                val: intl.get('Modify Password')
             }],
             errorMsg: ''
         }
@@ -59,15 +59,22 @@ class Index extends React.Component {
             this.setState({
                 loading: true
             });
-            modifyLoginPwd({oldPassword:this.refs['oldPassword'].getValue(),newPassword:this.refs['newPassword'].getValue()})
-                .then(response=>{
+            modifyLoginPwd({
+                oldPassword: this.refs['oldPassword'].getValue(),
+                newPassword: this.refs['newPassword'].getValue()
+            }).then(response => {
                     this.setState({
                         loading: false,
                         errorMsg: ""
                     });
                     removeToken();
-                    jumpUrl("login.html")
-                }, error=>{
+                    ui.tip({
+                        msg: intl.get('Login password modify successfully'),
+                        callback: () => {
+                            jumpUrl('login.html')
+                        }
+                    })
+                }, error => {
                     this.setState({
                         loading: false,
                         errorMsg: error
@@ -99,10 +106,12 @@ class Index extends React.Component {
                     </div>
                     <div className="clearfix modify-item">
                         <img src={userPwdImg} alt=""/>
-                        <Box ref="confirmPassword" type="password"  placeholder={intl.get('Confirm the new login password')}
+                        <Box ref="confirmPassword" type="password"
+                             placeholder={intl.get('Confirm the new login password')}
                              validates={['notNull']}/>
                     </div>
-                    <Button className="btn btn-confirm" key="submit" type="primary" loading={this.state.loading} onClick={this.confirm.bind(this)}>{intl.get('confirmBtn')}</Button>
+                    <Button className="btn btn-confirm" key="submit" type="primary" loading={this.state.loading}
+                            onClick={this.confirm.bind(this)}>{intl.get('confirmBtn')}</Button>
                 </div>
             </div>
         );
