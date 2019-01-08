@@ -1,8 +1,8 @@
 #app .a-content {
-  background-color: #f0f0f6;
+  background-color: #222931;
 }
 .deal-page {
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 .page-left {
   padding-right: 596px;
@@ -11,27 +11,28 @@
   float: right;
   width: 596px;
   padding: 0 8px;
-  margin-top: 8px;
 }
 
 .chart-wrap {
-  background-color: white;
+  background-color: #27313D;
   height: 470px;
+  box-shadow:0px 3px 6px rgba(0,0,0,0.16);
 }
 .coin-select-wrap {
   position: relative;
-  height: 40px;
-  line-height: 34px;
+  height: 30px;
+  line-height: 30px;
   background-color: #29303e;
   color: #ffffff;
   font-size: 16px;
-  padding: 6px 10px 0 10px;
+  padding: 0px 10px 0 10px;
+  box-shadow:0px 3px 6px rgba(0,0,0,0.16);
 }
 
-.time-type {
+.chart-type {
   float: left;
-  width: 64px;
-  height: 34px;
+  padding: 0 10px;
+  height: 30px;
   color: white;
   font-size: 14px;
   text-align: center;
@@ -48,15 +49,10 @@
 
 .coin-select {
   float: right;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   margin-left: 30px;
   user-select: none;
-  .icon-coin {
-    border-top-color: #006dde;
-    margin: 0px 15px 2px 8px;
-    transition: transform 0.2s;
-  }
   .icon-arrow-up {
     transform: rotate(180deg);
   }
@@ -66,6 +62,11 @@
     height: 34px;
   }
 }
+.icon-coin {
+  border-top-color: #006dde;
+  margin: 0px 15px 2px 8px;
+  transition: transform 0.2s;
+}
 
 .entrust-wrap {
   margin-top: 7px;
@@ -73,71 +74,74 @@
 
 .entrust-wrap {
   padding-left: 10px;
+  box-shadow:0px 3px 6px rgba(0,0,0,0.16);
   .time-wrap {
     height: 45px;
     line-height: 45px;
     font-size: 14px;
-    color: #666666;
-    background-color: white;
+    color: #8792A5;
+    background-color: #313b48;
     .label {
       float: left;
       padding: 0 15px;
     }
     .btn-search {
       background: #006dde;
-      margin-top: -4px;
+      margin-top: -1px;
       margin-left: 15px;
-      height: 31px;
+      height: 28px;
     }
   }
 }
 .btn-entrust {
   width: 122px;
-  height: 38px;
-  border-top-right-radius: 3px;
-  border-top-left-radius: 3px;
-  background-color: white;
+  height: 27px;
+  background:rgba(49,59,72,1);
   font-size: 14px;
   border: none;
   margin-right: 5px;
   vertical-align: bottom;
+  border-radius: 3px 3px 0 0;
+  color: #8792A5;
   &.active {
-    height: 42px;
-    color: #006dde;
+    height: 33px;
+    color: white;
+    background-color: #0DA9FF;
   }
 }
 .date-box-entrust {
-  margin-top: 7px;
+  margin-top: 9px;
   height: 31px;
 }
 .order-table {
-  padding: 0 15px 15px;
-  background-color: white;
   text-align: center;
   height: 335px;
   overflow-y: auto;
+  color: white;
+  background-color: #27313D;
 }
 .order-title {
   height: 27px;
   line-height: 27px;
-  background-color: #f9f9fb;
+  background:rgba(49,59,72,1);
   font-size: 14px;
-  color: #666666;
+  color: #8792A5;
+  box-shadow:0px 3px 6px rgba(0,0,0,0.16);
 }
 .order-col {
   float: left;
 }
 .order-col-1 {
-  width: 15%;
+  width: 20%;
 }
 .order-col-2 {
   width: 20%;
 }
 .order-col-3 {
-  width: 15%;
+  width: 12%;
 }
 .order-col-4 {
-  width: 15%;
+  width: 13%;
 }
 .order-col-5 {
   width: 13%;
@@ -151,21 +155,20 @@
 
 .order-item {
   font-size: 14px;
-  line-height: 26px;
-  height: 26px;
+  line-height: 30px;
+  height: 30px;
   .order-col-1 {
     text-align: left;
     padding-left: 7px;
   }
   &:hover {
-    background-color: rgba(249, 249, 251, .8);
+    background-color: rgb(61, 76, 95);
   }
 }
 .status-canceled {
-  color: #666666;
 }
 .oper-cancel {
-  color: #006dde;
+  color: #0DA9FF;
   text-decoration: underline;
 }
 .order-direction {
@@ -173,43 +176,45 @@
   margin-top: -2px;
 }
 .table-24h {
-  padding-top: 4px;
 }
 
 .quot-wrap {
-  //background-color: white;
+//background-color: white;
   font-size: 14px;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
+  margin-bottom: 10px;
 }
 .quot-left {
-  background-color: white;
   float: left;
   width: 300px;
+  background-color: #27313D;
 }
 .quot-right {
-  background-color: white;
+  background-color: #27313D;
   position: relative;
-  //padding-right: 25px;
+//padding-right: 25px;
   float: right;
   width: 276px;
-  height: 560px;
+  height: 550px;
   .quot-body {
     padding-right: 20px;
   }
 }
 .quot-title {
   font-size: 14px;
-  color: #666666;
+  color: #8792A5;
   text-align: center;
-  line-height: 40px;
-  height: 40px;
-  border-bottom: 1px solid #f0f0f6;
+  line-height: 30px;
+  height: 30px;
+  background-color: #313B48;
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
 }
 .quot-item {
   cursor: pointer;
   height: 26px;
   &:hover {
-    background-color: #f9f9fb;
+    background-color: #2f3b4a;
   }
 }
 .quot-col {
@@ -223,7 +228,7 @@
 }
 .quot-body {
   line-height: 26px;
-  color: #111111;
+  color: #FFFFFF;
   min-height: 479px;
   .quot-col {
     text-align: right;
@@ -231,13 +236,13 @@
   }
 }
 .quot-sell {
-  border-bottom: 1px solid #f0f0f6;
+  border-bottom: 1px solid #222931;
   .quot-col-1 {
     color: #ff0000;
   }
 }
 .quot-buy {
-  border-top: 1px solid #f0f0f6;
+  border-top: 1px solid #222931;
   .quot-col-1 {
     color: #51a314;
   }
@@ -254,12 +259,12 @@
   font-size: 18px;
   text-align: center;
   color: #51a314;
-  background-color: #f9f9fb;
+  background-color: #27313D;
 }
 .quot-footer {
-  border-top: 1px solid #f0f0f6;
+  border-top: 1px solid #222931;
   height: 40px;
-  color: #666666;
+  color: white;
   font-size: 14px;
   text-align: center;
   .select-wrap {
@@ -278,18 +283,18 @@
     }
     .select-list {
       width: 93px;
-      border: solid 1px #b5b5b5;
       line-height: 30px;
       position: absolute;
       top: 34px;
-      background-color: white;
       right: 9px;
       z-index: 9;
+      border: solid 1px #222931;
+      background-color: #27313d;
     }
     .select-item {
       cursor: pointer;
       &:hover {
-        background-color: #f0f0f6;
+        background-color: #2f3b4a;
       }
     }
   }
@@ -318,8 +323,8 @@
 .order-info {
   font-size: 14px;
   padding: 10px 20px 10px 45px;
-  background-color: white;
-  height: 238px;
+  background-color: #27313D;
+  height: 256px;
 }
 .info-left {
   float: left;
@@ -351,8 +356,9 @@
     float: left;
     margin-top: 2px;
     width: 36px;
-    //width: 53px;
-    //margin-left: -17px;
+    color: #8792A5;
+  //width: 53px;
+  //margin-left: -17px;
   }
   .box-invalid {
     border-color: #ff3f3f !important;
@@ -389,8 +395,10 @@
   line-height: 20px;
   text-align: right;
   padding-right: 22px;
-  font-size: 12px
+  font-size: 12px;
+  color: #8792A5;
 }
+.box-price,
 .box-quantity,
 .box-sum {
   margin-bottom: 10px;
@@ -416,6 +424,7 @@
   line-height: 30px;
   text-align: right;
   padding-right: 21px;
+  color: #8792A5;
 }
 .order-btn {
   width: 236px;
@@ -428,6 +437,8 @@
   padding: 0;
   position: absolute;
   bottom: 0;
+  border: none;
+  margin-bottom: -6px;
 }
 .btn-buy {
   background-image: linear-gradient(#407916, #407916),
@@ -463,13 +474,12 @@
 
 .coin-list-outer {
   position: absolute;
-  width: 549px;
-  height: 396px;
-  background-color: #ffffff;
-  border: solid 1px #b5b5b5;
+  width: 450px;
   z-index: 50;
-  top: 40px;
   right: 0;
+  top: 30px;
+  background-color: #0DA9FF;
+  color: white !important;
 }
 .coin-list-inner {
   padding: 15px 0 5px 0;
@@ -479,26 +489,25 @@
   .category {
     float: left;
     border-radius: 2px;
-    border: solid 1px #666666;
+    border: solid 1px white;
     padding: 0px 5px;
     font-size: 14px;
-    color: #111111;
+    color: white;
     line-height: 17px;
     margin-left: 15px;
     cursor: pointer;
     &.active {
-      color: #006dde;
-      border-color: #006dde;
+      color: white;
+      border-color: white;
     }
   }
 }
 
 .market-detail {
   padding: 15px 5px 5px 5px;
-  background-color: #ffffff;
   text-align: center;
   font-size: 14px;
-  height: 354px;
+  height: 170px;
   overflow-y: auto;
   .row:after {
     content: '';
@@ -509,18 +518,18 @@
   .td {
     float: left;
     text-align: center;
-    color: #666666;
+    color: white;
   }
   .th {
     height: 28px;
     line-height: 28px;
     vertical-align: bottom;
-    color: #666666;
+    color: white;
   }
   .td {
     font-size: 14px;
     padding: 7px 10px;
-    //border-bottom: 1px solid #f0f0f6;
+  //border-bottom: 1px solid #f0f0f6;
     height: 30px;
     cursor: pointer;
   }
@@ -551,14 +560,6 @@
 .info-right .empty {
   width: 236px;
   height: 32px;
-  background-image: linear-gradient(
-          #f0f0f6,
-          #f0f0f6),
-  linear-gradient(
-          #dcdce0,
-          #dcdce0);
-  background-blend-mode: normal,
-  normal;
   text-align: center;
   line-height: 32px;
   margin-top: 29px;
@@ -581,13 +582,13 @@
 
 .indicator-list {
   width: 335px;
-  height: 250px;
+  height: 180px;
   color: #666666;
   .item {
     font-size: 14px;
     padding: 0 35px;
     &:hover {
-      background-color: #f9f9fb;
+      background-color: #00a4ff;
     }
   }
 }
@@ -597,9 +598,144 @@
   display: inline-block;
   float: right;
   margin-top: -2px;
+}
+.time-type-wrap {
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 100px;
+  user-select: none;
+  float: left;
+}
+.time-type-list {
+  left: 271px;
+  width: 193px;
+  padding: 0px 0 10px 16px;
+}
+.time-type {
+  float: left;
+  font-size: 14px;
+  line-height: 2;
+  color: white;
+  margin-right: 10px;
+  width: 47px;
+  &.active {
+    color: #FFEE00;
+  }
+}
+.entrust-type {
+  padding-left: 25px;
+}
+.order-even-row {
+  background-color: rgba(42, 53, 67, 1);
+}
 
-  top: #B8C2CC;
-  middle: #8795A1;
-  bottom: #B8C2CC;
-  outsideThreshold: #b30097;
+/*定义滚动条高宽及背景
+ 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar
+{
+  width:8px;
+  height:8px;
+  background-color:#313b48;
+}
+/*定义滚动条轨道
+ 内阴影+圆角*/
+::-webkit-scrollbar-track
+{
+  -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);
+  background-color:#222931;
+}
+/*定义滑块
+ 内阴影+圆角*/
+::-webkit-scrollbar-thumb
+{
+  border-radius:10px;
+  -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,.3);
+  background-color:rgb(61, 76, 95);
+}
+
+.box-wrap .box-time .ant-input {
+  height: 27px;
+}
+
+.company-info-wrap {
+  padding: 5px 0px 26px 30px;
+  height: 346px;
+  -webkit-box-shadow: 0px 3px 6px rgba(0, 0, 0, .16);
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, .16);
+  margin-top: 8px;
+  color: white;
+  background: rgba(39, 49, 61, 1);
+  overflow-y: auto;
+}
+.company-info {
+  padding-top: 12px;
+  padding-right: 39px;
+  font-size: 14px;
+  line-height: 2;
+}
+
+.journalism-wrap {
+  float: right;
+  width: 590px;
+  height: 346px;
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
+  margin-top: 8px;
+  color: white;
+  padding-left: 5px;
+}
+.journalism-content {
+}
+
+.module-title {
+  float: left;
+  width: 120px;
+  height: 31px;
+  background-color: rgba(39, 49, 61, 1);
+  border-top-right-radius: 3px;
+  line-height: 31px;
+  text-align: center;
+}
+.module-more {
+  float: right;
+  margin-right: 45px;
+  text-decoration: underline;
+}
+.module-list {
+  height: 315px;
+  padding: 20px 35px 20px 36px;
+  background-color: rgba(39, 49, 61, 1);
+  font-size: 14px;
+  line-height: 2.5;
+  ul {
+    list-style: disc;
+    li {
+      padding-right: 10px;
+      cursor: pointer;
+      &:hover {
+        background-color: #2f3b4a;
+      }
+    }
+  }
+}
+
+.company-name {
+  float: left;
+  font-size: 20px;
+  color: #FF9900;
+}
+
+.item-title {
+  float: left;
+  width: 380px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.item-date {
+  float: right;
+  color: #8792A5;
+}
+.notice-wrap {
+  width: 100%;
+  padding-left: 0;
 }

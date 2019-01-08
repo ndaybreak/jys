@@ -309,7 +309,7 @@ class Index extends React.Component {
                                 <div className="label">{intl.get('auth_2')}</div>
                                 {/*基本信息*/}
                                 <div className="clearfix">
-                                    <Box ref="fullName" className="auth-box-left" placeholder={intl.get('fullNameTip')}
+                                    <Box ref="fullName" className="auth-box-left" placeholder="Name"
                                          validates={['notNull']} defaultValue={this.state.def.full_name}/>
                                     <BoxDate ref="birthday" className="auth-box-right"
                                              placeholder={intl.get('birthDateTip')} validates={['isSelect']}
@@ -318,9 +318,9 @@ class Index extends React.Component {
                                 <div className="clearfix">
                                     <Box ref="birthPlace" className="auth-box-left" placeholder={intl.get('birthPlace')}
                                          validates={['notNull']} defaultValue={this.state.def.place_birth}/>
-                                    <Box ref="presentAddr" className="auth-box-right"
-                                         placeholder={intl.get('presentAddr')} validates={['notNull']}
-                                         defaultValue={this.state.def.address}/>
+                                    <BoxSelect ref="education" className="auth-box-right"
+                                               placeholder="Education" validates={['isSelect']} defaultValue={this.state.def.education}
+                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="premanentAddr" className="auth-box"
@@ -329,10 +329,10 @@ class Index extends React.Component {
                                 </div>
                                 <div className="clearfix">
                                     <BoxSelect ref="nationality" className="auth-box-left"
-                                               placeholder={intl.get('nationality')}
+                                               placeholder="Nationality / Citizenship"
                                                validates={['isSelect']} defaultValue={this.state.def.country_area_id}
                                                options={this.state.countryList} optValue="id" optLabel="country_name"/>
-                                    <Box ref="postalCode" className="auth-box-right" placeholder={intl.get('auth_6')}
+                                    <Box ref="postalCode" className="auth-box-right" placeholder="Mobile Telephone No."
                                          validates={['notNull']} defaultValue={this.state.def.postal_code}/>
                                 </div>
 
@@ -348,11 +348,16 @@ class Index extends React.Component {
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="companyName" className="auth-box-left"
-                                         placeholder={intl.get('companyName')} validates={['notNull']}
+                                         placeholder="Company/Organization Name" validates={['notNull']}
                                          defaultValue={this.state.def.organization_name}/>
-                                    <Box ref="tin" className="auth-box-right" placeholder={intl.get('tin')}
+                                    <Box ref="tin" className="auth-box-right" placeholder="Office Telephone No."
                                          validates={['notNull']}
                                          defaultValue={this.state.def.tax_identification_number}/>
+                                </div>
+                                <div className="clearfix">
+                                    <Box ref="faxNo" className="auth-box-left"
+                                         placeholder="Office Fax No." validates={['notNull']}
+                                         defaultValue={this.state.def.faxNo}/>
                                 </div>
                                 {/*<div className="clearfix">*/}
                                 {/*<Box ref="sssNo" className="auth-box-left" placeholder={intl.get('sssNo')} validates={['notNull']} defaultValue={this.state.def.sss_gsis}/>*/}
@@ -396,9 +401,8 @@ class Index extends React.Component {
                                     signature or seal.
                                 </div>
                                 <div className="asset-info">
-                                    <div>For a trust corporation, individual, corporation or partnership, any one or
-                                        more of the following documents issued or submitted within 12 months before the
-                                        relevant date—
+                                    <div>
+                                        For a individual, any one or more of the following documents issued or submitted within 12 months before the relevant date—
                                     </div>
                                     <div>(1) a statement of account or a certificate issued by a custodian;</div>
                                     <div>(2) a certificate issued by an auditor or a certified public accountant;</div>

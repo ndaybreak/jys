@@ -117,7 +117,8 @@ class User extends React.Component {
                         </div>
                     )}
                     <div className="quot-current">
-                        {this.state.price} {this.state.otcPrice}
+                        {this.state.price}
+                        {/*{this.state.otcPrice}*/}
                     </div>
                     {this.state.typeValue !== 1 && (
                         <div className="quot-buy">

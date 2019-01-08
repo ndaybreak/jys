@@ -41,8 +41,8 @@ class App extends React.Component {
         let currentLocale = localStorage.getItem(LANG.name)
         if (!_.find(SUPPOER_LOCALES, { value: currentLocale })) {
             // currentLocale = "en-US";
-            localStorage.setItem(LANG.name, LANG.zh)
-            currentLocale = LANG.zh;
+            localStorage.setItem(LANG.name, LANG.en)
+            currentLocale = LANG.en;
         }
 
         http.get(`resource/locales/${currentLocale}.json`)

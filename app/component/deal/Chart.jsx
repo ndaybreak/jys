@@ -4,6 +4,7 @@ import intl from 'react-intl-universal'
 
 import CoinList from './CoinList';
 import IndicatorList from './IndicatorList';
+import TimeTypeList from './TimeTypeList';
 
 import React from "react";
 import PropTypes from "prop-types";
@@ -62,7 +63,8 @@ const PARA = {
 }
 let loadMorePara = Object.assign({latestTime: 0}, PARA, {number: 300})
 
-let timeType = 'time'
+let chartType = 'line'
+let timeType = '1m'
 
 const indicatorMap = {
     ema: {
@@ -143,16 +145,15 @@ class CandleStickChartPanToLoadMore extends React.Component {
             targetCoinCode: this.state.base
         }
         PARA.targetPair = targetPair
-        PARA.interval = timeType === 'time' ? '1m' : timeType
+        PARA.interval = timeType
         loadMorePara.targetPair = targetPair
-        loadMorePara.interval = timeType === 'time' ? '1m' : timeType
+        loadMorePara.interval = timeType
         getIntervalQuot(PARA, data => {
             const originData = this.state.data
             if(isInit) {
-                console.log(timeType, data)
                 isInit = false
                 this.init(data)
-            } else if(data[data.length -1].date.getTime() !== this.state.data[this.state.data.length - 1].date.getTime()) {
+            } else if(data.length && data[data.length -1].date.getTime() !== this.state.data[this.state.data.length - 1].date.getTime()) {
                 this.append(originData.concat([data[data.length - 1]]))
             }
         })
@@ -233,7 +234,6 @@ class CandleStickChartPanToLoadMore extends React.Component {
             xAccessor,
             displayXAccessor
         } = xScaleProvider(calculatedData.slice(-120));
-        // } = xScaleProvider(calculatedData.slice(timeType === 'time' ? -190 : -120));
 
         // console.log(head(linearData), last(linearData))
         // console.log(linearData.length)
@@ -399,8 +399,18 @@ class CandleStickChartPanToLoadMore extends React.Component {
             indicatorImg: this.state.showIndicator ? indicatorImgUp : indicatorImgDown
         })
     }
+    toggleTimeType(type) {
+        const isEnter = type === 'enter'
+        this.setState({
+            showTimeType: isEnter
+        })
+    }
 
     changeType(type) {
+        chartType = type
+        this.loadData()
+    }
+    changeTimeType(type) {
         timeType = type
         this.loadData()
     }
@@ -426,15 +436,21 @@ class CandleStickChartPanToLoadMore extends React.Component {
         // 横线
         const yGrid = {
             innerTickSize: -1 * gridWidth,
-            stroke: 'rgba(0, 0, 0, .1)', // 图表轴线的颜色
-            tickStroke: '#111111', //坐标线与坐标值颜色
+            stroke: 'rgba(255, 255, 255, .1)', // 图表轴线的颜色
+            tickStroke: 'rgba(255, 255, 255, .5)', //坐标线与坐标值颜色
             tickStrokeOpacity: 0.1,
         }
         // 竖线
         const xGrid = {
             innerTickSize: -1 * gridHeight,
             tickStrokeOpacity: 0,
-            stroke: 'rgba(0, 0, 0, .1)'
+            stroke: 'rgba(255, 255, 255, 0.1)',
+            tickStroke: 'rgba(255, 255, 255, .5)' //坐标线与坐标值颜色
+        }
+
+        const mouseCoordinate = {
+            fill: "#0DA9FF",
+            textFill: "rgba(255,255,255,0.9)"
         }
 
         const macdAppearance = {
@@ -497,16 +513,14 @@ class CandleStickChartPanToLoadMore extends React.Component {
         return (
             <div className="chart-wrap">
                 <div className="coin-select-wrap">
-                    <span className={'time-type ' + (timeType === 'time' ? 'active' : '')} onClick={this.changeType.bind(this, 'time')}>Time</span>
-                    <span className={'time-type ' + (timeType === '1m' ? 'active' : '')} onClick={this.changeType.bind(this, '1m')}>1min</span>
-                    <span className={'time-type ' + (timeType === '5m' ? 'active' : '')} onClick={this.changeType.bind(this, '5m')}>5min</span>
-                    <span className={'time-type ' + (timeType === '15m' ? 'active' : '')} onClick={this.changeType.bind(this, '15m')}>15min</span>
-                    <span className={'time-type ' + (timeType === '30m' ? 'active' : '')} onClick={this.changeType.bind(this, '30m')}>30min</span>
-                    <span className={'time-type ' + (timeType === '1h' ? 'active' : '')} onClick={this.changeType.bind(this, '1h')}>1hour</span>
-                    <span className={'time-type ' + (timeType === '4h' ? 'active' : '')} onClick={this.changeType.bind(this, '4h')}>4hour</span>
-                    <span className={'time-type ' + (timeType === '1d' ? 'active' : '')} onClick={this.changeType.bind(this, '1d')}>1day</span>
-                    <span className={'time-type ' + (timeType === '1w' ? 'active' : '')} onClick={this.changeType.bind(this, '1w')}>1week</span>
-                    {/*<span className={'time-type ' + (timeType === '1mon' ? 'active' : '')} onClick={this.changeType.bind(this, '1mon')}>1month</span>*/}
+                    <span className={'chart-type ' + (chartType === 'line' ? 'active' : '')} onClick={this.changeType.bind(this, 'line')}>Lime Chart</span>
+                    <span className={'chart-type ' + (chartType === 'candle' ? 'active' : '')} onClick={this.changeType.bind(this, 'candle')}>Candlestick Chart</span>
+                    <span className="time-type-wrap" onMouseEnter={this.toggleTimeType.bind(this, 'enter')} onMouseLeave={this.toggleTimeType.bind(this, 'leave')}>
+                        {timeType}<i className={'icon icon-arrow-down icon-coin ' + (this.state.showTimeType ? 'icon-arrow-up' : '')}></i>
+                        <div className={'coin-list-outer time-type-list ' + (this.state.showTimeType ? '' : 'hide')}>
+                            <TimeTypeList changeTimeType={this.changeTimeType.bind(this)}/>
+                        </div>
+                    </span>
                     <span className="coin-select" onMouseEnter={this.toggleCoins.bind(this, 'enter')} onMouseLeave={this.toggleCoins.bind(this, 'leave')}>
                         {this.state.base}/{this.state.target}<i className={'icon icon-arrow-down icon-coin ' + (this.state.showCoins ? 'icon-arrow-up' : '')}></i>
                         <div className={'coin-list-outer ' + (this.state.showCoins ? '' : 'hide')}>
@@ -523,13 +537,14 @@ class CandleStickChartPanToLoadMore extends React.Component {
                 </div>
                 {data.length > 1 && (
                     <ChartCanvas
+                        className="deal-chart"
                         ratio={0.5}
                         width={width}
                         margin={margin}
                         height={height}
                         type={type}
-                        seriesName={`MSFT_${timeType}`}
-                        key={`MSFT_${timeType}`}
+                        seriesName={`MSFT_${chartType}`}
+                        key={`MSFT_${chartType}`}
                         data={data}
                         xScale={xScale}
                         xAccessor={xAccessor}
@@ -563,15 +578,16 @@ class CandleStickChartPanToLoadMore extends React.Component {
                                 at="right"
                                 orient="right"
                                 rectWidth={80}
-                                displayFormat={format(".2f")} />
+                                displayFormat={format(".2f")}
+                                {...mouseCoordinate}/>
 
                             {/* 分时图 */}
-                            {timeType === 'time' && (
+                            {chartType === 'line' && (
                                 <LineSeries yAccessor={d => d.close} stroke="#0bb1ff"/>
                             )}
 
                             {/* K线图 */}
-                            {timeType !== 'time' && (
+                            {chartType !== 'line' && (
                                 <CandlestickSeries className="testing" fill={this.fill.bind(this)} stroke={this.fill.bind(this)}
                                                    wickStroke={this.fill.bind(this)} clip={false}/>
                             )}
@@ -655,11 +671,13 @@ class CandleStickChartPanToLoadMore extends React.Component {
                                     at="bottom"
                                     orient="bottom"
                                     rectWidth={120}
-                                    displayFormat={timeFormat("%Y-%m-%d %H:%M")} />
+                                    displayFormat={timeFormat("%Y-%m-%d %H:%M")}
+                                    {...mouseCoordinate}/>
                                 <MouseCoordinateY
                                     at="left"
                                     orient="left"
-                                    displayFormat={format(".4s")} />
+                                    displayFormat={format(".4s")}
+                                    {...mouseCoordinate}/>
                                 <BarSeries width={2} yAccessor={d => d.volume} fill={(d) => d.close > d.open ? "#51a314" : "#ff0000"} />
                             </Chart>
                         )}
@@ -667,33 +685,34 @@ class CandleStickChartPanToLoadMore extends React.Component {
                         {/* ---------MACD-------- */}
                         {indicatorMap.macd.isSelected && (
                             <Chart id={3} height={subChartHeight}
-                                yExtents={macdCalculator.accessor()}
-                                origin={(w, h) => [0, h - subChartHeight]} padding={{ top: 15, bottom: 0 }}
-                                >
+                                   yExtents={macdCalculator.accessor()}
+                                   origin={(w, h) => [0, h - subChartHeight]} padding={{ top: 15, bottom: 0 }}
+                            >
                                 <XAxis axisAt="bottom" orient="bottom" {...xGrid}/>
-                                <YAxis axisAt="right" orient="right" ticks={2}/>
+                                <YAxis axisAt="right" orient="right" ticks={2} {...yGrid}/>
 
                                 <MouseCoordinateX
-                                at="bottom"
-                                orient="bottom"
-                                rectWidth={120}
-                                displayFormat={timeFormat("%Y-%m-%d %H:%M")} />
+                                    at="bottom"
+                                    orient="bottom"
+                                    rectWidth={120}
+                                    displayFormat={timeFormat("%Y-%m-%d %H:%M")}
+                                    {...mouseCoordinate}/>
                                 <MouseCoordinateY
-                                at="left"
-                                orient="left"
-                                displayFormat={format(".2f")}
-                                />
+                                    at="left"
+                                    orient="left"
+                                    displayFormat={format(".2f")}
+                                    {...mouseCoordinate}/>
 
                                 <MACDSeries yAccessor={d => d.macd}
-                                {...macdAppearance} />
+                                            {...macdAppearance} />
                                 <MACDTooltip
-                                origin={[0, 15]}
-                                yAccessor={d => d.macd}
-                                options={macdCalculator.options()}
-                                labelFill="#0bb1ff"
-                                appearance={macdAppearance}
+                                    origin={[0, 15]}
+                                    yAccessor={d => d.macd}
+                                    options={macdCalculator.options()}
+                                    labelFill="#0bb1ff"
+                                    appearance={macdAppearance}
                                 />
-                             </Chart>
+                            </Chart>
                         )}
 
                         {/* ---------RSI-------- */}
@@ -706,17 +725,18 @@ class CandleStickChartPanToLoadMore extends React.Component {
                                 <XAxis axisAt="bottom" orient="bottom" showTicks={true} outerTickSize={0} {...xGrid}/>
                                 <YAxis axisAt="right"
                                        orient="right"
-                                       tickValues={[30, 50, 70]}/>
+                                       tickValues={[30, 50, 70]} {...yGrid}/>
                                 <MouseCoordinateX
                                     at="bottom"
                                     orient="bottom"
                                     rectWidth={120}
-                                    displayFormat={timeFormat("%Y-%m-%d %H:%M")} />
+                                    displayFormat={timeFormat("%Y-%m-%d %H:%M")}
+                                    {...mouseCoordinate}/>
                                 <MouseCoordinateY
                                     at="left"
                                     orient="left"
                                     displayFormat={format(".2f")}
-                                />
+                                    {...mouseCoordinate}/>
 
                                 <RSISeries yAccessor={d => d.rsi} {...rsiAppearance}/>
 
@@ -728,7 +748,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                             </Chart>
                         )}
 
-                        <CrossHairCursor />
+                        <CrossHairCursor stroke="#FFFFFF" />
                     </ChartCanvas>
                 )}
             </div>

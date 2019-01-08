@@ -4,7 +4,7 @@ var QRCode = require('qrcode-react')
 import Breadcrumb from '@/component/common/Breadcrumb'
 import RechargeSelect from '@/component/recharge/RechargeSelect'
 import { Icon, Modal, Button, Select } from 'antd'
-import { jumpUrl, validate, ui } from '@/utils'
+import { jumpUrl, validate, ui, getSearchPara } from '@/utils'
 import '@/public/css/recharge.pcss';
 import codeImgDefault from '@/public/img/二维码占位符.png'
 import logoImg from '@/public/img/code_logo.png'
@@ -19,7 +19,11 @@ class Index extends React.Component {
                 val: intl.get('personalCenter')
             }, {
                 val: intl.get('deposit')
-            }]
+            }],
+            selected: {
+                coin_code: getSearchPara('code'),
+                id: getSearchPara('id')
+            }
         }
     }
 
@@ -50,7 +54,7 @@ class Index extends React.Component {
             <div className="recharge-withdraw-page">
                 <div className="header">
                     <span className="title">{intl.get('deposit')}</span>
-                    <RechargeSelect onChange={this.handleCoinChange.bind(this)} />
+                    <RechargeSelect onChange={this.handleCoinChange.bind(this)} selected={this.state.selected} disabled={true} isRecharge={true}/>
                 </div>
                 <div className="content">
                     <div className="content-inner">

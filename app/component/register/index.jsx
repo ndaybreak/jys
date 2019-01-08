@@ -250,12 +250,12 @@ class Index extends React.Component {
                                 onKeyUp={this.inputKeyUp.bind(this)} onBlur={this.passwordBlur.bind(this)}/>
                     </div>
                     {/*推荐人*/}
-                    {/*<div className="item-wrap recommend-wrap">*/}
-                        {/*<img src={recommendImg} alt=""/>*/}
-                        {/*<input  className={'recommend'} autoComplete="new-password" type="text" placeholder={intl.get('referralId')}*/}
-                                {/*value={this.state.invitedCode} onChange={this.recommendChange.bind(this)}*/}
-                                {/*onKeyUp={this.inputKeyUp.bind(this)}/>*/}
-                    {/*</div>*/}
+                    <div className="item-wrap recommend-wrap">
+                        <img src={recommendImg} alt=""/>
+                        <input  className={'recommend'} autoComplete="new-password" type="text" placeholder={intl.get('referralId')}
+                                value={this.state.invitedCode} onChange={this.recommendChange.bind(this)}
+                                onKeyUp={this.inputKeyUp.bind(this)}/>
+                    </div>
                     {/*协议*/}
                     <div className="checkbox-wrap">
                         <label style={{width: '30px', display: 'inline-block'}}>

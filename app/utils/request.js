@@ -59,6 +59,7 @@ service.interceptors.response.use(
           })
           // window.location.href='login.html'
       }
+      console.log(res.info)
       return Promise.reject(res.info)
     } else {
       if (res.code) {
@@ -75,7 +76,7 @@ service.interceptors.response.use(
     //   type: 'error',
     //   duration: 5 * 1000
     // })
-      alert(error.message)
+    //   alert(error.message)
     return Promise.reject(error)
   })
 

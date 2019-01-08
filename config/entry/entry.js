@@ -157,4 +157,24 @@ module.exports = [{
     path: 'protocol/Index.jsx',
     title: 'protocol',
     keywords: 'protocol'
+}, {
+    name: 'bank-list',
+    path: 'bank/list.jsx',
+    title: 'bank list',
+    keywords: 'bank list'
+}, {
+    name: 'bank-add',
+    path: 'bank/add.jsx',
+    title: 'bank add',
+    keywords: 'bank add'
+}, {
+    name: 'legal-recharge',
+    path: 'legal-recharge/index.jsx',
+    title: 'legal recharge',
+    keywords: 'legal recharge'
+}, {
+    name: 'legal-withdraw',
+    path: 'legal-withdraw/index.jsx',
+    title: 'legal withdraw',
+    keywords: 'legal withdraw'
 }]

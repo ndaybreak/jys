@@ -126,7 +126,7 @@ class User extends React.Component {
 
                     {this.state.data.map((item, i) => {
                         return (
-                            <div className="order-item clearfix" key={i}>
+                            <div className={'order-item clearfix ' + (i%2 === 1 ? 'order-even-row' : '')} key={i}>
                                 <div className="order-col order-col-1">
                                     <img className="order-direction" src={item.tradeType === 1 ? directionBuyImg : directionSellerImg} alt=""/>{item.targetCoinCode}/{item.marketCoinCode}
                                 </div>

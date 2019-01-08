@@ -2,24 +2,45 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import { getMarketCoinQuot, getTargetPairsQuot } from '@/api/quot'
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
+import { getRecommendCoins, getCoin2CoinList } from '@/api'
+
+const formatCoin2CoinData = (data) => {
+    const result = {}
+    data.forEach(item => {
+        result[item.code.split('/')[1]] = 1
+    })
+    return Object.keys(result)
+}
 
 class CoinList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeCategory: 'BTC',
+            activeCategory: '',
+            categoryList: [],
             data: []
         }
 
-        getMarketCoinQuot({ code: this.state.activeCategory }, data => {
-            this.setState({
-                data: data
-            })
-        })
+        // getMarketCoinQuot({ code: this.state.activeCategory }, data => {
+        //     this.setState({
+        //         data: data
+        //     })
+        // })
     }
 
     componentDidMount() {
-
+        getCoin2CoinList().then(res => {
+            const list = formatCoin2CoinData(res.data)
+            this.setState({
+                categoryList: list,
+                activeCategory: list[0]
+            })
+            getMarketCoinQuot({ code: list[0] }, data => {
+                this.setState({
+                    data: data
+                })
+            })
+        })
     }
 
     changeCategory(val) {
@@ -47,12 +68,17 @@ class CoinList extends React.Component {
         return (
             <div className="coin-list-inner">
                 <div className="market-category clearfix">
-                    <span className={`category ${this.state.activeCategory === 'USDT' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'USDT')}>USDT</span>
-                    <span className={`category ${this.state.activeCategory === 'BTC' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'BTC')}>BTC</span>
-                    <span className={`category ${this.state.activeCategory === 'ETH' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'ETH')}>ETH</span>
+                    {this.state.categoryList.map((category, i) => {
+                        return (
+                            <span key={i} className={'category ' + (this.state.activeCategory === category ? 'active' : '')} onMouseEnter={this.changeCategory.bind(this, category)}>{category}</span>
+                        )
+                    })}
+                    {/*<span className={`category ${this.state.activeCategory === 'USDT' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'USDT')}>USDT</span>*/}
+                    {/*<span className={`category ${this.state.activeCategory === 'BTC' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'BTC')}>BTC</span>*/}
+                    {/*<span className={`category ${this.state.activeCategory === 'ETH' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'ETH')}>ETH</span>*/}
                 </div>
                 <div className="market-detail">
-                    <div className="row" style={{'backgroundColor': '#f9f9fb'}}>
+                    <div className="row">
                         <div className="th col-1">{intl.get('market')}</div>
                         <div className="th col-2 txt-right">{intl.get('price')}</div>
                         <div className="th col-3 txt-right">{intl.get('dayChg')}</div>

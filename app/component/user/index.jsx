@@ -14,9 +14,10 @@ import userPhoneImg from '@/public/img/user_phone.png'
 import userEmailImg from '@/public/img/user_email.png'
 import userRecommendImg from '@/public/img/user_recommend.png'
 import userAssetImg from '@/public/img/user_asset.png'
-import { getCommissionList, getAssetList, getAccountInfo } from '@/api'
+import { getCommissionList, getAssetList, getAccountInfo, getCoinAssetLog, getCoinList } from '@/api'
 import { getPriceBtcQuot, getTargetPairsQuot } from '@/api/quot'
 import {getSessionData} from "../../data";
+import AssetDetails from './AssetDetails'
 
 const getUserLevelImg = (level) => {
     const imgs = [userLevel1Img, userLevel2Img, userLevel3Img]
@@ -35,6 +36,19 @@ const getBtcTotalPrice = (priceList, assetObj) => {
     return sum
 }
 
+const getAssets = (data) => {
+    const result = []
+    let index = -1
+    data.forEach((item,i) => {
+        if(item.coin_code === 'HKD') {
+            index = i
+        }
+    })
+    result[0] = data.splice(index, 1)
+    result[1] = data
+    return result
+}
+
 class User extends React.Component {
     constructor(props) {
         super(props);
@@ -45,8 +59,10 @@ class User extends React.Component {
             isAuth: false,
             isMerchant: false,
             assetList: [],
+            legalAssetList: [],
             totalBtc: '',
-            total: ''
+            total: '',
+            detailsVisible: false
         }
     }
 
@@ -61,8 +77,10 @@ class User extends React.Component {
 
         // 获取资产列表 》获取每种数字币对应的btc价格 》btc价格转化为人民币
         getAssetList().then(res => {
+            let asset = getAssets(res.data)
             this.setState({
-                assetList: res.data
+                assetList: asset[1],
+                legalAssetList: asset[0]
             })
             return Promise.resolve(res.data)
         }).then(assetList => {
@@ -91,11 +109,13 @@ class User extends React.Component {
             }]
             getTargetPairsQuot(para, data => {
                 let value = 0
-                if(isLangZH()) {
-                    value = '￥' + (totalBtc * data[0].rmbPrice).toFixed(2)
-                } else {
-                    value = '$' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
-                }
+                // if(isLangZH()) {
+                //     value = '￥ ' + (totalBtc * data[0].rmbPrice).toFixed(2)
+                // } else {
+                //     value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
+                // }
+                value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
+
                 this.setState({
                     total: value
                 })
@@ -148,6 +168,49 @@ class User extends React.Component {
         }
     }
 
+    goDesposit(item) {
+        jumpUrl('recharge.html', {
+            id: item.id,
+            code: item.coin_code
+        })
+    }
+
+    goWithdrawal(item) {
+        jumpUrl('withdraw.html', {
+            id: item.id,
+            code: item.coin_code
+        })
+    }
+    goLegalDesposit(item) {
+        jumpUrl('legal-recharge.html', {
+            id: item.id,
+            code: item.coin_code
+        })
+    }
+
+    goLegalWithdrawal(item) {
+        jumpUrl('legal-withdraw.html', {
+            id: item.id,
+            code: item.coin_code
+        })
+    }
+
+    showVariationDetails() {
+        this.setState({
+            detailsVisible: true
+        })
+    }
+
+    handleDetailsClose() {
+        this.setState({
+            detailsVisible: false
+        })
+    }
+
+    bindBank() {
+        jumpUrl('bank-list.html')
+    }
+
     render() {
         const { userLevelImg, merchantLevelImg, isAuth, isMerchant } = this.state
 
@@ -175,12 +238,13 @@ class User extends React.Component {
                         <div className="info-right">
                             <div className="asset-line">
                                 {intl.get('myFunds')}
-                                <a className="info-link link-detail" href="">{intl.get('fundsDetail')}</a>
-                                <a className="info-link link-recharge" href="recharge.html">{intl.get('deposit')}</a>
-                                <a className="info-link" href="withdraw.html">{intl.get('withdrawal')}</a>
+                                <a className="info-link link-detail" href="javascript:" onClick={this.showVariationDetails.bind(this)}>Variation details</a>
+                                {/*<a className="info-link link-recharge" href="recharge.html">{intl.get('deposit')}</a>*/}
+                                {/*<a className="info-link" href="withdraw.html">{intl.get('withdrawal')}</a>*/}
                             </div>
                             <div>
-                                {intl.get('estimatedValue')}(BTC): {this.state.totalBtc} BTC
+                                {intl.get('estimatedValue')}:
+                                {/*{this.state.totalBtc} BTC*/}
                                 <span className="legal-value">{this.state.total}</span>
                             </div>
                         </div>
@@ -213,6 +277,14 @@ class User extends React.Component {
                         </div>
                     </div>
 
+                    <div className="clearfix">
+                        <div className="content-item item-left">
+                            <img src={userPhoneImg} alt=""/>
+                            <span>Binding Bank Cards</span>
+                            <button className="btn btn-primary btn-update" onClick={this.bindBank.bind(this)}>{intl.get('bind')}</button>
+                        </div>
+                    </div>
+
                     <div className="title">{intl.get('referralRebate')}</div>
                     <div className="clearfix">
                         <div className="content-item recommend-item recommend-left">
@@ -224,23 +296,64 @@ class User extends React.Component {
                             <span className="recommend-label">{intl.get('download_5')}:</span>
                             <span className="recommend-value">{this.state.recommendFriends}</span>
                         </div>
-                        <div className="content-item recommend-item">
-                            <img src={userAssetImg} alt=""/>
-                            <span className="recommend-label">{intl.get('download_7')}:</span>
-                            <span className="recommend-value">{this.state.recommendValue} BTC</span>
-                        </div>
+                        {/*<div className="content-item recommend-item">*/}
+                            {/*<img src={userAssetImg} alt=""/>*/}
+                            {/*<span className="recommend-label">{intl.get('download_7')}:</span>*/}
+                            {/*<span className="recommend-value">{this.state.recommendValue} BTC</span>*/}
+                        {/*</div>*/}
                     </div>
 
-                    <div className="title">{intl.get('assetsDetail')}</div>
+                    <div className="title">Digital Currency Assets</div>
                     <div className="asset-detail">
+                        <div className="clearfix asset-item th-row">
+                            <div className="asset-col">Coin</div>
+                            <div className="asset-col">Balance</div>
+                            <div className="asset-col">Available</div>
+                            <div className="asset-col">In Use</div>
+                            <div className="asset-col">Operation</div>
+                        </div>
                         {this.state.assetList.map(asset => {
                             return (
-                                <div className="asset-item" key={asset.id}>
-                                    <img src={asset.icon} alt=""/>
-                                    {asset.coin_code}
-                                    <span className="full-name">({asset.coin_name})</span>
-                                    <a className="btn-check">{intl.get('view')}</a>
-                                    <span className="asset-value">{asset.total_balance}</span>
+                                <div className="clearfix asset-item" key={asset.id}>
+                                    <div className="asset-col txt-left">
+                                        <img src={asset.icon} alt=""/>
+                                        {asset.coin_code}<span className="full-name">({asset.coin_name})</span>
+                                    </div>
+                                    <div className="asset-col">{asset.total_balance}</div>
+                                    <div className="asset-col">{asset.available_balance}</div>
+                                    <div className="asset-col">{asset.frozen_balance}</div>
+                                    <div className="asset-col">
+                                        <button className="btn btn-desposit" onClick={this.goDesposit.bind(this, asset)}>Desposit</button>
+                                        <button className="btn btn-withdrawal" onClick={this.goWithdrawal.bind(this, asset)}>Withdrawal</button>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+
+                    <div className="title">Fiat Currency Assets </div>
+                    <div className="asset-detail">
+                        <div className="clearfix asset-item th-row">
+                            <div className="asset-col">Coin</div>
+                            <div className="asset-col">Balance</div>
+                            <div className="asset-col">Available</div>
+                            <div className="asset-col">In Use</div>
+                            <div className="asset-col">Operation</div>
+                        </div>
+                        {this.state.legalAssetList.map(asset => {
+                            return (
+                                <div className="clearfix asset-item" key={asset.id}>
+                                    <div className="asset-col txt-left">
+                                        <img src={asset.icon} alt=""/>
+                                        {asset.coin_code}<span className="full-name">({asset.coin_name})</span>
+                                    </div>
+                                    <div className="asset-col">{asset.total_balance}</div>
+                                    <div className="asset-col">{asset.available_balance}</div>
+                                    <div className="asset-col">{asset.frozen_balance}</div>
+                                    <div className="asset-col">
+                                        <button className="btn btn-desposit" onClick={this.goLegalDesposit.bind(this, asset)}>Desposit</button>
+                                        <button className="btn btn-withdrawal" onClick={this.goLegalWithdrawal.bind(this, asset)}>Withdrawal</button>
+                                    </div>
                                 </div>
                             )
                         })}
@@ -285,6 +398,19 @@ class User extends React.Component {
                             <div className="level-col level-col-5">{intl.get('level_higher')}</div>
                         </div>
                     </div>
+                </Modal>
+
+                <Modal
+                    className="modal-confirm-davao modal-big"
+                    visible={this.state.detailsVisible}
+                    width={870}
+                    style={{top: 100}}
+                    onCancel={this.handleDetailsClose.bind(this)}
+                    footer=''
+                >
+                    {this.state.detailsVisible && (
+                        <AssetDetails/>
+                    )}
                 </Modal>
             </div>
         );

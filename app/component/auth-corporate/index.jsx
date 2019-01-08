@@ -71,13 +71,62 @@ class Index extends React.Component {
             videoUrl: '',
             videoError: '',
             videoCode: '',
-            infoList: [{}]
+            infoList: [{}],
+            institutionList: [{
+                id: 0,
+                value: 'Financial Institution'
+            }, {
+                id: 1,
+                value: 'Active NFE'
+            }, {
+                id: 2,
+                value: 'Passive NFE '
+            }],
+            bankList: [],
+            bankData: [[{
+                id: 0,
+                value: 'Bank'
+            }, {
+                id: 1,
+                value: 'Asset/ Fund Management'
+            }, {
+                id: 2,
+                value: 'Operator Stock Broking '
+            }, {
+                id: 3,
+                value: 'Fund'
+            }, {
+                id: 4,
+                value: 'Insurance Company'
+            }, {
+                id: 5,
+                value: ' Financial Market'
+            }, {
+                id: 6,
+                value: ' Nominees/ Custodian'
+            }], [{
+                id: 0,
+                value: 'Listed on Exchange'
+            }, {
+                id: 1,
+                value: 'Government firm / Agency'
+            }, {
+                id: 2,
+                value: 'Other active NFE'
+            }], [{
+                id: 0,
+                value: 'Financial Institution and located in non-participating jurisdiction'
+            }, {
+                id: 1,
+                value: 'NFE that is not an active NFE'
+            }]]
         }
     }
 
     componentDidMount() {
         this.setState({
-            from: getSearchPara('from')
+            from: getSearchPara('from'),
+            bankList: this.state.bankData[0]
         })
         getCountryList().then(res => {
             this.setState({
@@ -308,6 +357,12 @@ class Index extends React.Component {
         })
     }
 
+    institutionChange(key) {
+        this.setState({
+            bankList: this.state.bankData[key]
+        })
+    }
+
     render() {
         const {picSignImgUrl, picOneImgUrl, picTwoImgUrl, picThreeImgUrl, previewVisible, previewImage, videoUrl} = this.state
 
@@ -321,33 +376,31 @@ class Index extends React.Component {
                                 <div className="label">Basic Company Information</div>
                                 {/*基本信息*/}
                                 <div className="clearfix">
-                                    <Box ref="fullName" className="auth-box-left" placeholder="Name"
+                                    <Box ref="fullName" className="auth-box-left" placeholder="Company Name"
                                          validates={['notNull']} defaultValue={this.state.def.full_name}/>
-                                    <BoxSelect ref="nationality" className="auth-box-right"
-                                               placeholder="Please select the nature"
-                                               validates={['isSelect']} defaultValue={this.state.def.country_area_id}
-                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
+                                    <Box ref="nationality" className="auth-box-right" placeholder="Nature of Busines"
+                                         validates={['notNull']} defaultValue={this.state.def.country_area_id}/>
                                 </div>
                                 <div className="clearfix">
-                                    <Box ref="birthPlace" className="auth-box-left" placeholder="Liaison person"
+                                    <Box ref="birthPlace" className="auth-box-left" placeholder="Contact Person"
                                          validates={['notNull']} defaultValue={this.state.def.place_birth}/>
                                     <Box ref="presentAddr" className="auth-box-right"
-                                         placeholder="Registered address" validates={['notNull']}
+                                         placeholder="Registered Address" validates={['notNull']}
                                          defaultValue={this.state.def.address}/>
                                 </div>
                                 <div className="clearfix">
                                     <BoxDate ref="birthday" className="auth-box-left"
-                                             placeholder="Date of company registration" validates={['isSelect']}
+                                             placeholder="Date of Incorporation" validates={['isSelect']}
                                              defaultValue={this.state.def.birthday}/>
                                     <Box ref="registerNumber" className="auth-box-right"
-                                         placeholder="Company Registration Number" validates={['notNull']}
+                                         placeholder="Certificate Incorporation No." validates={['notNull']}
                                          defaultValue=""/>
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="premanentAddr" className="auth-box-left"
-                                         placeholder="Contract address" validates={['notNull']}
+                                         placeholder="Email Address" validates={['notNull']}
                                          defaultValue={this.state.def.premanent_address}/>
-                                    <Box ref="postalCode" className="auth-box-right" placeholder="Contract number"
+                                    <Box ref="postalCode" className="auth-box-right" placeholder="Contact No."
                                          validates={['notNull']} defaultValue={this.state.def.postal_code}/>
                                 </div>
 
@@ -453,19 +506,82 @@ class Index extends React.Component {
                                     <BoxSelect ref="corporationType" className="auth-box-left"
                                                placeholder="Please select financial institution"
                                                validates={['isSelect']} defaultValue={this.state.def.financial_institution}
-                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
+                                               onChange={this.institutionChange.bind(this)}
+                                               options={this.state.institutionList} optValue="id" optLabel="value"/>
                                     <BoxSelect ref="bank" className="auth-box-right"
                                                placeholder="Please select bank"
                                                validates={['isSelect']} defaultValue={this.state.def.bank}
-                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
+                                               options={this.state.bankList} optValue="id" optLabel="value"/>
                                 </div>
                             </div>
 
                             <div className="list-one-part">
                                 <div className="label">Are there serving or veteran soldiers, government employees and officials among the shareholders who hold more than 25% of the shares? Or the immediate family members of more than one person? If yes, please note:</div>
                                 <textarea className="big-box" name="" id="" cols="30" rows="6" style={{width: '100%',padding: '10px'}} placeholder="Example: 1. (The shareholders themselves meet the above requirements) Shareholder name ,shareholding ratio , position , certificate type , certificate number. &#10;Example: 2. (The immediate relatives of shareholders meet the above requirements) Shareholder name + shareholding ratio + family relationship with shareholders + position + certificate type + certificate number"></textarea>
+                            </div>
 
-                                <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>
+                            <div className="asset-part">
+                                {/*Upload Asset Certificate Documents*/}
+                                <div className="label">Upload Asset Certificate Documents</div>
+                                <div className="tip">In principle, all electronic certification materials require
+                                    Chinese or English versions. If they are not in the above two languages, please
+                                    provide the official version issued by the formal translation company with personal
+                                    signature or seal.
+                                </div>
+                                <div className="asset-info">
+                                    <div>
+                                        A. For a trust corporation, corporation or partnership, the most recent audited financial statement prepared within 16 months before the relevant date in respect of the trust corporation (or a trust of which it acts as a trustee), corporation or partnership; <br/>
+                                        B. For a trust corporation , corporation or partnership, any one or more of the following documents issued or submitted within 12 months before the relevant date—
+                                    </div>
+                                    <div>(1) a statement of account or a certificate issued by a custodian;</div>
+                                    <div>(2) a certificate issued by an auditor or a certified public accountant;</div>
+                                    <div>(3) a public filing submitted by or on behalf of the trust corporation (whether
+                                        on its own behalf or in respect of a trust of which it acts as a trustee),
+                                        individual, corporation or partnership.
+                                    </div>
+                                </div>
+
+                                <div className="clearfix upload-wrap">
+                                    <div className="pic-list">
+                                        {this.state.picList.map((pic, i) => {
+                                            return (
+                                                <div className="pic-item" key={i}>
+                                                    <div className="pic-wrap">
+                                                        <img className="pic-value" src={pic}/>
+                                                    </div>
+                                                    <span className="preview-btn"
+                                                          onClick={this.handlePreview.bind(this, pic)}>
+                                                <img src={previewImg} title={intl.get('clickToPreview')}/>
+                                            </span>
+                                                    <span className="preview-btn btn-delete"
+                                                          onClick={this.handleDelete.bind(this, i)}>
+                                                <img src={deleteImg} title={intl.get('delete')}/>
+                                            </span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+
+                                    <div className="pic-item">
+                                        <div className={'pic '}>
+                                            <Upload
+                                                name="file"
+                                                listType="picture-card"
+                                                className={'pic-uploader'}
+                                                showUploadList={false}
+                                                action={uploadUrl + 'type=4'}
+                                                beforeUpload={beforeUpload}
+                                                onChange={this.handleAssetChange.bind(this)}
+                                            >
+                                                <span></span>
+                                            </Upload>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="text-center">
+                                    <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>
+                                </div>
                             </div>
                         </div>
                     )}

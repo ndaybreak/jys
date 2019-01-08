@@ -92,7 +92,7 @@ class User extends React.Component {
             <div className="order-wrap">
                 <div className="order-type">
                     <button className={'btn btn-entrust ' + (this.state.type === 'one' ? 'active' : '')} onClick={this.changeType.bind(this, 'one')}>{intl.get('limitOrder')}</button>
-                    <button className={'btn btn-entrust ' + (this.state.type === 'two' ? 'active' : '')} onClick={this.changeType.bind(this, 'two')}>{intl.get('marketOrder')}</button>
+                    {/*<button className={'btn btn-entrust ' + (this.state.type === 'two' ? 'active' : '')} onClick={this.changeType.bind(this, 'two')}>{intl.get('marketOrder')}</button>*/}
                 </div>
                 <div className="order-info clearfix">
                     <OrderBuy base={this.state.base} basePrecision={this.state.basePrecision}

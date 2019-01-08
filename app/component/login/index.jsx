@@ -59,13 +59,13 @@ class Index extends React.Component {
         if(!pwdResult.pass && !errorMsg) {
             errorMsg = pwdResult.msg
         }
-        
+
         this.setState({
             isUserNameValid: emailResult.pass ? true : false,
             isPasswordValid: pwdResult.pass ? true : false,
             errorMsg: errorMsg
         })
-        
+
         return !errorMsg
     }
 
@@ -137,6 +137,7 @@ class Index extends React.Component {
                     codeImg: 'data:image/png;base64,' + res.data.authCode,
                     serverCode: res.data.code.toLowerCase()
                 })
+                this.refs['loginCode'].focus()
             })
         }
     }
@@ -223,7 +224,7 @@ class Index extends React.Component {
                     width='454px'
                     onCancel={this.handleCancel.bind(this)}
                     footer={[
-                        <Button className="btn-login-submit" key="submit" type="primary" loading={this.state.loading} onClick={this.loginSubmit.bind(this)}>
+                        <Button className="btn-login-submit ant-btn ant-btn-primary" key="submit" type="primary" loading={this.state.loading} onClick={this.loginSubmit.bind(this)}>
                             {intl.get('submit')}
                         </Button>,
                     ]}
@@ -232,7 +233,7 @@ class Index extends React.Component {
                         <div className="title">{intl.get('loginCodeTip')}</div>
                         <div className="submit-div">
                             <img src={this.state.codeImg} alt="" onClick={this.changeCodeImg.bind(this)} title={intl.get('clickRefresh')}/>
-                            <input className={'code-input ' + (this.state.codeErrorMsg ? 'error' : '')} type="text" onKeyUp={this.codeKeyUp.bind(this)}
+                            <input ref="loginCode" className={'code-input ' + (this.state.codeErrorMsg ? 'error' : '')} type="text" onKeyUp={this.codeKeyUp.bind(this)}
                                    value={this.state.code} onChange={this.codeChange.bind(this)}/>
                         </div>
                         <div className="code-error">

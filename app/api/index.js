@@ -107,6 +107,7 @@ export function loginByEmail(params) {
 }
 
 // 获取邮箱验证码
+// 验证码类型(1：更改手机或邮箱 2：注册 3：登陆（没有此功能暂时保留） 4：更改登陆密码 5：更改资金密码 6: 提现)
 export function sendEmailValidateCode(email, type) {
     return request({
         url: '/account/public/sendEmailVerificationCode',
@@ -335,3 +336,58 @@ export function getAuthVideoCode() {
         method: 'post'
     })
 }
+// 资产变动日志
+export function getCoinAssetLog(para) {
+    return request({
+        url: '/coinAssetLog/getListByCustomer',
+        method: 'get',
+        params: para
+    })
+}
+// 查询币币交易币种
+export function getCoin2CoinList() {
+    return request({
+        url: '/targetMarketCoin/public/getMarketTargetCoinListByCustomer',
+        method: 'get'
+    })
+}
+// 添加或更新支付方式
+export function saveOrUpdatePayAccountInfo(para) {
+    return request({
+        url: '/pay/saveOrUpdatePayAccountInfo',
+        method: 'post',
+        params: para
+    })
+}
+// 银行卡列表
+export function getBankList() {
+    return request({
+        url: '/pay/getPayAccountInfo',
+        method: 'get'
+    })
+}
+// 删除银行卡
+export function deleteBank(id) {
+    return request({
+        url: '/pay/delPayAccountInfo',
+        method: 'post',
+        params: {id: id}
+    })
+}
+// 查询提现记录(法币)
+export function queryWithdrawList(id) {
+    return request({
+        url: '/pay/delPayAccountInfo',
+        method: 'post',
+        params: {id: id}
+    })
+}
+// 法币提现
+export function legalWithdraw(para) {
+    return request({
+        url: '/withdrawCash/withdraw',
+        method: 'post',
+        params: para
+    })
+}
+

@@ -4,6 +4,9 @@ import EntrustOrder from './EntrustOrder';
 import QuotLeft from './QuotLeft';
 import QuotRight from './QuotRight';
 import Order from './Order';
+import Journalism from './Journalism';
+import CompanyInfo from './CompanyInfo';
+import Notice from './Notice';
 
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
 import '@/public/css/deal.pcss';
@@ -19,6 +22,8 @@ class User extends React.Component {
             data: [],
             base: getSearchPara('base') || 'BTC',
             target: getSearchPara('target') || 'USDT',
+            // base: getSearchPara('base') || 'STOX01.ST',
+            // target: getSearchPara('target') || 'HKD',
             width: document.body.clientWidth - 620
         }
     }
@@ -52,11 +57,16 @@ class User extends React.Component {
                         <QuotRight />
                     </div>
                     <Order />
+                    <Notice />
                 </div>
 
                 <div className="page-left">
                     <Chart width={this.state.width} type="svg"/>
                     <EntrustOrder />
+                    <div className="clearfix">
+                        <Journalism/>
+                        <CompanyInfo/>
+                    </div>
                 </div>
             </div>
         )

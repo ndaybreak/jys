@@ -429,7 +429,7 @@ ul, ol {
   cursor: pointer;
 }
 .btn-primary {
-  background-color: #044f9c;
+  background-color: #0da9ff;
   color: white;
   border: none;
 }
@@ -494,7 +494,7 @@ ul, ol {
             color: #ffffff;
             .submenu-wrap {
               position: absolute;
-              background-color: #044f9c;
+              background-color: #0da9ff;
               left: 0;
               top: 45px;
               min-width: 103px;
@@ -517,11 +517,11 @@ ul, ol {
             }
           }
           .active {
-            color: #0e71d7;
-            border-bottom: 1px solid #0e71d7;
+            color: #0da9ff;
+            border-bottom: 1px solid #0da9ff;
           }
           .menu:hover {
-            background-color: #044f9c;
+            background-color: #0da9ff;
             color: white;
           }
         }
@@ -774,8 +774,8 @@ ul, ol {
     float: left;
     width: 50%;
     border: none;
-    color: #006dde;
-    background-color: transparent;
+    color: #006dde !important;
+    background-color: transparent !important;
     margin: 0;
     font-size: 16px;
     box-shadow: none;
@@ -834,7 +834,7 @@ ul, ol {
   }
   .active {
     .user-link {
-      color: #0e71d7;
+      color: #0da9ff;
     }
   }
 }
@@ -874,4 +874,49 @@ textarea {
 .btn-disabled {
   background: rgba(164,164,164,1) !important;
   cursor: not-allowed !important;
+}
+
+.christmas.ant-btn-primary:before {
+  display: none !important;
+}
+
+.modal-big {
+  .ant-modal-body {
+    padding: 0;
+    .title {
+      height:50px;
+      line-height:50px;
+      background:rgba(13,169,255,1);
+      box-shadow:0px 3px 6px rgba(0,0,0,0.16);
+      font-size: 23px;
+      color: white;
+    }
+  }
+
+  .ant-modal-close {
+    display: inline-block;
+    color: white;
+    top: 10px;
+    right: 10px;
+    transition: all 0.3s;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+  .ant-modal-close-x {
+    font-size: 20px;
+  }
+  .content {
+    margin-top: -6px;
+    padding: 0 40px 20px 40px;
+    color: #111111;
+    font-size: 14px;
+    p {
+      margin-bottom: 15px;
+    }
+  }
+}
+
+.error-line {
+  color: red;
 }

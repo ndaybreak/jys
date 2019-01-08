@@ -54,7 +54,7 @@ class User extends React.Component {
                 sum: price * quantity
             })
         }
-        this.setOtcPrice()
+        // this.setOtcPrice()
     }
 
     quantityBoxChange(quantity) {
@@ -177,33 +177,35 @@ class User extends React.Component {
             quantity: this.refs['quantityBox'].getValue(),
             price: isOne ? this.refs['priceBox'].getValue() : 0
         }
-        setSessionData('dealOrder', para)
-        removeSessionData(SEND_FLAG)
-        jumpUrl('validate-code.html', {
-            from: 'deal',
-            base: this.props.base,
-            target: this.props.target
-        })
-        // entrustmentTrade(para).then(res => {
-        //     setTimeout(() => {
-        //         eventProxy.trigger('orderDone')
-        //     }, 1500)
-        //     this.setState({
-        //         price: '',
-        //         quantity: '',
-        //         sum: ''
-        //     })
-        //     this.cancelConfirm()
-        //     ui.tip({
-        //         msg: intl.get('successTip')
-        //     })
-        // }, error => {
-        //     this.cancelConfirm()
-        //     ui.tip({
-        //         width: 330,
-        //         msg: error
-        //     })
+
+        // setSessionData('dealOrder', para)
+        // removeSessionData(SEND_FLAG)
+        // jumpUrl('validate-code.html', {
+        //     from: 'deal',
+        //     base: this.props.base,
+        //     target: this.props.target
         // })
+
+        entrustmentTrade(para).then(res => {
+            setTimeout(() => {
+                eventProxy.trigger('orderDone')
+            }, 2000)
+            this.setState({
+                price: '',
+                quantity: '',
+                sum: ''
+            })
+            this.cancelConfirm()
+            ui.tip({
+                msg: intl.get('successTip')
+            })
+        }, error => {
+            this.cancelConfirm()
+            ui.tip({
+                width: 330,
+                msg: error
+            })
+        })
     }
 
     render() {
@@ -214,7 +216,7 @@ class User extends React.Component {
                 {type === 'one' && (
                     <div>
                         <BoxNumber ref="priceBox" className="box-price" value={this.state.price} label={intl.get('price') + ':'} unit={target} step={targetPrecision} onChange={this.priceBoxChange.bind(this)} validates={['notNull']}/>
-                        <div className="valuation">{intl.get('estimated')}: {this.state.otcPrice}</div>
+                        {/*<div className="valuation">{intl.get('estimated')}: {this.state.otcPrice}</div>*/}
                     </div>
                 )}
 
@@ -264,7 +266,7 @@ class User extends React.Component {
                         <div className="title">{intl.get('capitalPasswordTip')}</div>
                         <div className="submit-div">
                             {this.state.visible && (
-                                <ReactCodeInput className="password-value" type='text' fields={6} onChange={this.passwordChange.bind(this)}/>
+                                <ReactCodeInput className="password-value" type='password' fields={6} onChange={this.passwordChange.bind(this)}/>
                             )}
                         </div>
                         <div className="error">

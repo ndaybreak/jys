@@ -55,7 +55,7 @@ class BoxSelect extends React.Component {
         const options = this.props.options || []
         return (
             <div className={'box-wrap ' + className}>
-                {defaultValue && (
+                {typeof defaultValue !== 'undefined' && (
                     <Select
                         className="box-select"
                         showSearch
@@ -71,7 +71,7 @@ class BoxSelect extends React.Component {
                     </Select>
                 )}
 
-                {!defaultValue && (
+                {typeof defaultValue === 'undefined' && (
                     <Select
                         className="box-select"
                         showSearch

@@ -16,9 +16,10 @@ class Index extends React.Component {
     }
 
     componentWillMount() {
-
     }
     componentDidMount() {
+        this.select(this.props.selected)
+
         document.body.addEventListener('click', (e) => {
             if(!e.target.classList.contains('select-area')) {
                 this.setState({
@@ -26,7 +27,14 @@ class Index extends React.Component {
                 })
             }
         })
-        getCoinList({isRecharge: true}).then(res => {
+        const para = {}
+        if(this.props.isRecharge) {
+            para.isRecharge = true
+        }
+        if(this.props.isWithdrawCash) {
+            para.isWithdrawCash = true
+        }
+        getCoinList(para).then(res => {
             this.setState({
                 assetList: res.data
             })
@@ -37,6 +45,9 @@ class Index extends React.Component {
     }
 
     handleShow() {
+        if(this.props.disabled) {
+            return
+        }
         this.setState({
             show: true
         })
@@ -53,6 +64,9 @@ class Index extends React.Component {
     }
 
     toggleShow() {
+        if(this.props.disabled) {
+            return
+        }
         this.setState({
             show: !this.state.show
         })
@@ -62,7 +76,7 @@ class Index extends React.Component {
         const { selected, show, assetList } = this.state
         return (
             <div className="recharge-select-wrap">
-                <div className="selected-wrap clearfix">
+                <div className={'selected-wrap clearfix ' + (this.props.disabled ? 'disabled' : '')}>
                     <div className="selected" onClick={this.handleShow.bind(this)}>
                         {selected && (
                             <div className="item">

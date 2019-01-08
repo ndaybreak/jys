@@ -63,7 +63,7 @@
     color: #d1ac00;
   }
   .link-detail {
-    margin: 0 120px 0 20px;
+    float: right;
   }
   .link-recharge {
     margin-right: 25px;
@@ -222,4 +222,95 @@
 }
 .user-level {
   cursor: pointer;
+}
+
+.asset-item {
+  text-align: center;
+}
+.th-row {
+  color: #666666;
+  &:hover {
+    background-color: transparent !important;
+  }
+}
+.asset-col {
+  float: left;
+  width: 20%;
+}
+.btn-desposit {
+  height: 22px;
+  background: rgba(81,163,20,1);
+  font-size: 14px;
+  color: white;
+  padding: 0;
+  width: 75px;
+  margin-right: 8px;
+  border: none;
+}
+.btn-withdrawal {
+  height: 22px;
+  background:rgba(255,0,70,1);
+  font-size: 14px;
+  color: white;
+  padding: 0;
+  width: 88px;
+  margin-right: 5px;
+  border: none;
+}
+
+.modal-big {
+  .details-wrap {
+    .title {
+      background:rgba(76,85,104,1);
+    }
+    .box-wrap .box-error {
+      display: none;
+    }
+    .content {
+      padding: 0 15px 20px 15px;
+    }
+
+    .box-wrap {
+      width: 200px;
+      margin: 0 15px;
+    }
+
+    .th-row {
+      height: 32px;
+      background: rgba(240,240,246,1);
+      line-height: 32px;
+      margin-top: 6px;
+      &:hover {
+        background-color: rgba(240,240,246,1) !important;
+      }
+    }
+    .td-row {
+      &:hover {
+        background: rgba(240,240,246,0.8);
+      }
+    }
+    .col-detail {
+      float: left;
+      width: 20%;
+      font-size: 14px;
+      line-height: 2;
+      text-align: center;
+      &.up {
+        color: #51a314;
+      }
+      &.down {
+        color: #ff0000
+      }
+    }
+
+    .detail-pagination {
+      text-align: right;
+      margin-top: 20px;
+      margin-right: 20px;
+    }
+
+    .table-detail {
+      min-height: 452px;
+    }
+  }
 }

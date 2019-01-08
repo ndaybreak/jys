@@ -5,7 +5,8 @@ import ReactCodeInput from 'react-code-input'
 import Breadcrumb from '@/component/common/Breadcrumb'
 import RechargeSelect from '@/component/recharge/RechargeSelect'
 import { Icon, Modal, Button, Select } from 'antd'
-import { jumpUrl, validate, ui } from '@/utils'
+import { jumpUrl, validate, ui, getSearchPara } from '@/utils'
+import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import '@/public/css/withdraw.pcss';
 import codeImgDefault from '@/public/img/二维码占位符.png'
 import logoImg from '@/public/img/code_logo.png'
@@ -14,6 +15,7 @@ import { getWithdrawAddress, getAssetList, getWithdrawInfo, withdrawApplication 
 const assetMap = {}
 const defaultValue = '--'
 let coinId
+const SEND_FLAG = 'isValidateCodeSend'
 
 class Index extends React.Component {
     constructor(props) {
@@ -33,7 +35,11 @@ class Index extends React.Component {
             dayUsed: defaultValue,
             minQuantity: defaultValue,
             actualValue: defaultValue,
-            password: ''
+            password: '',
+            selected: {
+                coin_code: getSearchPara('code'),
+                id: getSearchPara('id')
+            }
         }
     }
 
@@ -174,28 +180,37 @@ class Index extends React.Component {
                 toAddress: this.state.address,
                 moneyPassword: this.state.password
             }
-            this.setState({
-                loading: true
+            // this.setState({
+            //     loading: true
+            // })
+
+            setSessionData('withdrawData', para)
+            removeSessionData(SEND_FLAG)
+            jumpUrl('validate-code.html', {
+                from: 'withdraw',
+                code: getSearchPara('code'),
+                id: getSearchPara('id')
             })
-            withdrawApplication(para).then(res => {
-                this.setState({
-                    visible: false
-                })
-                ui.tip({
-                    msg: intl.get('withdrawRequestSubmitted'),
-                    callback: () => {
-                        window.location.reload()
-                    }
-                })
-            }, error => {
-                this.setState({
-                    visible: false,
-                    loading: false
-                })
-                ui.tip({
-                    msg: error
-                })
-            })
+
+            // withdrawApplication(para).then(res => {
+            //     this.setState({
+            //         visible: false
+            //     })
+            //     ui.tip({
+            //         msg: intl.get('withdrawRequestSubmitted'),
+            //         callback: () => {
+            //             window.location.reload()
+            //         }
+            //     })
+            // }, error => {
+            //     this.setState({
+            //         visible: false,
+            //         loading: false
+            //     })
+            //     ui.tip({
+            //         msg: error
+            //     })
+            // })
         }
     }
     passwordChange(val) {
@@ -215,7 +230,7 @@ class Index extends React.Component {
             <div className="recharge-withdraw-page">
                 <div className="header">
                     <span className="title">{intl.get('withdrawal')}</span>
-                    <RechargeSelect onChange={this.handleCoinChange.bind(this)} />
+                    <RechargeSelect onChange={this.handleCoinChange.bind(this)} selected={this.state.selected} disabled={true} isWithdrawCash={true}/>
                 </div>
                 <div className="content">
                     <div className="content-inner">

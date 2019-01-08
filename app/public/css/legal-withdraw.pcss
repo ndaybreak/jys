@@ -1,17 +1,14 @@
 .a-content {
   background-color: #f0f0f6;
 }
-.auth-page {
+.legal-recharge-page {
   width: 1200px;
   margin: 5px auto 50px;
-}
-.info-part,
-.pic-part {
   background-color: white;
-  margin-bottom: 5px;
 }
 .info-part {
-  padding: 30px 285px 10px;
+  position: relative;
+  padding: 30px 256px 10px;
   .tip {
     font-size: 15px;
     color: #e9a400;
@@ -39,11 +36,11 @@
   }
 }
 .auth-box-left {
-  width: 308px;
+  width: 337px;
   margin-right: 12px;
 }
 .auth-box-right {
-  width: 308px;
+  width: 337px;
 }
 .auth-box {
   width: 100%;
@@ -176,13 +173,15 @@
   font-size: 15px;
   color: #e9a400;
   margin-bottom: 30px;
+  line-height: 1.7;
 }
 .info-part {
   margin-bottom: 0;
 }
 .asset-part {
+  position: relative;
   margin-bottom: 5px;
-  padding: 30px 25px 10px 285px;
+  padding: 0px 256px 10px 256px;
   background-color: white;
 }
 .asset-info {
@@ -373,39 +372,171 @@
   float: right;
 }
 
-.list-one-part {
-  padding: 10px 80px 10px 285px;
-  background-color: white;
+.legal-recharge-page {
+  .bank-tip {
+    height:19px;
+    font-size:14px;
+    line-height:24px;
+    color:rgba(102,102,102,1);
+    margin: 24px 0;
+  }
 }
-.auth-table {
-  width: 100%;
-  text-align: center;
-  .auth-th,
-  .auth-td {
-    float: left;
-    width: 20%;
-    height:53px;
-    line-height:53px;
-    border:1px solid rgba(181,181,181,1);
-    border-left: 0;
+.bank-item {
+  position: relative;
+  height:123px;
+  line-height: 1.5;
+  border:1px dashed rgba(217,217,217,1);
+  padding: 10px 20px;
+  color: #111;
+  margin-bottom: 20px;
+  .currency {
+    color: #51A314;
   }
-  .cell-first {
-    border-left: 1px solid rgba(181,181,181,1);
+  .number {
+    font-size: 20px;
   }
-  input {
+  .btn-delete {
+    width: 75px;
+    height: 22px;
+    line-height: 22px;
+    background: rgba(255, 0, 70, 1);
+    opacity: 1;
+    border-radius: 2px;
+    color: white;
+    position: absolute;
+    right: 20px;
+    top: 53px;
     border: none;
-    outline: none;
-    width: 100%;
-    height: 40px;
-    text-align: center;
+    padding: 0;
   }
-
-  .auth-td {
-    border-top: 0;
+}
+.btn-add {
+  position: relative;
+  width:686px;
+  height:123px;
+  border:1px dashed rgba(217,217,217,1);
+  margin-top: 10px;
+  &:before {
+    content: '';
+    position: absolute;
+    width:64px;
+    height:1px;
+    background-color: rgba(181,181,181,1);
+    top: 50%;
+    left: 50%;
+    margin-left: -32px;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    height:64px;
+    width:1px;
+    background-color: rgba(181,181,181,1);
+    top: 50%;
+    left: 50%;
+    margin-top: -32px;
   }
 }
 
-.list-two-part {
-  padding: 10px 80px 10px 285px;
+.tip-part {
+  padding: 10px 256px 0px;
+}
+.bank-info {
+  width:650px;
+  background:rgba(240,240,246,1);
+  padding: 15px 20px 0px 20px;
+  .bank-info-label {
+    color: #666666;
+    line-height: 33px;
+    font-size: 14px;
+  }
+  .value {
+    color: #111111;
+    padding-bottom: 30px;
+    font-size: 16px;
+  }
+}
+
+.record-tip {
+  font-size:14px;
+  line-height:24px;
+  color:rgba(102,102,102,1);
+}
+
+.recode-title {
+  height:32px;
+  line-height:32px;
+  background:rgba(240,240,246,1);
+  font-size:14px;
+  color:rgba(102,102,102,1);
+  text-align: center;
+}
+.col-record {
+  float: left;
+  width: 20%;
+}
+.col-date {
+  width: 25%;
+}
+.col-fee {
+  width: 18%;
+}
+.col-amount {
+  width: 17%;
+}
+.record-row {
+  height:32px;
+  line-height:32px;
+  text-align: center;
+  &.row-odd {
+    background:rgba(244,244,251,1);
+  }
+}
+.record-part {
+  margin-top: 30px;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.withdraw-info {
+  height:226px;
+  background:rgba(240,240,246,1);
+  font-size:14px;
+  text-align: center;
+  margin-bottom: 30px;
+  .available {
+    line-height: 60px;
+    color: rgba(181, 181, 181, 1);
+    padding-top: 15px;
+  }
+  .total {
+    font-size: 30px;
+    color: #51A314;
+    margin: 0 5px;
+  }
+  .currency {
+    color: #666666;
+  }
+
+  .limit,
+  .fee {
+    color: #666666;
+    font-size: 14px;
+    margin-bottom: 18px;
+    .value {
+      color: #111111;
+      margin-left: 5px;
+    }
+  }
+  .amount-box {
+    width: 290px;
+    .box {
+      background-color: #f0f0f6;
+    }
+  }
+}
+.withdraw-list {
+  position: relative;
+  margin-bottom: 5px;
+  padding: 0px 176px 10px 176px;
   background-color: white;
 }

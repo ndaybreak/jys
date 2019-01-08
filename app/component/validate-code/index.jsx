@@ -6,7 +6,7 @@ import ReactCodeInput from 'react-code-input'
 import { jumpUrl, validate, getSearchPara, ui } from '@/utils'
 import { setToken } from '@/utils/auth'
 import { setSessionData, getSessionData, removeSessionData } from '@/data'
-import { sendEmailValidateCode, registerByEmail, entrustmentTrade, setCapitalPwd } from '@/api'
+import { sendEmailValidateCode, registerByEmail, entrustmentTrade, setCapitalPwd, legalWithdraw, withdrawApplication } from '@/api'
 import emailImg from '@/public/img/邮件.png'
 
 const SEND_FLAG = 'isValidateCodeSend'
@@ -37,6 +37,12 @@ class Index extends React.Component {
         } else if(getSearchPara('from') === 'set-capital-password') {
             data = getSessionData('capitalPassword')
             type = 5
+        } else if(getSearchPara('from') === 'withdraw') {
+            data = getSessionData('withdrawData')
+            type = 6
+        } else if(getSearchPara('from') === 'legal-withdraw') {
+            data = getSessionData('legalWithdrawData')
+            type = 6
         }
 
         if(getSearchPara('from') === 'register') {
@@ -57,36 +63,6 @@ class Index extends React.Component {
         }
     }
 
-    sendEmailValidateCode() {
-        sendEmailValidateCode(email, type).then(res => {
-            setSessionData(SEND_FLAG, true)
-            this.setState({
-                remainingTime: 60
-            })
-            this.startValidateCodeTime()
-        })
-    }
-
-    startValidateCodeTime() {
-        const interval = setInterval(() => {
-            if(this.state.remainingTime === 0) {
-                clearInterval(interval)
-            } else {
-                let time = --this.state.remainingTime
-                this.setState({
-                    remainingTime: time
-                })
-                setSessionData(REMAIN_TIME, time)
-            }
-        }, 1000)
-    }
-
-    emailCodeChange(code) {
-        this.setState({
-            verifyCode: code
-        })
-    }
-
     submit() {
         if(this.state.verifyCode.length < 6) {
             this.setState({
@@ -103,6 +79,10 @@ class Index extends React.Component {
             this.dealOrderSubmit()
         } else if(getSearchPara('from') === 'set-capital-password') {
             this.capitalPwdSubmit()
+        } else if(getSearchPara('from') === 'withdraw') {
+            this.withdrawSubmit()
+        } else if(getSearchPara('from') === 'legal-withdraw') {
+            this.legalWithdrawSubmit()
         }
     }
     registerSubmit() {
@@ -181,6 +161,77 @@ class Index extends React.Component {
                 submitLoading: false,
                 errorMsg: error
             })
+        })
+    }
+    withdrawSubmit() {
+        const para = Object.assign({}, data, {emailVerifyCode: this.state.verifyCode})
+        withdrawApplication(para).then(res => {
+            this.setState({
+                submitLoading: false
+            })
+            ui.tip({
+                msg: intl.get('successTip'),
+                callback: () => {
+                    jumpUrl('withdraw.html', {
+                        code: getSearchPara('code'),
+                        id: getSearchPara('id')
+                    })
+                }
+            })
+        }, error => {
+            this.setState({
+                submitLoading: false,
+                errorMsg: error
+            })
+        })
+    }
+
+    legalWithdrawSubmit() {
+        const para = Object.assign({}, data, {emailVerifyCode: this.state.verifyCode})
+        debugger
+        legalWithdraw(para).then(res => {
+            debugger
+            ui.tip({
+                msg: intl.get('successTip'),
+                callback: () => {
+                    jumpUrl('legal-withdraw.html')
+                }
+            })
+        }, error => {
+            this.setState({
+                submitLoading: false,
+                errorMsg: error
+            })
+        })
+    }
+
+    sendEmailValidateCode() {
+        sendEmailValidateCode(email, type).then(res => {
+            setSessionData(SEND_FLAG, true)
+            this.setState({
+                remainingTime: 60
+            })
+            this.startValidateCodeTime()
+        })
+    }
+
+    startValidateCodeTime() {
+        const interval = setInterval(() => {
+            if(this.state.remainingTime === 0) {
+                clearInterval(interval)
+            } else {
+                let time = --this.state.remainingTime
+                this.setState({
+                    remainingTime: time
+                })
+                setSessionData(REMAIN_TIME, time)
+            }
+        }, 1000)
+    }
+
+    emailCodeChange(code) {
+        this.setState({
+            verifyCode: code
         })
     }
 
