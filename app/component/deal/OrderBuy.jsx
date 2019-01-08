@@ -8,6 +8,7 @@ import {entrustmentTrade, getEntrustmentList} from '@/api'
 import BoxNumber from '@/component/common/ui/BoxNumber'
 // import { getTargetPairsQuot } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
+import StorageButtons from './StorageButtons'
 
 const SEND_FLAG = 'isValidateCodeSend'
 
@@ -20,8 +21,10 @@ class User extends React.Component {
             password: '',
             passwordMsg: '',
             loading: false,
-            percentSelectedStatusArray:{}
+            storagePercent: '',
+            percentSelectedStatusArray: {}
         }
+        this.changeTotal = this.changeTotal.bind(this);
     }
 
     componentDidMount() {
@@ -54,19 +57,30 @@ class User extends React.Component {
     priceBoxChange(price) {
         const quantity = this.refs['quantityBox'].getValue()
         if (quantity) {
-            this.setState({
-                sum: price * quantity
-            })
+            this.updateSum(price * quantity);
         }
         this.setOtcPrice(price)
+    }
+
+    updateSum(sum) {
+        const available = this.props.available;
+        let storagePercent = '';
+        if (available) {
+            const percent = Math.round(sum/parseFloat(available) * 1000);
+            if (percent % 250 === 0) {
+                storagePercent = (percent/10).toFixed(0) + "%";
+            }
+        }
+        this.setState({
+            sum: sum,
+            storagePercent: storagePercent
+        })
     }
 
     quantityBoxChange(quantity) {
         const price = this.refs['priceBox'].getValue()
         if (price) {
-            this.setState({
-                sum: price * quantity
-            })
+            this.updateSum(price * quantity);
         }
     }
 
@@ -82,13 +96,20 @@ class User extends React.Component {
         }
     }
 
+    toPercentString(percent) {
+        return isNaN(percent) ? '' : (percent * 100).toFixed(0) + '%';
+    }
+
     changeTotal(percent) {
         const available = this.props.available
+        this.setState({
+            storagePercent: this.toPercentString(percent)
+        })
         if (available) {
             let sum = (parseFloat(available) * percent).toFixed(this.props.targetPrecision)
             this.setState({
-                sum: sum
-            })
+                sum: sum,
+            });
             if (this.props.type === 'one') {
                 this.sumBoxChange(sum)
             }
@@ -178,8 +199,8 @@ class User extends React.Component {
         let isOne = this.props.type === 'one'
         let para = {
             moneyPassword: this.state.password,
-            tradeType: 1,
-            orderType: isOne ? 2 : 1,
+            tradeType: 1,  // 1：买 2： 卖
+            orderType: isOne ? 2 : 1, // 1：市价单； 2：限价单
             targetCoinCode: this.props.base,
             marketCoinCode: this.props.target,
             quantity: isOne ? this.refs['quantityBox'].getValue() : 0,
@@ -240,30 +261,46 @@ class User extends React.Component {
                            unit={target} step='0.00000001' onChange={this.sumBoxChange.bind(this)}
                            validates={['notNull']}/>
 
-                <div className="percent-wrap clearfix">
-                    <button className="percent-item" onClick={this.changeTotal.bind(this, 0.25)}>25%</button>
-                    <button className="percent-item" onClick={this.changeTotal.bind(this, 0.5)}>50%</button>
-                    <button className="percent-item" onClick={this.changeTotal.bind(this, 0.75)}>75%</button>
-                    <button className="percent-item" onClick={this.changeTotal.bind(this, 1)}>100%</button>
+                <div className="percent-buttons-wrap">
+                    <StorageButtons
+                        storagePercent={this.state.storagePercent}
+                        onStorageSelected={this.changeTotal}/>
                 </div>
+                {/*<div className="percent-wrap clearfix">*/
+                }
+                {/*<button className="percent-item" onClick={this.changeTotal.bind(this, 0.25)}>25%</button>*/
+                }
+                {/*<button className="percent-item" onClick={this.changeTotal.bind(this, 0.5)}>50%</button>*/
+                }
+                {/*<button className="percent-item" onClick={this.changeTotal.bind(this, 0.75)}>75%</button>*/
+                }
+                {/*<button className="percent-item" onClick={this.changeTotal.bind(this, 1)}>100%</button>*/
+                }
 
-                {isLogin() && (
-                    <div>
-                        <div className="available-wrap clearfix">
-                            {intl.get('available')}： {available} {target}
+                {/*</div>*/
+                }
+
+                {
+                    isLogin() && (
+                        <div>
+                            <div className="available-wrap clearfix">
+                                {intl.get('available')}： {available} {target}
+                            </div>
+                            <button className="btn order-btn btn-buy"
+                                    onClick={this.handleBuy.bind(this)}>{intl.get('buyBtn')}</button>
                         </div>
-                        <button className="btn order-btn btn-buy"
-                                onClick={this.handleBuy.bind(this)}>{intl.get('buyBtn')}</button>
-                    </div>
-                )}
+                    )
+                }
 
-                {!isLogin() && (
-                    <div className="empty">
-                        <a href="register.html">{intl.get('register')}</a> | <a
-                        href="login.html?from=deal">{intl.get('login')}</a> <span
-                        className="buy-span">{intl.get('buy')}</span>
-                    </div>
-                )}
+                {
+                    !isLogin() && (
+                        <div className="empty">
+                            <a href="register.html">{intl.get('register')}</a> | <a
+                            href="login.html?from=deal">{intl.get('login')}</a> <span
+                            className="buy-span">{intl.get('buy')}</span>
+                        </div>
+                    )
+                }
 
                 <Modal
                     className="modal-confirm-davao"
@@ -294,47 +331,63 @@ class User extends React.Component {
                     </div>
                 </Modal>
 
-                <Modal
+                < Modal
                     className="modal-confirm-davao"
                     visible={this.state.confirmVisible}
                     width={330}
-                    style={{top: 250}}
+                    style={
+                        {
+                            top: 250
+                        }
+                    }
                     onOk={this.confirm.bind(this)}
                     onCancel={this.cancelConfirm.bind(this)}
-                    footer={[
-                        <Button key="back" className="btn-cancel"
-                                onClick={this.cancelConfirm.bind(this)}>{intl.get('cancelBtn')}</Button>,
-                        <Button key="submit" className="btn-submit" type="primary" loading={this.state.loading}
-                                onClick={this.confirm.bind(this)}>
-                            {intl.get('confirmBtn')}
-                        </Button>,
-                    ]}
+                    footer={
+                        [
+                            <Button key="back" className="btn-cancel"
+                                    onClick={this.cancelConfirm.bind(this)}>{intl.get('cancelBtn')}</Button>,
+                            <Button key="submit" className="btn-submit" type="primary" loading={this.state.loading}
+                                    onClick={this.confirm.bind(this)}>
+                                {intl.get('confirmBtn')}
+                            </Button>,
+                        ]
+                    }
                 >
-                    <div className="davao-confirm-wrap">
-                        <div className="title">{intl.get('buyConfirm')}</div>
-                        <div className="order-info-div clearfix">
-                            <div className="label">{intl.get('trade')}</div>
-                            <div className="content">{base}/{target}</div>
+                    <div
+                        className="davao-confirm-wrap">
+                        < div
+                            className="title"> {intl.get('buyConfirm')}
+                        </div>
+                        <div
+                            className="order-info-div clearfix">
+                            <div
+                                className="label"> {intl.get('trade')}
+                            </div>
+                            <div
+                                className="content"> {base}
+                                /{target}</div>
                         </div>
                         <div className="order-info-div clearfix">
                             <div className="label">{intl.get('orderType')}</div>
                             <div
                                 className="content">{type === 'one' ? intl.get('limitOrder') : intl.get('marketOrder')}</div>
                         </div>
-                        {type === 'one' && (
-                            <div>
-                                <div className="order-info-div clearfix">
-                                    <div className="label">{intl.get('orderUPrice')}</div>
-                                    <div
-                                        className="content">{this.refs['priceBox'] && this.refs['priceBox'].getValue()}</div>
+                        {
+                            type === 'one' && (
+                                <div>
+                                    <div className="order-info-div clearfix">
+                                        <div className="label">{intl.get('orderUPrice')}</div>
+                                        <div
+                                            className="content">{this.refs['priceBox'] && this.refs['priceBox'].getValue()}</div>
+                                    </div>
+                                    <div className="order-info-div clearfix">
+                                        <div className="label">{intl.get('orderAmount')}</div>
+                                        <div
+                                            className="content">{this.refs['quantityBox'] && this.refs['quantityBox'].getValue()}</div>
+                                    </div>
                                 </div>
-                                <div className="order-info-div clearfix">
-                                    <div className="label">{intl.get('orderAmount')}</div>
-                                    <div
-                                        className="content">{this.refs['quantityBox'] && this.refs['quantityBox'].getValue()}</div>
-                                </div>
-                            </div>
-                        )}
+                            )
+                        }
                         <div className="order-info-div clearfix">
                             <div className="label">{intl.get('orderTotal')}</div>
                             <div className="content">{this.refs['sumBox'] && this.refs['sumBox'].getValue()}</div>

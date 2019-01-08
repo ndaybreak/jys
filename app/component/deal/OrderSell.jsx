@@ -8,6 +8,7 @@ import {entrustmentTrade, getEntrustmentList} from '@/api'
 import BoxNumber from '@/component/common/ui/BoxNumber'
 // import { getTargetPairsQuot } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
+import StorageButtons from "./StorageButtons";
 
 const SEND_FLAG = 'isValidateCodeSend'
 
@@ -18,8 +19,11 @@ class User extends React.Component {
             visible: false,
             password: '',
             passwordMsg: '',
-            loading: false
+            loading: false,
+            storagePercent: '',
+            percentSelectedStatusArray: {}
         }
+        this.changeTotal = this.changeTotal.bind(this);
     }
 
     componentDidMount() {
@@ -50,11 +54,24 @@ class User extends React.Component {
     priceBoxChange(price) {
         const quantity = this.refs['quantityBox'].getValue()
         if (quantity) {
-            this.setState({
-                sum: price * quantity
-            })
+            this.updateSum(price * quantity);
         }
         this.setOtcPrice()
+    }
+
+    updateSum(sum) {
+        const available = this.props.available;
+        let storagePercent = '';
+        if (available) {
+            const percent = Math.round(sum / parseFloat(available) * 1000);
+            if (percent % 250 === 0) {
+                storagePercent = (percent / 10).toFixed(0) + "%";
+            }
+        }
+        this.setState({
+            sum: sum,
+            storagePercent: storagePercent
+        })
     }
 
     quantityBoxChange(quantity) {
@@ -63,9 +80,7 @@ class User extends React.Component {
         }
         const price = this.refs['priceBox'].getValue();
         if (price) {
-            this.setState({
-                sum: price * quantity
-            })
+            this.updateSum(price * quantity);
         }
     }
 
@@ -78,8 +93,15 @@ class User extends React.Component {
         }
     }
 
+    toPercentString(percent) {
+        return isNaN(percent) ? '' : (percent * 100).toFixed(0) + '%';
+    }
+
     changeTotal(percent) {
-        const available = this.props.available
+        const available = this.props.available;
+        this.setState({
+            storagePercent: this.toPercentString(percent)
+        })
         if (available) {
             let quantity = (parseFloat(available) * percent).toFixed(this.props.basePrecision)
             this.setState({
@@ -172,8 +194,8 @@ class User extends React.Component {
         let isOne = this.props.type === 'one'
         let para = {
             moneyPassword: this.state.password,
-            tradeType: 2,
-            orderType: isOne ? 2 : 1,
+            tradeType: 2, // 1：买 2： 卖
+            orderType: isOne ? 2 : 1,// 1：市价单； 2：限价单
             targetCoinCode: this.props.base,
             marketCoinCode: this.props.target,
             quantity: this.refs['quantityBox'].getValue(),
@@ -232,12 +254,17 @@ class User extends React.Component {
                                validates={['notNull']}/>
                 )}
 
-                <div className="percent-wrap clearfix">
-                    <span className="percent-item" onClick={this.changeTotal.bind(this, 0.25)}>25%</span>
-                    <span className="percent-item" onClick={this.changeTotal.bind(this, 0.5)}>50%</span>
-                    <span className="percent-item" onClick={this.changeTotal.bind(this, 0.75)}>75%</span>
-                    <span className="percent-item" onClick={this.changeTotal.bind(this, 1)}>100%</span>
+                <div className="percent-buttons-wrap">
+                    <StorageButtons
+                        storagePercent={this.state.storagePercent}
+                        onStorageSelected={this.changeTotal}/>
                 </div>
+                {/*<div className="percent-wrap clearfix">*/}
+                    {/*<span className="percent-item" onClick={this.changeTotal.bind(this, 0.25)}>25%</span>*/}
+                    {/*<span className="percent-item" onClick={this.changeTotal.bind(this, 0.5)}>50%</span>*/}
+                    {/*<span className="percent-item" onClick={this.changeTotal.bind(this, 0.75)}>75%</span>*/}
+                    {/*<span className="percent-item" onClick={this.changeTotal.bind(this, 1)}>100%</span>*/}
+                {/*</div>*/}
 
                 {isLogin() && (
                     <div>
