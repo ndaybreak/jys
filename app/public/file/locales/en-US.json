@@ -227,5 +227,16 @@
   "Different about the two new password": "Different about the two new password",
   "Forget password": "Forgotten password",
   "Login password modify successfully": "Login password modify successfully",
-  "Set new login password": "Set new login password"
+  "Set new login password": "Set new login password",
+  "Get Message Code": "Get Message Code",
+  "Please enter verifyCode": "Enter the Message Code",
+  "Please enter new phone": "Please enter new phone",
+  "Please select the nature": "Please select the nature",
+  "Bind phone": "Bind phone",
+  "Modify Successfully": "Modify Successfully",
+  "next":"Next",
+  "Please enter new email": "Please enter new email",
+  "Bind email": "Bind email",
+  "Original mobile phone number":"Original mobile phone number",
+  "Original email":"Original email"
 }

@@ -6,7 +6,7 @@ import ReactCodeInput from 'react-code-input'
 import {getSearchPara, jumpUrl, ui, validate} from '@/utils'
 import {setToken} from '@/utils/auth'
 import {getSessionData, removeSessionData, setSessionData} from '@/data'
-import {entrustmentTrade, registerByEmail, sendEmailValidateCode, setCapitalPwd, resetLoginPwd} from '@/api'
+import {entrustmentTrade, registerByEmail, resetLoginPwd, sendEmailValidateCode, setCapitalPwd} from '@/api'
 import emailImg from '@/public/img/邮件.png'
 import {removeToken} from "../../utils/auth";
 
@@ -16,6 +16,7 @@ const REMAIN_TIME = 'validate_code_remain_time'
 let data = {}
 let email = ''
 let type = ''
+let nextPageName = undefined;
 
 class Index extends React.Component {
     constructor(props) {
@@ -24,7 +25,8 @@ class Index extends React.Component {
             submitLoading: false,
             verifyCode: '',
             remainingTime: 60,
-            errorMsg: ''
+            errorMsg: '',
+            submitBtnText: intl.get('submit')
         }
     }
 
@@ -46,6 +48,14 @@ class Index extends React.Component {
             data = getSessionData('forgetLoginPassword');
             email = data.email;
             type = 4;
+        }else if(fromPage === 'user'){
+            email = getSessionData('user').email;
+            type = 1;
+            this.setState({
+                submitBtnText: intl.get('next')
+            });
+            nextPageName = getSessionData('nextPageName');
+            removeSessionData('nextPageName');
         }
 
         if (!getSessionData(SEND_FLAG)) {
@@ -98,6 +108,11 @@ class Index extends React.Component {
             })
             return
         }
+        if (nextPageName) {
+            setSessionData('verifyCode', this.state.verifyCode);
+            jumpUrl(nextPageName + '.html');
+            return;
+        }
         this.setState({
             submitLoading: true
         })
@@ -108,15 +123,15 @@ class Index extends React.Component {
             this.dealOrderSubmit()
         } else if (fromPage === 'set-capital-password') {
             this.capitalPwdSubmit()
-        }else if(fromPage === 'forget-login-password'){
+        } else if (fromPage === 'forget-login-password') {
             this.setLoginPasswordSubmit();
         }
     }
 
-    setLoginPasswordSubmit(){
+    setLoginPasswordSubmit() {
         const para = Object.assign({}, data, {verifyCode: this.state.verifyCode})
         resetLoginPwd(para).then(res => {
-           removeToken();
+            removeToken();
             ui.tip({
                 msg: intl.get('Login password modify successfully'),
                 callback: () => {
@@ -214,12 +229,13 @@ class Index extends React.Component {
                 <div className="item-wrap btn-wrap">
                     <Button className="btn-login-big" key="submit" type="primary" loading={this.state.submitLoading}
                             onClick={this.submit.bind(this)}>
-                        {intl.get('submit')}
+                        {this.state.submitBtnText}
                     </Button>
                 </div>
             </div>
         );
     }
 }
+
 
 export default Index;

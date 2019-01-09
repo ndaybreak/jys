@@ -345,3 +345,39 @@ export function resetLoginPwd(para) {
         params: para
     })
 }
+
+// 根据手机号获取验证码
+export function getVerifyCodeByPhone(para){
+    return request({
+        url:'/account/public/sendSmsVerificationCode',
+        method:'get',
+        params: para
+    })
+}
+
+// 设置手机号码
+export function setPhoneToServer(para){
+    return request({
+        url:'/account/bindingMobile',
+        method:'post',
+        params: para
+    })
+}
+
+// 修改手机号码
+export function modifyPhoneToServer(para){
+    return request({
+        url:'/account/changeMobile',
+        method:'post',
+        params: para
+    })
+}
+
+// 设置邮箱
+export function modifyEmailToServer(para){
+    return request({
+        url:'/account/changeEmail',
+        method:'post',
+        params: para
+    })
+}

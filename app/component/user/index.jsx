@@ -1,7 +1,7 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import { Icon, Modal, Button, Upload, message, Spin } from 'antd'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
+import {Modal} from 'antd'
+import {getSearchPara, isLangZH, jumpUrl, kebabCaseData2Camel, ui, validate} from '@/utils'
 import '@/public/css/user.pcss';
 import userIconImg from '@/public/img/user_icon.png'
 import userLevel1Img from '@/public/img/user_level_1.png'
@@ -14,9 +14,9 @@ import userPhoneImg from '@/public/img/user_phone.png'
 import userEmailImg from '@/public/img/user_email.png'
 import userRecommendImg from '@/public/img/user_recommend.png'
 import userAssetImg from '@/public/img/user_asset.png'
-import { getCommissionList, getAssetList, getAccountInfo } from '@/api'
-import { getPriceBtcQuot, getTargetPairsQuot } from '@/api/quot'
-import {getSessionData} from "../../data";
+import {getAccountInfo, getAssetList, getCommissionList} from '@/api'
+import {getPriceBtcQuot, getTargetPairsQuot} from '@/api/quot'
+import {getSessionData, setSessionData} from "../../data";
 
 const getUserLevelImg = (level) => {
     const imgs = [userLevel1Img, userLevel2Img, userLevel3Img]
@@ -46,7 +46,9 @@ class User extends React.Component {
             isMerchant: false,
             assetList: [],
             totalBtc: '',
-            total: ''
+            total: '',
+            phoneNo: undefined,
+            phoneAreaNo: undefined
         }
     }
 
@@ -91,7 +93,7 @@ class User extends React.Component {
             }]
             getTargetPairsQuot(para, data => {
                 let value = 0
-                if(isLangZH()) {
+                if (isLangZH()) {
                     value = '￥' + (totalBtc * data[0].rmbPrice).toFixed(2)
                 } else {
                     value = '$' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
@@ -108,7 +110,9 @@ class User extends React.Component {
             userLevelImg: getUserLevelImg(user.customer_level),
             merchantLevelImg: getMerchantLevelImg(user.merchant_level),
             isAuth: user.auth_application_status === 2,
-            email: user.email
+            email: user.email,
+            phoneAreaNo: user.mobile_area_code,
+            phoneNo: user.mobile_number
         })
         // getAccountInfo().then(res => {
         //     this.setState({
@@ -138,16 +142,28 @@ class User extends React.Component {
     }
 
     openModifyPage(page) {
-        if(page === 'capitalPassword') {
+        if (page === 'capitalPassword') {
             jumpUrl('set-capital-password.html')
-        }else if('modifyLoginPassword' === page){
+        } else if ('modifyLoginPassword' === page) {
             jumpUrl('modify-login-password.html');
         }
     }
 
-    render() {
-        const { userLevelImg, merchantLevelImg, isAuth, isMerchant } = this.state
+    modifyPhone() {
+        if (this.state.phoneNo) {
+            jumpUrl('verify-old-phone.html');
+        } else {
+            setSessionData('nextPageName', 'modify-phone');
+            jumpUrl('validate-code.html', {'from': 'user'});
+        }
+    }
 
+    modifyEmail() {
+        jumpUrl('verify-old-email.html');
+    }
+
+    render() {
+        const {userLevelImg, merchantLevelImg, isAuth, isMerchant} = this.state;
         return (
             <div className="user-page">
                 <div className="user-info">
@@ -163,7 +179,8 @@ class User extends React.Component {
                                 <button className="btn btn-authed">{intl.get('verified')}</button>
                             )}
                             {!isAuth && (
-                                <button className="btn btn-auth" onClick={this.goAuth.bind(this)}>{intl.get('toVerified')}</button>
+                                <button className="btn btn-auth"
+                                        onClick={this.goAuth.bind(this)}>{intl.get('toVerified')}</button>
                             )}
                             {isMerchant && (
                                 <button className="btn btn-agent">{intl.get('merchantCorner')}</button>
@@ -189,24 +206,27 @@ class User extends React.Component {
                         <div className="content-item item-left">
                             <img src={userPwdImg} alt=""/>
                             <span>{intl.get('loginPwd')}</span>
-                            <button className="btn btn-primary btn-update" onClick={this.openModifyPage.bind(this, 'modifyLoginPassword')}>{intl.get('modify')}</button>
+                            <button className="btn btn-primary btn-update"
+                                    onClick={this.openModifyPage.bind(this, 'modifyLoginPassword')}>{intl.get('modify')}</button>
                         </div>
                         <div className="content-item">
                             <img src={userPwdImg} alt=""/>
                             <span>{intl.get('capitalPassword')}</span>
-                            <button className="btn btn-primary btn-update" onClick={this.openModifyPage.bind(this, 'capitalPassword')}>{intl.get('modify')}</button>
+                            <button className="btn btn-primary btn-update"
+                                    onClick={this.openModifyPage.bind(this, 'capitalPassword')}>{intl.get('modify')}</button>
                         </div>
                     </div>
                     <div className="clearfix">
                         <div className="content-item item-left">
                             <img src={userPhoneImg} alt=""/>
                             <span>{intl.get('bindPhone')}</span>
-                            <button className="btn btn-primary btn-update">{intl.get('bind')}</button>
+                            <button className="btn btn-primary btn-update"
+                                    onClick={this.modifyPhone.bind(this)}>{intl.get('bind')}</button>
                         </div>
                         <div className="content-item">
                             <img src={userEmailImg} alt=""/>
                             <span>{intl.get('bindEmail')}</span>
-                            <button className="btn btn-primary btn-update">{intl.get('bind')}</button>
+                            <button className="btn btn-primary btn-update" onClick={this.modifyEmail.bind(this)}>{intl.get('bind')}</button>
                         </div>
                     </div>
 
