@@ -8,7 +8,7 @@ import '@/public/css/bind-phone.pcss';
 import {getCountryList, getVerifyCodeByPhone, modifyPhoneToServer, setPhoneToServer} from '@/api'
 import Box from '@/component/common/ui/Box'
 import Breadcrumb from '@/component/common/Breadcrumb'
-import phoneIcon from '@/public/img/phone.png';
+import phoneIcon from '@/public/img/user_phone.png';
 
 let timeTicker = '';
 

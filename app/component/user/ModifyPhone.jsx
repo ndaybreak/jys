@@ -59,6 +59,7 @@ class ModifyPhone extends React.Component {
             this.setState({
                 loading: false
             });
+            removeToken();
             ui.tip({
                 msg: intl.get('Modify successfully'),
                 callback: () => {
@@ -71,13 +72,13 @@ class ModifyPhone extends React.Component {
             requestParams.oldVerifyCode = oldVerifyCode;
             requestParams.newVerifyCode = newVerifyCode;
             modifyPhoneToServer(requestParams)
-                .then(callbackSuccess(), callbackError);
+                .then(callbackSuccess, callbackError);
         } else {
             requestParams.mobileVerifyCode = newVerifyCode;
             requestParams.emailVerifyCode = oldVerifyCode;
             // const params = {...requestParams, mobileVerifyCode: newVerifyCode, emailVerifyCode: oldVerifyCode};
             setPhoneToServer(requestParams)
-                .then(callbackSuccess(), callbackError);
+                .then(callbackSuccess, callbackError);
         }
     }
 

@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { kebabCaseData2Camel, isLangZH } from '@/utils'
+import {isLangZH, kebabCaseData2Camel} from '@/utils'
 
 // page--首页
 // 获取推荐币种
@@ -27,13 +27,14 @@ export function getCategorys() {
         method: 'post'
     })
 }
+
 // page--帮助中心
 // 获取帮助详情
 export function getHelpDetail(id) {
     return request({
         url: '/managementSystem/public/queryHelpContentByid',
         method: 'post',
-        params: { id }
+        params: {id}
     })
 }
 
@@ -66,7 +67,7 @@ export function getNewsDetail(id) {
     return request({
         url: '/managementSystem/public/queryNewsCenterByid',
         method: 'post',
-        params: { id }
+        params: {id}
     })
 }
 
@@ -196,21 +197,25 @@ export function getAssetList() {
         method: 'get'
     })
 }
+
 // 查看用户信息
 export function getAccountInfo(para) {
     return request({
         url: '/account/getAccountInfo',
         method: 'get',
         params: Object.assign({
-            email:true,
-            customerLevel:true,
-            merchantLevel:true,
-            agentLevel:true,
-            icon:true,
-            authApplicationStatus:true
+            email: true,
+            customerLevel: true,
+            merchantLevel: true,
+            agentLevel: true,
+            icon: true,
+            authApplicationStatus: true,
+            country: true,
+            mobile: true,
         }, para)
     })
 }
+
 // 查询币币交易委托订单
 export function getEntrustmentList(para) {
     return request({
@@ -225,6 +230,7 @@ export function getEntrustmentList(para) {
         }
     })
 }
+
 // 查询交易限制参数
 export function getTradeLimitParameter(base, target) {
     return request({
@@ -236,6 +242,7 @@ export function getTradeLimitParameter(base, target) {
         }
     })
 }
+
 // 币币委托交易
 export function entrustmentTrade(para) {
     return request({
@@ -244,6 +251,7 @@ export function entrustmentTrade(para) {
         params: para
     })
 }
+
 // 币币交易 撤单
 export function cancelCoinsOrder(id) {
     return request({
@@ -254,6 +262,7 @@ export function cancelCoinsOrder(id) {
         }
     })
 }
+
 // 获取数字币
 export function getCoinList(para) {
     return request({
@@ -262,6 +271,7 @@ export function getCoinList(para) {
         params: para
     })
 }
+
 // 获取充值地址
 export function getRechargeAddress(coinId) {
     return request({
@@ -272,6 +282,7 @@ export function getRechargeAddress(coinId) {
         }
     })
 }
+
 // 获取提现地址
 export function getWithdrawAddress(coinId) {
     return request({
@@ -282,6 +293,7 @@ export function getWithdrawAddress(coinId) {
         }
     })
 }
+
 // 获取提现基本信息
 export function getWithdrawInfo(coinId) {
     return request({
@@ -292,6 +304,7 @@ export function getWithdrawInfo(coinId) {
         }
     })
 }
+
 // 发出提现申请
 export function withdrawApplication(para) {
     return request({
@@ -300,6 +313,7 @@ export function withdrawApplication(para) {
         params: para
     })
 }
+
 // 意见反馈
 export function saveFeedback(para) {
     return request({
@@ -308,6 +322,7 @@ export function saveFeedback(para) {
         params: para
     })
 }
+
 // 身份认证途径列表
 export function getAuthTypeList() {
     return request({
@@ -319,6 +334,7 @@ export function getAuthTypeList() {
         }
     })
 }
+
 // 设置资金密码
 export function setCapitalPwd(para) {
     return request({
@@ -347,37 +363,37 @@ export function resetLoginPwd(para) {
 }
 
 // 根据手机号获取验证码
-export function getVerifyCodeByPhone(para){
+export function getVerifyCodeByPhone(para) {
     return request({
-        url:'/account/public/sendSmsVerificationCode',
-        method:'get',
+        url: '/account/public/sendSmsVerificationCode',
+        method: 'get',
         params: para
     })
 }
 
 // 设置手机号码
-export function setPhoneToServer(para){
+export function setPhoneToServer(para) {
     return request({
-        url:'/account/bindingMobile',
-        method:'post',
+        url: '/account/bindingMobile',
+        method: 'post',
         params: para
     })
 }
 
 // 修改手机号码
-export function modifyPhoneToServer(para){
+export function modifyPhoneToServer(para) {
     return request({
-        url:'/account/changeMobile',
-        method:'post',
+        url: '/account/changeMobile',
+        method: 'post',
         params: para
     })
 }
 
 // 设置邮箱
-export function modifyEmailToServer(para){
+export function modifyEmailToServer(para) {
     return request({
-        url:'/account/changeEmail',
-        method:'post',
+        url: '/account/changeEmail',
+        method: 'post',
         params: para
     })
 }

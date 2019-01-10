@@ -43,26 +43,26 @@ class ModifyEmail extends React.Component {
         this.setState({
             loading: true
         });
-        const callbackError = (error) => {
-            this.setState({
-                loading: false,
-                errorMsg: error
-            })
-        };
-        const callbackSuccess = (res) => {
+        modifyEmailToServer({
+            email: this.refs['email'].getValue(),
+            oldVerifyCode: oldVerifyCode, newVerifyCode: this.refs['verifyCode'].getValue()
+        }).then((res) => {
             this.setState({
                 loading: false
             });
+            removeToken();
             ui.tip({
                 msg: intl.get('Modify successfully'),
                 callback: () => {
                     jumpUrl('login.html')
                 }
             })
-        };
-        modifyEmailToServer({email:this.refs['email'].getValue(),
-            oldVerifyCode:oldVerifyCode, newVerifyCode:this.refs['verifyCode'].getValue()})
-            .then(callbackSuccess(), callbackError);
+        }, (error) => {
+            this.setState({
+                loading: false,
+                errorMsg: error
+            })
+        });
     }
 
     startTimeTicker() {
