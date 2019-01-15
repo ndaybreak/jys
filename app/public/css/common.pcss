@@ -275,8 +275,7 @@ html {
 html > body {
     margin: 0;
     font-size: 16px;
-//font-family: "Microsoft YaHei", Helvetica, STHeiTi, Arial, sans-serif; font-family: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans GB", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    color: #111111;
+//font-family: "Microsoft YaHei", Helvetica, STHeiTi, Arial, sans-serif; font-family: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans GB", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; color: #111111;
 }
 
 article,
@@ -645,13 +644,121 @@ ul, ol {
 
     .a-footer {
         position: relative;
-    //height: 92px; //margin-top: -92px; margin-top: -59px;
-        line-height: 33px;
-    //line-height: 67px; text-align: center;
-        background-color: #15181f;
-        padding: 13px 0;
-        color: #888f9e;
-        font-size: 14px;
+        box-sizing: border-box;
+        background-color: #000000;
+
+        .footer-wrap {
+            width: 1200px;
+            padding-top: 14px;
+            padding-bottom: 10px;
+            margin: 0 auto;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .link-block-wrap {
+            padding-right: 50px;
+            padding-top: 6px;
+
+            .link-block-title {
+                margin-left: 12px;
+                font-size: 16px;
+                line-height: 28px;
+                color: rgba(255, 255, 255, 1);
+            }
+
+            .company-address-wrap {
+                margin-top: 7px;
+                margin-left: 12px;
+            }
+
+            .company-address {
+                font-size: 12px;
+                line-height: 32px;
+                color: rgba(193, 193, 212, 1);
+            }
+
+            .link-item-wrap {
+                color: rgba(255, 255, 255, 1);
+                margin-top: 15px;
+                margin-bottom: 4px;
+                list-style-position: inside;
+
+                .link-item-img {
+                    width: 5px;
+                    height: 5px;
+                    margin-right: 7px;
+                }
+
+                .link-block-item {
+                    height: 12px;
+                    font-size: 12px;
+                    line-height: 21px;
+                    text-decoration: none;
+                    border-bottom: 1px solid;
+                    padding-bottom: 1px;
+                    color: rgba(136, 143, 158, 1);
+                }
+            }
+        }
+
+        .logo {
+            padding-right: 50px;
+
+            .logo-font {
+                font-size: 24px;
+                //line-height:105px;
+                color: rgba(255, 255, 255, 1);
+            }
+
+            .support-wrap {
+                margin-top: 14px;
+                margin-bottom: 14px;
+            }
+
+            .support-email {
+                font-size: 12px;
+                margin-left: 7px;
+                line-height: 21px;
+                color: rgba(193, 193, 212, 1);
+                align-self: center;
+                text-align: center;
+            }
+
+            .support-email-img {
+                height: 17px;
+                border: 0
+            }
+
+            .out-link {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
+                margin-top: 15px;
+                justify-content: space-between;
+
+                .out-link-wrap {
+                    flex: 1;
+
+                    .out-link-img {
+                        height: 25px;
+                        filter: gray;
+                        -webkit-filter: grayscale(100%);
+                        -moz-filter: grayscale(100%);
+                        -o-filter: grayscale(100%);
+                        border: 0;
+                    }
+
+                    .out-link-img:hover {
+                        filter: none
+                    }
+                }
+            }
+        }
     }
 
     .a-content {
@@ -659,8 +766,7 @@ ul, ol {
         min-height: 100%;
         margin-top: -55px;
         padding-top: 55px;
-    //padding-bottom: 92px; padding-bottom: 59px;
-        position: relative;
+    //padding-bottom: 92px; padding-bottom: 59px; position: relative;
     }
 }
 

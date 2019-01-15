@@ -167,5 +167,10 @@ module.exports = [{
     path: 'user/VerifyOldEmail.jsx',
     title: '验证老邮箱号',
     keywords: '验证老邮箱号'
+}, {
+    name: 'fees',
+    path: 'legal/Fees.jsx',
+    title: '费率',
+    keywords: '费率'
 }
 ]
