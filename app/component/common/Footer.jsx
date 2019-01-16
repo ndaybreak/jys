@@ -10,8 +10,8 @@ import linkDotIcon from '@/public/img/dot.png';
 class Logo extends React.Component {
 
     initOutLinkButtons() {
-        // {iconPath, linkPath, altWord}
-        const outLinks = [{iconPath: facebookIcon, linkPath: 'https://www.baidu.com'},
+        const outLinks = [
+            {iconPath: facebookIcon, linkPath: 'https://www.baidu.com'},
             {iconPath: twitterIcon, linkPath: 'https://twitter.com/hkstox/'},
             {iconPath: telegramIcon, linkPath: 'https://t.me/joinchat/GwfM7gxO0UGXPFhvjCxzrw'},
             {iconPath: redditIcon, linkPath: 'https://www.reddit.com/user/hkstox/'},
@@ -33,7 +33,7 @@ class Logo extends React.Component {
             <div className={'logo-font'}>HKSTOx</div>
             <div className={'support-wrap'}>
                 <img className={'support-email-img'} src={emailIcon}></img>
-                <span className={'support-email'}>Email: support@hkstox.io</span>
+                <span className={'support-email'}>Email: <span> support@hkstox.io</span></span>
             </div>
             {outLinks}
         </div>)
@@ -79,9 +79,9 @@ class Contact extends React.Component {
             {listLink}
             <div className={'company-address-wrap'}>
                 <div className={'company-address'}>
-                    Unit 4308,Far East Finance Center,No.16 Harcourt Road,
+                    Unit 4308,Far East Finance Center,No.16 Harcourt Road,Admiralty,Hong Kong
                 </div>
-                <div className={'company-address'}>Admiralty,Hong Kong Phone: 852 3528 0178 FAX: 852 3258 0371</div>
+                <div className={'company-address'}>Phone: <span>852 3528 0178</span> FAX: <span>852 3258 0371</span></div>
             </div>
         </div>)
     }
@@ -90,8 +90,8 @@ class Contact extends React.Component {
 class Footer extends React.Component {
 
     render() {
-        const legal = [{linkPath: 'http://www.baicu.com', linkTitle: 'Terms of Service'},
-            {linkPath: 'http://www.baicu.com', linkTitle: 'Prvacy Policy'}];
+        const legal = [{linkPath: 'terms-of-service.html', linkTitle: 'Terms of Service'},
+            {linkPath: 'privacy-policy.html', linkTitle: 'Privacy Policy'}];
         const information = [
             {linkTitle: 'Fees', linkPath: 'fees.html'},
             {linkPath: 'news.html', linkTitle: 'Announcement and News'},

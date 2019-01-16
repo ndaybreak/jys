@@ -172,5 +172,15 @@ module.exports = [{
     path: 'legal/Fees.jsx',
     title: '费率',
     keywords: '费率'
+}, {
+    name: 'privacy-policy',
+    path: 'legal/Policy.jsx',
+    title: '费率',
+    keywords: '费率'
+}, {
+    name: 'terms-of-service',
+    path: 'legal/Service.jsx',
+    title: '费率',
+    keywords: '费率'
 }
 ]
