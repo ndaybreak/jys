@@ -10,12 +10,13 @@ import linkDotIcon from '@/public/img/dot.png';
 class Logo extends React.Component {
 
     initOutLinkButtons() {
+        // FIXME facebook 和 领英超链接
         const outLinks = [
-            {iconPath: facebookIcon, linkPath: 'https://www.baidu.com'},
+            {iconPath: facebookIcon, linkPath: 'https://www.hkstox.com'},
             {iconPath: twitterIcon, linkPath: 'https://twitter.com/hkstox/'},
             {iconPath: telegramIcon, linkPath: 'https://t.me/joinchat/GwfM7gxO0UGXPFhvjCxzrw'},
             {iconPath: redditIcon, linkPath: 'https://www.reddit.com/user/hkstox/'},
-            {iconPath: linkinIcon, linkPath: 'https://www.baidu.com'}].map((val) => {
+            {iconPath: linkinIcon, linkPath: 'https://www.hkstox.com'}].map((val) => {
             return <div className={'out-link-wrap'} key={val.linkPath}><a href={val.linkPath}><img
                 className={'out-link-img'}
                 src={val.iconPath}/>
@@ -99,9 +100,9 @@ class Footer extends React.Component {
         const contact = [{linkPath: 'feedback', linkTitle: 'Feed back'}]
         return <div className="a-footer">
             <div className={"footer-wrap"}>
-                <Logo/>
-                <ListBlock blockTitle={'Legal'} linkArray={legal}/>
-                <ListBlock blockTitle={'Information'} linkArray={information}/>
+                <Logo />
+                <ListBlock key={'Legal'} blockTitle={'Legal'} linkArray={legal}/>
+                <ListBlock key={'Information'} blockTitle={'Information'} linkArray={information}/>
                 <Contact blockTitle={'Contact'} linkArray={contact}/>
             </div>
         </div>

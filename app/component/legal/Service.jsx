@@ -67,7 +67,7 @@ class Service extends React.Component {
             '-28.3pt;mso-char-indent-count:-2.36;mso-pagination:widow-orphan\'><span\n' +
             'lang=EN-GB style=\'mso-bidi-font-size:12.0pt;font-family:"Times New Roman",serif;\n' +
             'mso-fareast-font-family:PMingLiU;mso-font-kerning:0pt;mso-ansi-language:EN-GB\'>1.1<span\n' +
-            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp; </span>\"<b style=\'mso-bidi-font-weight:\n' +
+            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp;</span>\"<b style=\'mso-bidi-font-weight:\n' +
             'normal\'>Account</b>\" shall mean a User\'s account used by the User to store\n' +
             'Digital Assets on HKSTOx.<o:p></o:p></span></p>\n' +
             '\n' +
@@ -76,7 +76,7 @@ class Service extends React.Component {
             '-28.3pt;mso-char-indent-count:-2.36;mso-pagination:widow-orphan\'><span\n' +
             'lang=EN-GB style=\'mso-bidi-font-size:12.0pt;font-family:"Times New Roman",serif;\n' +
             'mso-fareast-font-family:PMingLiU;mso-font-kerning:0pt;mso-ansi-language:EN-GB\'>1.2<span\n' +
-            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp; </span>\"<b style=\'mso-bidi-font-weight:\n' +
+            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp;</span>\"<b style=\'mso-bidi-font-weight:\n' +
             'normal\'>The Company</b>\", \"<b style=\'mso-bidi-font-weight:normal\'>ourselves</b>\",\n' +
             '\"<b style=\'mso-bidi-font-weight:normal\'>we</b>\" or \"<b style=\'mso-bidi-font-weight:\n' +
             'normal\'>us</b>\" shall mean HKSTOx and any or all of its <b style=\'mso-bidi-font-weight:\n' +
@@ -87,7 +87,7 @@ class Service extends React.Component {
             '-28.3pt;mso-char-indent-count:-2.36;mso-pagination:widow-orphan\'><span\n' +
             'lang=EN-GB style=\'mso-bidi-font-size:12.0pt;font-family:"Times New Roman",serif;\n' +
             'mso-fareast-font-family:PMingLiU;mso-font-kerning:0pt;mso-ansi-language:EN-GB\'>1.3<span\n' +
-            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp; </span>\"<b style=\'mso-bidi-font-weight:\n' +
+            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp;</span>\"<b style=\'mso-bidi-font-weight:\n' +
             'normal\'>Digital Asset(s)</b>\", \"<b style=\'mso-bidi-font-weight:normal\'>Digital\n' +
             'Currency</b>\" and \"<b style=\'mso-bidi-font-weight:normal\'>Virtual Currency</b>\"\n' +
             'shall mean digital/virtual assets or blockchain tokens (i.e., bitcoin (BTC) and\n' +
@@ -101,7 +101,7 @@ class Service extends React.Component {
             '-28.3pt;mso-char-indent-count:-2.36;mso-pagination:widow-orphan\'><span\n' +
             'lang=EN-GB style=\'mso-bidi-font-size:12.0pt;font-family:"Times New Roman",serif;\n' +
             'mso-fareast-font-family:PMingLiU;mso-font-kerning:0pt;mso-ansi-language:EN-GB\'>1.4<span\n' +
-            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp; </span>\"<b style=\'mso-bidi-font-weight:\n' +
+            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp;</span>\"<b style=\'mso-bidi-font-weight:\n' +
             'normal\'>External Account</b>\" shall mean any Digital Asset account: (<span\n' +
             'class=SpellE>i</span>) from which the User may load Digital Assets into the\n' +
             'Account, and (ii) to which the User may push Digital Assets from the Account.<o:p></o:p></span></p>\n' +
@@ -111,7 +111,7 @@ class Service extends React.Component {
             '-28.3pt;mso-char-indent-count:-2.36;mso-pagination:widow-orphan\'><span\n' +
             'lang=EN-GB style=\'mso-bidi-font-size:12.0pt;font-family:"Times New Roman",serif;\n' +
             'mso-fareast-font-family:PMingLiU;mso-font-kerning:0pt;mso-ansi-language:EN-GB\'>1.5<span\n' +
-            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp; </span>\"<b style=\'mso-bidi-font-weight:\n' +
+            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp;</span>\"<b style=\'mso-bidi-font-weight:\n' +
             'normal\'>Restricted Jurisdictions</b>\" shall include the United States\n' +
             '(including customer whose resident address is in the United States, holding US\n' +
             'passport or green card, with nationality as United States or who was born in\n' +
@@ -124,7 +124,7 @@ class Service extends React.Component {
             '-28.3pt;mso-char-indent-count:-2.36;mso-pagination:widow-orphan\'><span\n' +
             'lang=EN-GB style=\'mso-bidi-font-size:12.0pt;font-family:"Times New Roman",serif;\n' +
             'mso-fareast-font-family:PMingLiU;mso-font-kerning:0pt;mso-ansi-language:EN-GB\'>1.6<span\n' +
-            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp; </span>\"<b style=\'mso-bidi-font-weight:\n' +
+            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp;</span>\"<b style=\'mso-bidi-font-weight:\n' +
             'normal\'>User</b>\", \"<b style=\'mso-bidi-font-weight:normal\'>your</b>\" or \"<b\n' +
             'style=\'mso-bidi-font-weight:normal\'>you</b>\" shall mean the individual or\n' +
             'entity using or accessing this Website, the Exchange and accepting the\n' +
@@ -135,10 +135,11 @@ class Service extends React.Component {
             '-28.3pt;mso-char-indent-count:-2.36;mso-pagination:widow-orphan\'><span\n' +
             'lang=EN-GB style=\'mso-bidi-font-size:12.0pt;font-family:"Times New Roman",serif;\n' +
             'mso-fareast-font-family:PMingLiU;mso-font-kerning:0pt;mso-ansi-language:EN-GB\'>1.7<span\n' +
-            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp; </span>\"<b style=\'mso-bidi-font-weight:\n' +
+            'style=\'mso-tab-count:1\'>&nbsp;&nbsp;&nbsp;&nbsp;</span>\"<b style=\'mso-bidi-font-weight:\n' +
             'normal\'>Verified User</b>\" shall mean a User who has submitted to HKSTOx the\n' +
             'required documents in order to complete the KYC and AML checks.<o:p></o:p></span></p>\n' +
             '\n' +
+
             '<p class=MsoNormal style=\'mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;\n' +
             'margin-left:14.2pt;mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;\n' +
             'mso-para-margin-left:-.01gd;text-indent:-14.3pt;mso-char-indent-count:-1.19;\n' +
