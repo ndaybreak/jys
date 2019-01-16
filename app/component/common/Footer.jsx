@@ -97,7 +97,7 @@ class Footer extends React.Component {
             {linkTitle: 'Fees', linkPath: 'fees.html'},
             {linkPath: 'news.html', linkTitle: 'Announcement and News'},
             {linkPath: 'help.html', linkTitle: 'FAQ and Support'}];
-        const contact = [{linkPath: 'feedback', linkTitle: 'Feed back'}]
+        const contact = [{linkPath: 'feedback.html', linkTitle: 'Feedback'}]
         return <div className="a-footer">
             <div className={"footer-wrap"}>
                 <Logo />
