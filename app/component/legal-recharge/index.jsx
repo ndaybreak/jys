@@ -1,13 +1,13 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
-import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH} from '@/utils'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, parseTime} from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import '@/public/css/legal-recharge.pcss';
 import previewImg from '@/public/img/放大镜up.png'
 import deleteImg from '@/public/img/删除.png'
 import videoDemoImg from '@/public/img/register-video-demo.png'
-import {getCountryList, saveBasicAuthInfo, savePicAuthInfo, queryAuthInfo, getAuthTypeList, getAuthVideoCode} from '@/api'
+import {legalRecharge, getRechargeAccountList} from '@/api'
 import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
@@ -28,22 +28,46 @@ function beforeUpload(file) {
     return isImg && isLt5M;
 }
 
-function beforeVideoUpload(file) {
-    const isVideo = file.type.indexOf('video') >= 0;
-    if (!isVideo) {
-        message.error('Please upload video');
+function formatAccountData(data) {
+    const bank = {}
+    const list = []
+    const account = {}
+    data.forEach((item, i) => {
+        item.account = item.pay_account_name + ' (' + item.pay_account_number + ')'
+        bank[item.bankName] = 1
+        if(account[item.bankName]) {
+            account[item.bankName].push(item)
+        } else {
+            account[item.bankName] = [item]
+        }
+    })
+    Object.keys(bank).forEach(b => {
+        list.push({
+            id: b,
+            bankName: b
+        })
+    })
+    return [list, account]
+}
+
+function getInfo(id, data) {
+    let item
+    for(let i = 0, len = data.length; i < len; i++) {
+        item = data[i]
+        if(item.id === id) {
+            return item.bankAccountInfo
+        }
     }
-    // const isLt5M = file.size / 1024 / 1024 < 5;
-    // if (!isLt5M) {
-    //     message.error(intl.get('pic5MTip'));
-    // }
-    return isVideo;
+    return ''
 }
 
 class Index extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            bankList: [],
+            accountList: [],
+            accountData: [],
             loading: false,
             def: {
                 authType: 1
@@ -52,85 +76,32 @@ class Index extends React.Component {
             authTypeList: [],
             previewVisible: false,
             previewImage: '',
-            picSignHover: false,
-            picSignError: '',
-            picSignImgUrl: '',
-            picOneHover: false,
-            picOneError: '',
-            picOneImgUrl: '',
-            picTwoHover: false,
-            picTwoError: '',
-            picTwoImgUrl: '',
-            picThreeHover: false,
-            picThreeError: '',
-            picThreeImgUrl: '',
             picList: [],
-            from: '',
-            videoUrl: '',
-            videoError: '',
-            videoCode: ''
+            info: '',
+            picError: ''
         }
     }
 
     componentDidMount() {
+        getRechargeAccountList().then(res => {
+            const data = formatAccountData(res.data)
+            this.setState({
+                bankList: data[0],
+                accountData: data[1]
+            })
+        })
+    }
+
+    bankChange(bank) {
         this.setState({
-            from: getSearchPara('from')
+            accountList: this.state.accountData[bank]
         })
-        getCountryList().then(res => {
-            this.setState({
-                countryList: res.data
-            })
-        })
-        // queryAuthInfo().then(res => {
-        //     if(res.data) {
-        //         // const data = kebabCaseData2Camel(res.data)
-        //         const data = res.data
-        //         this.setState(Object.assign({}, {
-        //             def: Object.assign(this.state.def, data),
-        //             picSignImgUrl: data.specimen_signature,
-        //             picOneImgUrl: data.credential_front_pic_addr,
-        //             picTwoImgUrl: data.credential_back_pic_addr,
-        //             picThreeImgUrl: data.credential_sign_pic_addr
-        //         }))
-        //     }
-        // })
-        getAuthTypeList().then(res => {
-            this.setState({
-                authTypeList: res.data
-            })
-        })
-
-        if(getSearchPara('from') === 'question') {
-            getAuthVideoCode().then(res => {
-                this.setState({
-                    videoCode: res.data.headingCode
-                })
-            })
-        }
     }
 
-    handleChange(imgUrl, info) {
-        if (info.file.status === 'uploading') {
-            this.setState({loading: true});
-            return;
-        }
-        if (info.file.status === 'done') {
-            const state = {loading: false}
-            state[imgUrl] = info.file.response.data.fileUrl
-            this.setState(state)
-        }
-    }
-
-    handleVideoChange(info) {
-        if (info.file.status === 'uploading') {
-            this.setState({loading: true});
-            return;
-        }
-        if (info.file.status === 'done') {
-            const state = {loading: false}
-            state.videoUrl = info.file.response.data.fileUrl
-            this.setState(state)
-        }
+    accountChange(accountId) {
+        this.setState({
+            info: getInfo(accountId, this.state.accountList)
+        })
     }
 
     handleAssetChange(info) {
@@ -155,40 +126,19 @@ class Index extends React.Component {
     validateHighInfo() {
         const amountValid = this.refs['amount'].validate()
         const numberValid = this.refs['number'].validate()
+        const picValid = !!this.state.picList.length
 
-        return amountValid && numberValid
-    }
-
-    storeBasicInfo() {
-        const para = {
-            fullName: this.refs['fullName'].getValue(),
-            birthday: this.refs['birthday'].getValue(),
-            placeBirth: this.refs['birthPlace'].getValue(),
-            address: this.refs['presentAddr'].getValue(),
-            premanentAddress: this.refs['premanentAddr'].getValue(),
-            sourceFunds: this.refs['fundsSource'].getValue(),
-            natureWork: this.refs['workNature'].getValue(),
-            organizationName: this.refs['companyName'].getValue(),
-            taxIdentificationNumber: this.refs['tin'].getValue(),
-            // sssGsis: this.refs['sssNo'].getValue(),
-            postalCode: this.refs['postalCode'].getValue(),
-            countryAreaId: this.refs['nationality'].getValue()
-            // specimenSignature: this.state.picSignImgUrl,
-        }
-        setSessionData('authBasicData', para)
-    }
-
-    submitInfo() {
-        const para = getSessionData('authBasicData')
-        return new Promise((resolve, reject) => {
-            saveBasicAuthInfo(para).then(res => {
-                resolve()
-            }, error => {
-                this.setState({
-                    loading: false
-                })
+        if(picValid) {
+            this.setState({
+                picError: ''
             })
-        })
+        } else {
+            this.setState({
+                picError: 'Please upload picture'
+            })
+        }
+
+        return amountValid && numberValid && picValid
     }
 
     submitPic() {
@@ -210,38 +160,37 @@ class Index extends React.Component {
         })
     }
 
-    submit() {
-        if (this.validateHighInfo()) {
-            this.setState({
-                loading: true
-            })
-            this.submitInfo().then(() => {
-                return this.submitPic()
-            // }).then(() => {
-            //     return refreshAccountInfo()
-            }).then(() => {
-                this.setState({
-                    loading: false
-                })
-                ui.tip({
-                    msg: 'Register success!',
-                    width: 230,
-                    callback: () => {
-                        jumpUrl('index.html')
-                    }
-                })
-            })
-        }
-    }
-
     handleNext() {
         if (this.validateBasicInfo()) {
-            jumpUrl('legal-recharge.html?isSubmit=true')
+            jumpUrl('legal-recharge.html', {
+                isSubmit: true,
+                accountId: this.refs.account.getValue(),
+                id: getSearchPara('id')
+            })
         }
     }
     handleSubmit() {
         if (this.validateHighInfo()) {
-            jumpUrl('user.html')
+            const para = {
+                amount: this.refs.amount.getValue(),
+                certificate: this.state.picList.join(','),
+                orderNumber: this.refs.number.getValue(),
+                companyBankAccountId: getSearchPara('accountId'),
+                coinId: getSearchPara('id')
+            }
+            legalRecharge(para).then(res => {
+                ui.tip({
+                    msg: intl.get('successTip'),
+                    width: 230,
+                    callback: () => {
+                        jumpUrl('user.html')
+                    }
+                })
+            }, error => {
+                this.setState({
+                    picError: error.info
+                })
+            })
         }
     }
 
@@ -296,40 +245,43 @@ class Index extends React.Component {
                                 <BoxSelect ref="bank" className="auth-box-left"
                                            placeholder="Dah Sing Bank,Limited"
                                            validates={['isSelect']} defaultValue={this.state.def.bank}
-                                           options={this.state.countryList} optValue="id" optLabel="country_name"/>
+                                           onChange={this.bankChange.bind(this)}
+                                           options={this.state.bankList} optValue="id" optLabel="bankName"/>
                             </div>
                             <div className="clearfix">
                                 <BoxSelect ref="account" className="auth-box"
                                            placeholder="Our company name（Note: Our company name is a subsidiary wholly owned in trust by..."
                                            validates={['isSelect']} defaultValue={this.state.def.account}
-                                           options={this.state.countryList} optValue="id" optLabel="country_name"/>
+                                           onChange={this.accountChange.bind(this)}
+                                           options={this.state.accountList} optValue="id" optLabel="companyName"/>
                             </div>
 
                             <div className="bank-info">
-                                <div className="bank-info-label">Payee</div>
-                                <div className="value">
-                                    Our company name（Note: Our company name is a subsidiary wholly owned in trust by Coinsuper Fintech (HK) Co. Ltd.）
-                                </div>
-                                <div className="bank-info-label">Payee address</div>
-                                <div className="value">
-                                    Level 16 Man Yee Building, 68 Des Voeux Road Central, Central, Hong Kong
-                                </div>
-                                <div className="bank-info-label">Account receivable account /IBAN</div>
-                                <div className="value">
-                                    8339001346（HKD Current Account）
-                                </div>
-                                <div className="bank-info-label">Beneficiary bank</div>
-                                <div className="value">
-                                    Dah Sing Bank, Limited
-                                </div>
-                                <div className="bank-info-label">Beneficiary bank address</div>
-                                <div className="value">
-                                    Shop No. 10, 1st Floor of the Podium, Admiralty Centre, No. 18 Harcourt Road, Admiralty
-                                </div>
-                                <div className="bank-info-label">Beneficiary bank SWIFT</div>
-                                <div className="value">
-                                    DSBAHKHH
-                                </div>
+                                {this.state.info}
+                                {/*<div className="bank-info-label">Payee</div>*/}
+                                {/*<div className="value">*/}
+                                    {/*Our company name（Note: Our company name is a subsidiary wholly owned in trust by Coinsuper Fintech (HK) Co. Ltd.）*/}
+                                {/*</div>*/}
+                                {/*<div className="bank-info-label">Payee address</div>*/}
+                                {/*<div className="value">*/}
+                                    {/*Level 16 Man Yee Building, 68 Des Voeux Road Central, Central, Hong Kong*/}
+                                {/*</div>*/}
+                                {/*<div className="bank-info-label">Account receivable account /IBAN</div>*/}
+                                {/*<div className="value">*/}
+                                    {/*8339001346（HKD Current Account）*/}
+                                {/*</div>*/}
+                                {/*<div className="bank-info-label">Beneficiary bank</div>*/}
+                                {/*<div className="value">*/}
+                                    {/*Dah Sing Bank, Limited*/}
+                                {/*</div>*/}
+                                {/*<div className="bank-info-label">Beneficiary bank address</div>*/}
+                                {/*<div className="value">*/}
+                                    {/*Shop No. 10, 1st Floor of the Podium, Admiralty Centre, No. 18 Harcourt Road, Admiralty*/}
+                                {/*</div>*/}
+                                {/*<div className="bank-info-label">Beneficiary bank SWIFT</div>*/}
+                                {/*<div className="value">*/}
+                                    {/*DSBAHKHH*/}
+                                {/*</div>*/}
                             </div>
                             <div className="text-center">
                                 <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>
@@ -344,11 +296,11 @@ class Index extends React.Component {
                                 <Box ref="amount" className="auth-box-left" placeholder="Deposit amount"
                                      validates={['notNull']} defaultValue={this.state.def.amount}/>
                                 <Box ref="number" className="auth-box-right"
-                                     placeholder="Bank Account Number" validates={['notNull']}
+                                     placeholder="Remittance number" validates={['notNull']}
                                      defaultValue={this.state.def.number}/>
                             </div>
                             <div className="record-tip">
-                                The remittance voucher must display a clear bank name, account holder's name, account number and amount. Please upload colorful, clear jpeg, png, jpg or pdf files up to 5MB in size.
+                                The remittance voucher must display a clear bank name, account holder's name, account number and amount. Please upload colorful, clear jpeg, png, jpg files up to 5MB in size.
                             </div>
                             <div className="clearfix upload-wrap">
                                 <div className="pic-list">
@@ -387,6 +339,8 @@ class Index extends React.Component {
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="error-line">{this.state.picError}</div>
 
                             <div className="text-center">
                                 <button className="btn btn-next" onClick={this.handleSubmit.bind(this)}>Submit</button>

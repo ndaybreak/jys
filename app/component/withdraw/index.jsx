@@ -15,7 +15,6 @@ import { getWithdrawAddress, getAssetList, getWithdrawInfo, withdrawApplication 
 const assetMap = {}
 const defaultValue = '--'
 let coinId
-const SEND_FLAG = 'isValidateCodeSend'
 
 class Index extends React.Component {
     constructor(props) {
@@ -66,7 +65,7 @@ class Index extends React.Component {
         }, error => {
             ui.tip({
                 width: 300,
-                msg: error
+                msg: error.info
             })
         })
         getWithdrawInfo(item.id).then(res => {
@@ -84,7 +83,7 @@ class Index extends React.Component {
         }, error => {
             ui.tip({
                 width: 600,
-                msg: error
+                msg: error.info
             })
         })
     }
@@ -185,7 +184,7 @@ class Index extends React.Component {
             // })
 
             setSessionData('withdrawData', para)
-            removeSessionData(SEND_FLAG)
+            removeSessionData('isValidateCodeSend')
             jumpUrl('validate-code.html', {
                 from: 'withdraw',
                 code: getSearchPara('code'),
@@ -230,7 +229,7 @@ class Index extends React.Component {
             <div className="recharge-withdraw-page">
                 <div className="header">
                     <span className="title">{intl.get('withdrawal')}</span>
-                    <RechargeSelect onChange={this.handleCoinChange.bind(this)} selected={this.state.selected} disabled={true} isWithdrawCash={true}/>
+                    <RechargeSelect onChange={this.handleCoinChange.bind(this)} selected={this.state.selected} isWithdrawCash={true}/>
                 </div>
                 <div className="content">
                     <div className="content-inner">

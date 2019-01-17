@@ -1,40 +1,95 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
-import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH} from '@/utils'
+import {Icon, Modal, Button, Upload, message, Spin, Pagination} from 'antd'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, parseTime} from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import previewImg from '@/public/img/放大镜up.png'
 import deleteImg from '@/public/img/删除.png'
 import videoDemoImg from '@/public/img/register-video-demo.png'
-import {getCountryList, saveBasicAuthInfo, savePicAuthInfo, queryAuthInfo, getAuthTypeList, getAuthVideoCode} from '@/api'
+import {getLegalRechargeRecord} from '@/api'
 import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
 import { refreshAccountInfo } from '@/utils/auth'
+
+function getStatus(status) {
+    if(status == 0) {
+        return 'to audit'
+    } else if(status == 1) {
+        return 'rejected'
+    } else if(status == 2) {
+        return 'passed'
+    }
+}
 
 class Record extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: false,
+            total: 0,
+            currPage: 1,
+            data: [],
             dateList: [{
+                id: '',
+                value: 'All'
+            }, {
                 id: 1,
                 value: '1D'
             }, {
-                id: 2,
+                id: 3,
                 value: '3D'
+            }, {
+                id: 7,
+                value: '1W'
+            }, {
+                id: 30,
+                value: '1M'
             }],
             statusList: [{
+                id: '',
+                value: 'All'
+            }, {
+                id: 0,
+                value: 'to audit'
+            }, {
                 id: 1,
-                value: 'Success'
+                value: 'rejected'
             }, {
                 id: 2,
-                value: 'Fail'
+                value: 'passed'
             }]
         }
     }
 
     componentDidMount() {
+        this.loadData(1)
+    }
+    assetFilter() {
+        setTimeout(() => {
+            this.loadData(1)
+        })
+    }
+
+    loadData(page) {
+        this.setState({
+            currPage: page,
+            loading: true
+        })
+        const para = {
+            currPage: page,
+            pageSize: 10,
+            day: this.refs.date.getValue(),
+            status: this.refs.status.getValue()
+        }
+        getLegalRechargeRecord(para).then(res => {
+            console.log(res.data)
+            this.setState({
+                data: res.data,
+                loading: false,
+                total: res.pageInfo.totalCount
+            })
+        })
     }
 
     render() {
@@ -43,35 +98,31 @@ class Record extends React.Component {
                 <div className="label">Deposit Record</div>
                 <div className="clearfix">
                     <BoxSelect ref="date" className="auth-box-left" placeholder="Date"
+                               onChange={this.assetFilter.bind(this)}
                                options={this.state.dateList} optValue="id" optLabel="value"/>
                     <BoxSelect ref="status" className="auth-box-right" placeholder="Status"
+                               onChange={this.assetFilter.bind(this)}
                                options={this.state.statusList} optValue="id" optLabel="value"/>
                 </div>
                 <div className="recode-title clearfix">
                     <div className="col-record">Date</div>
-                    <div className="col-record">Total</div>
+                    <div className="col-record">Amount</div>
                     <div className="col-record">Status</div>
                 </div>
-                <div className="record-row">
-                    <div className="col-record">2018-12-12 18:15:25</div>
-                    <div className="col-record">100</div>
-                    <div className="col-record">Success</div>
-                </div>
-                <div className="record-row row-odd">
-                    <div className="col-record">2018-12-12 18:15:25</div>
-                    <div className="col-record">100</div>
-                    <div className="col-record">Success</div>
-                </div>
-                <div className="record-row">
-                    <div className="col-record">2018-12-12 18:15:25</div>
-                    <div className="col-record">100</div>
-                    <div className="col-record">Success</div>
-                </div>
-                <div className="record-row row-odd">
-                    <div className="col-record">2018-12-12 18:15:25</div>
-                    <div className="col-record">100</div>
-                    <div className="col-record">Success</div>
-                </div>
+                {this.state.data.map((item, i) => {
+                    return (
+                        <div className="record-row" key={i}>
+                            <div className="col-record">{parseTime(item.create_time)}</div>
+                            <div className="col-record">{item.amount}</div>
+                            <div className="col-record">{getStatus(item.status)}</div>
+                        </div>
+                    )
+                })}
+
+                <Pagination className="detail-pagination"
+                            total={this.state.total}
+                            current={this.state.currPage}
+                            onChange={this.loadData.bind(this)} />
             </div>
         );
     }

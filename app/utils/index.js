@@ -461,3 +461,16 @@ export function accDivide(arg1, arg2) {
     m = Math.pow(10, Math.max(r1, r2));
     return (arg1 * m) / (arg2 * m)
 }
+
+// 判断是否是pdf文件
+export function isPdf(url) {
+    return url.indexOf('.pdf') > -1
+}
+// 数字转化为百分比
+export function format2Percentage(value) {
+    if(isNaN(value)) {
+        return ''
+    } else {
+        return parseFloat(value) * 100 + '%'
+    }
+}

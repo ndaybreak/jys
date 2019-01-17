@@ -121,21 +121,28 @@ class Index extends React.Component {
                 countryId: this.refs['country'].getValue(),
                 certificate: this.state.picList.join(',')
             }
-            this.setState({
-                loading: true
+            // this.setState({
+            //     loading: true
+            // })
+
+            setSessionData('bankAddData', para)
+            removeSessionData('isValidateCodeSend')
+            jumpUrl('validate-code.html', {
+                from: 'bank-add'
             })
-            saveOrUpdatePayAccountInfo(para).then(res => {
-                this.setState({
-                    loading: false
-                })
-                ui.tip({
-                    msg: 'Operation success!',
-                    width: 230,
-                    callback: () => {
-                        jumpUrl('user.html')
-                    }
-                })
-            })
+
+            // saveOrUpdatePayAccountInfo(para).then(res => {
+            //     this.setState({
+            //         loading: false
+            //     })
+            //     ui.tip({
+            //         msg: 'Operation success!',
+            //         width: 230,
+            //         callback: () => {
+            //             jumpUrl('user.html')
+            //         }
+            //     })
+            // })
         }
     }
 

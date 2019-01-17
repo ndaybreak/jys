@@ -21,7 +21,7 @@ class User extends React.Component {
             loading: false,
             data: [],
             base: getSearchPara('base') || 'BTC',
-            target: getSearchPara('target') || 'USDT',
+            target: getSearchPara('target') || 'HKD',
             // base: getSearchPara('base') || 'STOX01.ST',
             // target: getSearchPara('target') || 'HKD',
             width: document.body.clientWidth - 620

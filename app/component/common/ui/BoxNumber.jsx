@@ -2,8 +2,10 @@ import React from 'react';
 import { validate } from '@/utils'
 
 const getPrecision = (val) => {
-    let decimals =(val + '').split('.')[1]
-    return decimals ?  decimals.length : 0
+    if(String(val).indexOf('.') === -1) {
+        return 0
+    }
+    return (val + '').split('.')[1].length
 }
 
 class Box extends React.Component {
@@ -48,7 +50,8 @@ class Box extends React.Component {
     boxChange(e) {
         let value = e.target.value
         value = value.substring(0, value.split('.')[0].length + this.state.precision + 1)
-        if(value == this.state.value) {
+        value = value ? Math.abs(parseFloat(value)) : value
+        if(value === this.state.value) {
             return
         }
 
@@ -84,12 +87,17 @@ class Box extends React.Component {
     render() {
         const {placeholder, className, label, unit, step} = this.props
         return (
-            <div className={'box-number-wrap ' + (className ? className : '')}>
+            <div className={'box-wrap box-number-wrap ' + (className ? className : '')}>
                 <span className="label">{label}</span>
                 <div className={'box-number'}>
-                    <input className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number" placeholder={placeholder}
+                    <input id="numberBox" ref="numberBox" className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number" placeholder={placeholder}
                            value={this.state.value} onChange={this.boxChange.bind(this)} step={step}/>
                     <span className="box-number-unit">{unit}</span>
+                    <div className="box-error">
+                        {!this.state.isValid && (
+                            <span>{this.state.errorMsg}</span>
+                        )}
+                    </div>
                 </div>
             </div>
         );

@@ -12,8 +12,6 @@ import BoxSelect from '@/component/common/ui/BoxSelect'
 import Breadcrumb from '@/component/common/Breadcrumb'
 import userPwdImg from '@/public/img/user_pwd.png'
 
-const SEND_FLAG = 'isValidateCodeSend'
-
 class Index extends React.Component {
     constructor(props) {
         super(props);
@@ -60,7 +58,7 @@ class Index extends React.Component {
             setSessionData('capitalPassword', {
                 moneyPassword: this.refs['password'].getValue()
             })
-            removeSessionData(SEND_FLAG)
+            removeSessionData('isValidateCodeSend')
             jumpUrl('validate-code.html', {
                 from: 'set-capital-password'
             })

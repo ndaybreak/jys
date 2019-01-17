@@ -1,7 +1,7 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isLogin } from '@/utils'
-import { getEntrustmentList, getAssetList, getAccountInfo } from '@/api'
+import { getEntrustmentList, getAssetList } from '@/api'
 import BoxNumber from '@/component/common/ui/BoxNumber'
 import eventProxy from '@/utils/eventProxy'
 import OrderBuy from './OrderBuy';
@@ -17,18 +17,15 @@ class User extends React.Component {
     }
 
     componentDidMount() {
-        isLogin() && getAccountInfo({isMoneyPassword: true}).then(res => {
-            this.setState({
-                hasMoneyPwd: !!res.data.is_money_password
+        if(isLogin()) {
+            getAssetList().then(res => {
+                this.setState({
+                    assetList: res.data
+                }, () => {
+                    this.setAvailable()
+                })
             })
-        })
-        isLogin() && getAssetList().then(res => {
-            this.setState({
-                assetList: res.data
-            }, () => {
-                this.setAvailable()
-            })
-        })
+        }
 
         eventProxy.on('coinsUpdate', (data) => {
             this.setState({
@@ -97,12 +94,12 @@ class User extends React.Component {
                 <div className="order-info clearfix">
                     <OrderBuy base={this.state.base} basePrecision={this.state.basePrecision}
                               target={this.state.target} targetPrecision={this.state.targetPrecision}
-                              available={this.state.targetAvailable} hasMoneyPwd={this.state.hasMoneyPwd}
+                              available={this.state.targetAvailable}
                               minSum={this.state.targetMin} type={this.state.type}
                               otcPrice={this.state.otcPrice}/>
                     <OrderSell base={this.state.base} basePrecision={this.state.basePrecision}
                               target={this.state.target} targetPrecision={this.state.targetPrecision}
-                               available={this.state.baseAvailable} hasMoneyPwd={this.state.hasMoneyPwd}
+                               available={this.state.baseAvailable}
                                minSum={this.state.baseMin} type={this.state.type}
                                otcPrice={this.state.otcPrice}/>
 

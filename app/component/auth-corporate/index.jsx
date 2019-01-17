@@ -1,13 +1,14 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
-import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH} from '@/utils'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isPdf} from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import '@/public/css/auth-corporate.pcss';
 import previewImg from '@/public/img/放大镜up.png'
 import deleteImg from '@/public/img/删除.png'
 import videoDemoImg from '@/public/img/register-video-demo.png'
-import {getCountryList, saveBasicAuthInfo, savePicAuthInfo, queryAuthInfo, getAuthTypeList, getAuthVideoCode} from '@/api'
+import pdfImg from '@/public/img/icon_pdf.png'
+import {getCountryList, saveCompanyBasicAuthInfo, saveCompanyPicAuthInfo, queryCompanyAuthInfo, getAuthTypeList, getAuthVideoCode} from '@/api'
 import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
@@ -26,6 +27,19 @@ function beforeUpload(file) {
     return isImg && isLt5M;
 }
 
+function imgOrPdfBeforeUpload(file) {
+    const isImgOrPdf = file.type.indexOf('image') >= 0 || file.type.indexOf('pdf') >= 0;
+    if (!isImgOrPdf) {
+        message.error('Please upload photo or pdf');
+    }
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+        // message.error(intl.get('pic5MTip'));
+        message.error('The max size of the file is 5MB');
+    }
+    return isImgOrPdf && isLt5M;
+}
+
 function beforeVideoUpload(file) {
     const isVideo = file.type.indexOf('video') >= 0;
     if (!isVideo) {
@@ -38,6 +52,16 @@ function beforeVideoUpload(file) {
     return isVideo;
 }
 
+const directorDefault = {
+    name: '',
+    residentialAddress: '',
+    incorpration: '',
+    directorShareholder: '',
+    shareholding: ''
+}
+
+const isSubmit = getSearchPara('isSubmit') === 'Y'
+
 class Index extends React.Component {
     constructor(props) {
         super(props);
@@ -45,10 +69,10 @@ class Index extends React.Component {
             loading: false,
             def: {
                 authType: 1,
-                source_funds: 'aa',
-                nature_work: 'bb',
-                organization_name: 'cc',
-                tax_identification_number: 'dd'
+                source_funds: '',
+                nature_work: '',
+                organization_name: '',
+                tax_identification_number: ''
             },
             countryList: [],
             authTypeList: [],
@@ -59,73 +83,83 @@ class Index extends React.Component {
             picSignImgUrl: '',
             picOneHover: false,
             picOneError: '',
+            // picOneImgUrl: 'https://hkstox.io/files/coin/e73c82e2-3dd7-4360-8eed-4bd46834053d_BNB.png',
             picOneImgUrl: '',
             picTwoHover: false,
             picTwoError: '',
+            // picTwoImgUrl: 'https://hkstox.io/files/coin/e73c82e2-3dd7-4360-8eed-4bd46834053d_BNB.png',
             picTwoImgUrl: '',
             picThreeHover: false,
             picThreeError: '',
             picThreeImgUrl: '',
+            // picList: [{
+            //     isPdf: false,
+            //     url: 'https://hkstox.io/files/coin/e73c82e2-3dd7-4360-8eed-4bd46834053d_BNB.png'
+            // }],
             picList: [],
-            from: '',
+            // videoUrl: 'http://192.169.232.54:8080/files/7ae60467-a938-4f12-992e-aae47e7f39ea_%E7%AC%AC%E5%8D%81%E6%9C%9F.mp4',
             videoUrl: '',
             videoError: '',
             videoCode: '',
-            infoList: [{}],
+            infoList: [Object.assign({}, directorDefault)],
             institutionList: [{
-                id: 0,
+                id: 1,
                 value: 'Financial Institution'
             }, {
-                id: 1,
+                id: 2,
                 value: 'Active NFE'
             }, {
-                id: 2,
+                id: 3,
                 value: 'Passive NFE '
             }],
             bankList: [],
             bankData: [[{
-                id: 0,
+                id: 1,
                 value: 'Bank'
             }, {
-                id: 1,
+                id: 2,
                 value: 'Asset/ Fund Management'
             }, {
-                id: 2,
+                id: 3,
                 value: 'Operator Stock Broking '
             }, {
-                id: 3,
+                id: 4,
                 value: 'Fund'
             }, {
-                id: 4,
+                id: 5,
                 value: 'Insurance Company'
             }, {
-                id: 5,
+                id: 6,
                 value: ' Financial Market'
             }, {
-                id: 6,
+                id: 7,
                 value: ' Nominees/ Custodian'
             }], [{
-                id: 0,
+                id: 8,
                 value: 'Listed on Exchange'
             }, {
-                id: 1,
+                id: 9,
                 value: 'Government firm / Agency'
             }, {
-                id: 2,
+                id: 10,
                 value: 'Other active NFE'
             }], [{
-                id: 0,
+                id: 11,
                 value: 'Financial Institution and located in non-participating jurisdiction'
             }, {
-                id: 1,
+                id: 12,
                 value: 'NFE that is not an active NFE'
-            }]]
+            }]],
+            authorizedName: '',
+            position: '',
+            mobile: '',
+            passport: '',
+            behalfError: ''
         }
     }
 
     componentDidMount() {
         this.setState({
-            from: getSearchPara('from'),
             bankList: this.state.bankData[0]
         })
         getCountryList().then(res => {
@@ -133,7 +167,7 @@ class Index extends React.Component {
                 countryList: res.data
             })
         })
-        // queryAuthInfo().then(res => {
+        // queryCompanyAuthInfo().then(res => {
         //     if(res.data) {
         //         // const data = kebabCaseData2Camel(res.data)
         //         const data = res.data
@@ -141,8 +175,7 @@ class Index extends React.Component {
         //             def: Object.assign(this.state.def, data),
         //             picSignImgUrl: data.specimen_signature,
         //             picOneImgUrl: data.credential_front_pic_addr,
-        //             picTwoImgUrl: data.credential_back_pic_addr,
-        //             picThreeImgUrl: data.credential_sign_pic_addr
+        //             picTwoImgUrl: data.credential_back_pic_addr
         //         }))
         //     }
         // })
@@ -152,7 +185,7 @@ class Index extends React.Component {
             })
         })
 
-        if(getSearchPara('from') === 'question') {
+        if(isSubmit) {
             getAuthVideoCode().then(res => {
                 this.setState({
                     videoCode: res.data.headingCode
@@ -192,33 +225,51 @@ class Index extends React.Component {
         }
         if (info.file.status === 'done') {
             const state = {loading: false, picList: this.state.picList}
-            state.picList.push(info.file.response.data.fileUrl)
+            state.picList.push({
+                isPdf: isPdf(info.file.response.data.fileUrl),
+                url: info.file.response.data.fileUrl
+            })
             this.setState(state)
         }
     }
 
     validateBasicInfo() {
-        const fullNameValid = this.refs['fullName'].validate()
-        const birthdayValid = this.refs['birthday'].validate()
-        const birthPlaceValid = this.refs['birthPlace'].validate()
-        const presentAddrValid = this.refs['presentAddr'].validate()
-        const premanentAddrValid = this.refs['premanentAddr'].validate()
-        const nationalityValid = this.refs['nationality'].validate()
-        const postalCodeValid = this.refs['postalCode'].validate()
-
-        const fundsSourceValid = this.refs['fundsSource'].validate()
-        const workNatureValid = this.refs['workNature'].validate()
         const companyNameValid = this.refs['companyName'].validate()
-        const tinValid = this.refs['tin'].validate()
+        const natureWorkValid = this.refs['natureWork'].validate()
+        const contactPersonValid = this.refs['contactPerson'].validate()
+        const registeredAddressValid = this.refs['registeredAddress'].validate()
+        const companyRegistrationDateValid = this.refs['companyRegistrationDate'].validate()
+        const companyRegistrationNumberValid = this.refs['companyRegistrationNumber'].validate()
+        const contactAddressValid = this.refs['contactAddress'].validate()
+        const areaCodeValid = this.refs['areaCode'].validate()
+        const contactNumberValid = this.refs['contactNumber'].validate()
         const corporationTypeValid = this.refs['corporationType'].validate()
         const bankValid = this.refs['bank'].validate()
-        const registerNumberValid = this.refs['registerNumber'].validate()
-        // const sssNoValid = this.refs['sssNo'].validate()
-        //
-        // const picSignValid = !!this.state.picSignImgUrl
+        const picValid = !!this.state.picList.length
+        if(picValid) {
+            this.setState({
+                picError: ''
+            })
+        } else {
+            this.setState({
+                picError: 'Please upload picture'
+            })
+        }
 
-        return fullNameValid && birthdayValid && postalCodeValid && birthPlaceValid && presentAddrValid && premanentAddrValid &&
-            workNatureValid && companyNameValid && tinValid && fundsSourceValid && nationalityValid && corporationTypeValid && bankValid && registerNumberValid
+        const behalfValid = this.state.authorizedName || this.state.position || this.state.mobile || this.state.passport
+        if(behalfValid) {
+            this.setState({
+                behalfError: ''
+            })
+        } else {
+            this.setState({
+                behalfError: 'Please enter'
+            })
+        }
+
+        return companyNameValid && companyRegistrationDateValid && contactNumberValid && registeredAddressValid && contactAddressValid &&
+            companyNameValid && contactPersonValid && natureWorkValid && corporationTypeValid && bankValid && companyRegistrationNumberValid
+            && picValid && behalfValid && areaCodeValid
     }
 
     validateHighInfo() {
@@ -226,14 +277,11 @@ class Index extends React.Component {
         const countryCredentialsIdValid = this.refs['countryCredentialsId'].validate()
         const picOneValid = !!this.state.picOneImgUrl
         const picTwoValid = !!this.state.picTwoImgUrl
-        // const picThreeValid = !!this.state.picThreeImgUrl
         const videoValid = !!this.state.videoUrl
         this.setState({
-            // picSignError: picSignValid ? '' : intl.get('uploadPhotoTip'),
             picOneError: picOneValid ? '' : intl.get('uploadPhotoTip'),
             picTwoError: picTwoValid ? '' : intl.get('uploadPhotoTip'),
             videoError: videoValid ? '' : 'Please upload video'
-            // picThreeError: picThreeValid ? '' : intl.get('uploadPhotoTip')
         })
 
         return authTypeValid && countryCredentialsIdValid && picOneValid && picTwoValid && videoValid
@@ -241,27 +289,32 @@ class Index extends React.Component {
 
     storeBasicInfo() {
         const para = {
-            fullName: this.refs['fullName'].getValue(),
-            birthday: this.refs['birthday'].getValue(),
-            placeBirth: this.refs['birthPlace'].getValue(),
-            address: this.refs['presentAddr'].getValue(),
-            premanentAddress: this.refs['premanentAddr'].getValue(),
-            sourceFunds: this.refs['fundsSource'].getValue(),
-            natureWork: this.refs['workNature'].getValue(),
-            organizationName: this.refs['companyName'].getValue(),
-            taxIdentificationNumber: this.refs['tin'].getValue(),
-            // sssGsis: this.refs['sssNo'].getValue(),
-            postalCode: this.refs['postalCode'].getValue(),
-            countryAreaId: this.refs['nationality'].getValue(),
-            // specimenSignature: this.state.picSignImgUrl,
+            name: this.refs['companyName'].getValue(),
+            natureWork: this.refs['natureWork'].getValue(),
+            liaisonPerson: this.refs['contactPerson'].getValue(),
+            registeredAddress: this.refs['registeredAddress'].getValue(),
+            companyRegistrationDate: this.refs['companyRegistrationDate'].getValue(),
+            companyRegistrationNumber: this.refs['companyRegistrationNumber'].getValue(),
+            areaCodeId: this.refs['areaCode'].getValue(),
+            contactAddress: this.refs['contactAddress'].getValue(),
+            contactNumber: this.refs['contactNumber'].getValue(),
+            code: this.refs['corporationType'].getValue(),
+            bank: this.refs['bank'].getValue(),
+            authorizedName: this.state.authorizedName,
+            position: this.state.position,
+            mobile: this.state.mobile,
+            passport: this.state.passport,
+            explainInfo: this.state.explainInfo,
+            list: this.state.infoList
         }
         setSessionData('authBasicData', para)
     }
 
     submitInfo() {
-        const para = getSessionData('authBasicData')
         return new Promise((resolve, reject) => {
-            saveBasicAuthInfo(para).then(res => {
+            const para = getSessionData('authBasicData')
+            saveCompanyBasicAuthInfo(para).then(res => {
+                debugger
                 resolve()
             }, error => {
                 this.setState({
@@ -280,7 +333,7 @@ class Index extends React.Component {
             verifyVideo: this.state.videoUrl
         }
         return new Promise((resolve, reject) => {
-            savePicAuthInfo(para).then(res => {
+            saveCompanyPicAuthInfo(para).then(res => {
                 resolve(res.info)
             }, error => {
                 this.setState({
@@ -297,17 +350,14 @@ class Index extends React.Component {
             })
             this.submitInfo().then(() => {
                 this.submitPic().then((info) => {
+                    debugger
                     ui.tip({
-                        // msg: info,
                         msg: 'Register success!',
-                        width: 230
+                        width: 230,
+                        callback: () => {
+                            jumpUrl('index.html')
+                        }
                     })
-                    this.setState({
-                        loading: false
-                    })
-                    setTimeout(() => {
-                        jumpUrl('index.html')
-                    }, 3000)
                 })
             })
         }
@@ -316,7 +366,9 @@ class Index extends React.Component {
     handleNext() {
         if (this.validateBasicInfo()) {
             this.storeBasicInfo()
-            jumpUrl('commitment-letter.html')
+            jumpUrl('commitment-letter.html', {
+                from: 'corporate'
+            })
         }
     }
 
@@ -343,6 +395,10 @@ class Index extends React.Component {
         });
     }
 
+    downloadPdf(url) {
+        window.open(url)
+    }
+
     handleDelete(i) {
         let data = this.state.picList
         data.splice(i, 1)
@@ -353,7 +409,7 @@ class Index extends React.Component {
 
     addTr() {
         this.setState({
-            infoList: this.state.infoList.concat([{}])
+            infoList: this.state.infoList.concat([Object.assign({}, directorDefault)])
         })
     }
 
@@ -363,68 +419,64 @@ class Index extends React.Component {
         })
     }
 
+    directorChange(key, i, e) {
+        const list = this.state.infoList
+        list[i][key] = e.target.value
+        this.setState({
+            infoList: list
+        })
+    }
+
+    inputChange(key, e) {
+        const state = {}
+        state[key] = e.target.value
+        this.setState(state)
+    }
+
     render() {
         const {picSignImgUrl, picOneImgUrl, picTwoImgUrl, picThreeImgUrl, previewVisible, previewImage, videoUrl} = this.state
 
         return (
             <Spin spinning={this.state.loading}>
                 <div className="auth-page">
-                    {this.state.from === 'register' && (
+                    {!isSubmit && (
                         <div>
                             <div className="info-part">
                                 {/*<div className="tip">{intl.get('auth_1')}</div>*/}
                                 <div className="label">Basic Company Information</div>
                                 {/*基本信息*/}
                                 <div className="clearfix">
-                                    <Box ref="fullName" className="auth-box-left" placeholder="Company Name"
-                                         validates={['notNull']} defaultValue={this.state.def.full_name}/>
-                                    <Box ref="nationality" className="auth-box-right" placeholder="Nature of Busines"
-                                         validates={['notNull']} defaultValue={this.state.def.country_area_id}/>
+                                    <Box ref="companyName" className="auth-box-left" placeholder="Company Name"
+                                         validates={['notNull']} defaultValue={this.state.def.name}/>
+                                    <Box ref="natureWork" className="auth-box-right" placeholder="Nature of Business"
+                                         validates={['notNull']} defaultValue={this.state.def.natureWork}/>
                                 </div>
                                 <div className="clearfix">
-                                    <Box ref="birthPlace" className="auth-box-left" placeholder="Contact Person"
-                                         validates={['notNull']} defaultValue={this.state.def.place_birth}/>
-                                    <Box ref="presentAddr" className="auth-box-right"
+                                    <Box ref="contactPerson" className="auth-box-left" placeholder="Contact Person"
+                                         validates={['notNull']} defaultValue={this.state.def.incorpration}/>
+                                    <Box ref="registeredAddress" className="auth-box-right"
                                          placeholder="Registered Address" validates={['notNull']}
-                                         defaultValue={this.state.def.address}/>
+                                         defaultValue={this.state.def.registeredAddress}/>
                                 </div>
                                 <div className="clearfix">
-                                    <BoxDate ref="birthday" className="auth-box-left"
+                                    <BoxDate ref="companyRegistrationDate" className="auth-box-left"
                                              placeholder="Date of Incorporation" validates={['isSelect']}
-                                             defaultValue={this.state.def.birthday}/>
-                                    <Box ref="registerNumber" className="auth-box-right"
+                                             defaultValue={this.state.def.companyRegistrationDate}/>
+                                    <Box ref="companyRegistrationNumber" className="auth-box-right"
                                          placeholder="Certificate Incorporation No." validates={['notNull']}
-                                         defaultValue=""/>
+                                         defaultValue={this.state.def.companyRegistrationNumber}/>
                                 </div>
                                 <div className="clearfix">
-                                    <Box ref="premanentAddr" className="auth-box-left"
+                                    <Box ref="contactAddress" className="auth-box-left"
                                          placeholder="Email Address" validates={['notNull']}
-                                         defaultValue={this.state.def.premanent_address}/>
-                                    <Box ref="postalCode" className="auth-box-right" placeholder="Contact No."
-                                         validates={['notNull']} defaultValue={this.state.def.postal_code}/>
+                                         defaultValue={this.state.def.contactAddress}/>
+                                    <BoxSelect ref="areaCode" className="area-code-wrap"
+                                               placeholder="Area Code"
+                                               validates={['isSelect']} defaultValue={this.state.def.phone_area_id}
+                                               options={this.state.countryList} optValue="id" optLabel="area_code"/>
+                                    <Box ref="contactNumber" className="phone-wrap" placeholder="Contact No."
+                                         validates={['notNull']} defaultValue={this.state.def.contactNumber}/>
                                 </div>
-
-                                {/*财务信息*/}
-                                <div className="label hide">{intl.get('financeInfo')}</div>
-                                <div className="clearfix hide">
-                                    <Box ref="fundsSource" className="auth-box-left"
-                                         placeholder={intl.get('fundsSource')} validates={['notNull']}
-                                         defaultValue={this.state.def.source_funds}/>
-                                    <Box ref="workNature" className="auth-box-right"
-                                         placeholder={intl.get('workNature')} validates={['notNull']}
-                                         defaultValue={this.state.def.nature_work}/>
-                                </div>
-                                <div className="clearfix hide">
-                                    <Box ref="companyName" className="auth-box-left"
-                                         placeholder={intl.get('companyName')} validates={['notNull']}
-                                         defaultValue={this.state.def.organization_name}/>
-                                    <Box ref="tin" className="auth-box-right" placeholder={intl.get('tin')}
-                                         validates={['notNull']}
-                                         defaultValue={this.state.def.tax_identification_number}/>
-                                </div>
-                                {/*<div className="clearfix">*/}
-                                {/*<Box ref="sssNo" className="auth-box-left" placeholder={intl.get('sssNo')} validates={['notNull']} defaultValue={this.state.def.sss_gsis}/>*/}
-                                {/*</div>*/}
 
                                 {/*签字样本*/}
                                 {/*<div className="label">{intl.get('specimenSignature')}</div>*/}
@@ -470,11 +522,12 @@ class Index extends React.Component {
                                     {this.state.infoList.map((item, i) => {
                                         return (
                                             <div className="auth-tr clearfix" key={i}>
-                                                <div className="auth-td cell-first"><input type="text"/></div>
-                                                <div className="auth-td"><input type="text"/></div>
-                                                <div className="auth-td"><input type="text"/></div>
-                                                <div className="auth-td"><input type="text"/></div>
-                                                <div className="auth-td"><input type="text"/></div>
+                                                <div className="auth-td cell-first"><input type="text" value={item.name} onChange={this.directorChange.bind(this, 'name', i)}/></div>
+                                                <div className="auth-td"><input type="text" value={item.residentialAddress} onChange={this.directorChange.bind(this, 'residentialAddress', i)}/></div>
+                                                <div className="auth-td"><input type="text" value={item.incorpration} onChange={this.directorChange.bind(this, 'incorpration', i)}/></div>
+                                                <div className="auth-td"><input type="text" value={item.directorShareholder} onChange={this.directorChange.bind(this, 'directorShareholder', i)}/></div>
+                                                <div className="auth-td"><input type="text" value={item.shareholding} onChange={this.directorChange.bind(this, 'shareholding', i)}/></div>
+                                                {/*<a href="javascript:" className="btn-delete" onClick={this.directorDelete.bind(this, i)}>delete</a>*/}
                                             </div>
                                         )
                                     })}
@@ -482,7 +535,7 @@ class Index extends React.Component {
                             </div>
 
                             <div className="list-two-part">
-                                <div className="label">Information of the person(s) authorized to give instruction on Customer's behalf
+                                <div className="label">Information of the person authorized to give instruction on Customer’s behalf
                                 </div>
                                 <div className="auth-table">
                                     <div className="auth-tr clearfix">
@@ -492,12 +545,13 @@ class Index extends React.Component {
                                         <div className="auth-th">Passport/I.D. no.</div>
                                     </div>
                                     <div className="auth-tr clearfix">
-                                        <div className="auth-td cell-first"><input type="text"/></div>
-                                        <div className="auth-td"><input type="text"/></div>
-                                        <div className="auth-td"><input type="text"/></div>
-                                        <div className="auth-td"><input type="text"/></div>
+                                        <div className="auth-td cell-first"><input type="text" value={this.state.authorizedName} onChange={this.inputChange.bind(this, 'authorizedName')}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.position} onChange={this.inputChange.bind(this, 'position')}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.mobile} onChange={this.inputChange.bind(this, 'mobile')}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.passport} onChange={this.inputChange.bind(this, 'passport')}/></div>
                                     </div>
                                 </div>
+                                <div className="error-line">{this.state.behalfError}</div>
                             </div>
 
                             <div className="info-part">
@@ -517,7 +571,7 @@ class Index extends React.Component {
 
                             <div className="list-one-part">
                                 <div className="label">Are there serving or veteran soldiers, government employees and officials among the shareholders who hold more than 25% of the shares? Or the immediate family members of more than one person? If yes, please note:</div>
-                                <textarea className="big-box" name="" id="" cols="30" rows="6" style={{width: '100%',padding: '10px'}} placeholder="Example: 1. (The shareholders themselves meet the above requirements) Shareholder name ,shareholding ratio , position , certificate type , certificate number. &#10;Example: 2. (The immediate relatives of shareholders meet the above requirements) Shareholder name + shareholding ratio + family relationship with shareholders + position + certificate type + certificate number"></textarea>
+                                <textarea className="big-box" value={this.state.explainInfo} onChange={this.inputChange.bind(this, 'explainInfo')} name="" id="" cols="30" rows="6" style={{width: '100%',padding: '10px'}} placeholder="Example: 1. (The shareholders themselves meet the above requirements) Shareholder name ,shareholding ratio , position , certificate type , certificate number. &#10;Example: 2. (The immediate relatives of shareholders meet the above requirements) Shareholder name + shareholding ratio + family relationship with shareholders + position + certificate type + certificate number"></textarea>
                             </div>
 
                             <div className="asset-part">
@@ -526,7 +580,7 @@ class Index extends React.Component {
                                 <div className="tip">In principle, all electronic certification materials require
                                     Chinese or English versions. If they are not in the above two languages, please
                                     provide the official version issued by the formal translation company with personal
-                                    signature or seal.
+                                    signature or seal. <br/>Uploads must be JPEG (.jpg.jpeg.jpe.jfif and.jif), PNG or PDF
                                 </div>
                                 <div className="asset-info">
                                     <div>
@@ -547,16 +601,30 @@ class Index extends React.Component {
                                             return (
                                                 <div className="pic-item" key={i}>
                                                     <div className="pic-wrap">
-                                                        <img className="pic-value" src={pic}/>
+                                                        {pic.isPdf && (
+                                                            <img className="pic-value" src={pdfImg} alt=""/>
+                                                        )}
+                                                        {!pic.isPdf && (
+                                                            <img className="pic-value" src={pic.url}/>
+                                                        )}
                                                     </div>
-                                                    <span className="preview-btn"
-                                                          onClick={this.handlePreview.bind(this, pic)}>
-                                                <img src={previewImg} title={intl.get('clickToPreview')}/>
-                                            </span>
+                                                    {pic.isPdf && (
+                                                        <span className="preview-btn btn-download"
+                                                              onClick={this.downloadPdf.bind(this, pic.url)}>
+                                                            {/*<Icon type="download" />*/}
+                                                            <img src={previewImg} title={intl.get('clickToPreview')}/>
+                                                        </span>
+                                                    )}
+                                                    {!pic.isPdf && (
+                                                        <span className="preview-btn"
+                                                              onClick={this.handlePreview.bind(this, pic.url)}>
+                                                            <img src={previewImg} title={intl.get('clickToPreview')}/>
+                                                        </span>
+                                                    )}
                                                     <span className="preview-btn btn-delete"
                                                           onClick={this.handleDelete.bind(this, i)}>
-                                                <img src={deleteImg} title={intl.get('delete')}/>
-                                            </span>
+                                                            <img src={deleteImg} title={intl.get('delete')}/>
+                                                    </span>
                                                 </div>
                                             )
                                         })}
@@ -570,7 +638,7 @@ class Index extends React.Component {
                                                 className={'pic-uploader'}
                                                 showUploadList={false}
                                                 action={uploadUrl + 'type=4'}
-                                                beforeUpload={beforeUpload}
+                                                beforeUpload={imgOrPdfBeforeUpload}
                                                 onChange={this.handleAssetChange.bind(this)}
                                             >
                                                 <span></span>
@@ -578,6 +646,8 @@ class Index extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+
+                                <div className="error-line">{this.state.picError}</div>
 
                                 <div className="text-center">
                                     <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>
@@ -587,7 +657,7 @@ class Index extends React.Component {
                     )}
 
                     {/*证件照*/}
-                    {this.state.from === 'question' && (
+                    {isSubmit && (
                         <div className="pic-part">
                             <div className="auth-type-wrap">
                                 {/*<div className="label">{intl.get('auth_8')}</div>*/}

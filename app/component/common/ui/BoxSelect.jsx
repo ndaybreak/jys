@@ -54,7 +54,7 @@ class BoxSelect extends React.Component {
         const {placeholder, className, optValue, optLabel, defaultValue} = this.props
         const options = this.props.options || []
         return (
-            <div className={'box-wrap ' + className}>
+            <div className={'box-wrap ' + className + (this.state.isValid ? '' : ' box-invalid')}>
                 {typeof defaultValue !== 'undefined' && (
                     <Select
                         className="box-select"
@@ -63,7 +63,7 @@ class BoxSelect extends React.Component {
                         defaultValue={defaultValue}
                         optionFilterProp="children"
                         onChange={this.boxChange.bind(this)}
-                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                        filterOption={(input, option) => (option.props.children + '').toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
                         {options.map((item, index) => {
                             return <Select.Option value={item[optValue]} key={index}>{item[optLabel]}</Select.Option>
@@ -78,7 +78,7 @@ class BoxSelect extends React.Component {
                         placeholder={placeholder}
                         optionFilterProp="children"
                         onChange={this.boxChange.bind(this)}
-                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                        filterOption={(input, option) => (option.props.children + '').toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
                         {options.map((item, index) => {
                             return <Select.Option value={item[optValue]} key={index}>{item[optLabel]}</Select.Option>

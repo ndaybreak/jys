@@ -56,38 +56,29 @@ class List extends React.Component {
     }
 
     handleDelete(bank) {
-        this.setState({
-            visible: true,
-            toDeleteId: bank.id
-        })
-    }
-
-    confirm() {
-        this.setState({
-            visible: false,
-            loading: true
-        })
-        deleteBank(this.state.toDeleteId).then(res => {
-            console.log(res)
-            ui.tip({
-                msg: 'Operation success!',
-                width: 230,
-                callback: () => {
-                    this.loadData()
-                }
-            })
-        })
-    }
-
-    cancel() {
-        this.setState({
-            visible: false
+        ui.confirm({
+            msg: 'Are you sure to delete it?',
+            onOk: () => {
+                removeSessionData('isValidateCodeSend')
+                jumpUrl('validate-code.html', {
+                    from: 'bank-list',
+                    id: bank.id
+                })
+                // deleteBank(bank.id).then(res => {
+                //     console.log(res)
+                //     ui.tip({
+                //         msg: 'Operation success!',
+                //         width: 230,
+                //         callback: () => {
+                //             this.loadData()
+                //         }
+                //     })
+                // })
+            }
         })
     }
 
     render() {
-        const {picSignImgUrl, picOneImgUrl, picTwoImgUrl, picThreeImgUrl, previewVisible, previewImage, videoUrl} = this.state
-
         return (
             <div className="bank-page">
                 <Spin spinning={this.state.loading}>
@@ -118,24 +109,6 @@ class List extends React.Component {
                         <button className="btn btn-add" onClick={this.addBank.bind(this)}></button>
                     </div>
                 </Spin>
-
-                <Modal
-                    className="modal-confirm-davao"
-                    visible={this.state.visible}
-                    width={290}
-                    onOk={this.confirm.bind(this)}
-                    onCancel={this.cancel.bind(this)}
-                    footer={[
-                        <Button key="back" className="btn-cancel" onClick={this.cancel.bind(this)}>{intl.get('cancelBtn')}</Button>,
-                        <Button key="submit" className="btn-submit" type="primary" loading={this.state.loading} onClick={this.confirm.bind(this)}>
-                            {intl.get('confirmBtn')}
-                        </Button>,
-                    ]}
-                >
-                    <div className="davao-confirm-wrap">
-                        <div className="title simple">Are you sure to delete it?</div>
-                    </div>
-                </Modal>
             </div>
         );
     }

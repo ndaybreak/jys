@@ -721,6 +721,33 @@ ul, ol {
       margin-left: 0;
     }
   }
+
+  .box-number {
+    position: relative;
+    display: inline-block;
+    .box-number-unit {
+      position: absolute;
+      color: #b5b5b5;
+      font-size: 12px;
+      top: 5px;
+      right: 17px;
+      -moz-user-select:none;
+      -webkit-user-select:none;
+      user-select:none;
+    }
+    .box-number-input {
+      height: 27px;
+      line-height: 25px;
+      width: 190px;
+      border: 1px solid #b5b5b5;
+      padding-left: 7px;
+      background-color: #f0f0f6;
+      &:focus {
+        border-color: #2d8ff2;
+      }
+    }
+  }
+
   .box-invalid {
     border-color: #ff3f3f !important;
     .ant-input {
@@ -732,6 +759,10 @@ ul, ol {
     font-size: 14px;
     color: #ff3f3f;
   }
+}
+
+.box-invalid .box-select .ant-select-selection {
+  border-color: #ff3f3f;
 }
 
 .tip-success {
@@ -919,4 +950,44 @@ textarea {
 
 .error-line {
   color: red;
+}
+
+.sto-modal-confirm {
+  .anticon-question-circle,
+  .anticon {
+    display: none;
+  }
+  .ant-modal-body {
+    padding: 0;
+  }
+  .ant-modal-confirm-title {
+    padding: 44px 32px 7px;
+    text-align: center;
+    color: #111111;
+    font-size: 20px;
+  }
+  .ant-modal-confirm-btns {
+    display: block;
+    width: 100%;
+    & > button:first-child,
+    & > button:last-child {
+      float: left;
+      width: 50%;
+      margin: 0;
+      padding: 0;
+      height: 50px;
+      font-size: 16px;
+    }
+    & > button:first-child {
+      color: #0DA9FF;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    & > button:last-child {
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
 }

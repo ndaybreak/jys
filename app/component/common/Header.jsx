@@ -1,7 +1,7 @@
 import React from 'react'
 import intl from 'react-intl-universal'
 import { getPageName, isLogin, isLangZH, jumpUrl } from '@/utils'
-import { removeToken } from '@/utils/auth'
+import { removeToken, refreshAccountInfo } from '@/utils/auth'
 import { logout } from '@/api'
 import { LANG } from '@/data/static'
 import '@/public/css/common.pcss'
@@ -11,6 +11,10 @@ import userUpImg from '@/public/img/个人中心up.png'
 import userDownImg from '@/public/img/个人中心down.png'
 
 const activeMenu = getPageName()
+
+if(isLogin()) {
+    refreshAccountInfo()
+}
 
 class Header extends React.Component {
     constructor(props) {

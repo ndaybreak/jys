@@ -1,7 +1,7 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
-import { getCommissionList, getAssetList, getAccountInfo } from '@/api'
+import { getCommissionList, getAssetList } from '@/api'
 import { latestDealSub } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
 

@@ -2,7 +2,7 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import QuotSelect from './QuotSelect';
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
-import { getCommissionList, getAssetList, getAccountInfo } from '@/api'
+import { getCommissionList, getAssetList } from '@/api'
 import { entrustOrderSub } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
 
@@ -36,6 +36,9 @@ class User extends React.Component {
     }
 
     getPrecision(val) {
+        if(String(val).indexOf('.') === -1) {
+            return 0
+        }
         return (val + '').split('.')[1].length
     }
     getPrecisionList(precision) {

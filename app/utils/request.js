@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { isLangZH, ui, jumpUrl, getPage } from '@/utils'
 import { getToken, removeToken } from '@/utils/auth'
+import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
@@ -13,7 +14,8 @@ service.interceptors.request.use(config => {
   if (getToken()) {
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     // config.headers['X-Token'] = getToken()
-    config.headers['content-type'] = 'application/x-www-form-urlencoded'
+    // config.headers['content-type'] = 'application/x-www-form-urlencoded'
+    config.headers['content-type'] = 'application/json'
     // config.data = config.data || {}
     // config.params = config.params || {}
     // config.params.adminToken = store.getters.token
@@ -51,16 +53,19 @@ service.interceptors.response.use(
         // 请自行在引入 MessageBox
         // import { Message, MessageBox } from 'element-ui'
           ui.tip({
+              width: 280,
               msg: res.info,
               callback: () => {
                   removeToken()
-                  jumpUrl('login.html', {from: getPage()})
+                  // jumpUrl('login.html', {from: getPage()})
+                  jumpUrl('index.html')
               }
           })
           // window.location.href='login.html'
+      } else {
+          // message.error(res.info)
       }
-      console.log(res.info)
-      return Promise.reject(res.info)
+      return Promise.reject(res)
     } else {
       if (res.code) {
         return response.data

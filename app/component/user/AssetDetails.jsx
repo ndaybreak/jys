@@ -2,7 +2,7 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import { getMarketCoinQuot, getTargetPairsQuot } from '@/api/quot'
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, parseTime } from '@/utils'
-import { getCommissionList, getAssetList, getAccountInfo, getCoinAssetLog, getCoinList } from '@/api'
+import { getCommissionList, getAssetList, getCoinAssetLog, getCoinList } from '@/api'
 import BoxSelect from '@/component/common/ui/BoxSelect'
 import { Pagination, Spin } from 'antd';
 

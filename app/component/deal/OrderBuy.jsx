@@ -8,8 +8,7 @@ import { getEntrustmentList, entrustmentTrade } from '@/api'
 import BoxNumber from '@/component/common/ui/BoxNumber'
 // import { getTargetPairsQuot } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
-
-const SEND_FLAG = 'isValidateCodeSend'
+import { checkAuth } from '@/utils/auth'
 
 class User extends React.Component {
     constructor(props) {
@@ -121,13 +120,10 @@ class User extends React.Component {
     }
 
     handleBuy() {
+        if(!checkAuth([ 'auth', 'questionnaire', 'capitalPassword'])) {
+            return
+        }
         if(this.validate()) {
-            if(!this.props.hasMoneyPwd) {
-                ui.tip({
-                    msg: intl.get('notSetCapitalPassword')
-                })
-                return
-            }
             this.setState({
                 visible: true,
                 passwordMsg: '',
@@ -186,7 +182,7 @@ class User extends React.Component {
         }
 
         // setSessionData('dealOrder', para)
-        // removeSessionData(SEND_FLAG)
+        // removeSessionData('isValidateCodeSend')
         // jumpUrl('validate-code.html', {
         //     from: 'deal',
         //     base: this.props.base,
@@ -210,7 +206,7 @@ class User extends React.Component {
             this.cancelConfirm()
             ui.tip({
                 width: 330,
-                msg: error
+                msg: error.info
             })
         })
     }

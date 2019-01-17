@@ -2,17 +2,27 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
 import ReactCodeInput from 'react-code-input'
-import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH} from '@/utils'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, format2Percentage} from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import '@/public/css/legal-withdraw.pcss';
-import {getCountryList, saveBasicAuthInfo, savePicAuthInfo, queryAuthInfo, getAuthTypeList, getAuthVideoCode, getBankList} from '@/api'
+import {
+    getCountryList,
+    saveBasicAuthInfo,
+    savePicAuthInfo,
+    queryAuthInfo,
+    getAuthTypeList,
+    getAuthVideoCode,
+    getBankList,
+    getLegalConfigInfo
+} from '@/api'
 import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
-import { refreshAccountInfo } from '@/utils/auth'
+import BoxNumber from '@/component/common/ui/BoxNumber'
+import {refreshAccountInfo} from '@/utils/auth'
 import Record from './Record'
 
-const SEND_FLAG = 'isValidateCodeSend'
+let RATE = 0
 
 function formatBankData(data) {
     const bank = {}
@@ -21,7 +31,7 @@ function formatBankData(data) {
     data.forEach((item, i) => {
         item.account = item.pay_account_name + ' (' + item.pay_account_number + ')'
         bank[item.bankName] = 1
-        if(account[item.bankName]) {
+        if (account[item.bankName]) {
             account[item.bankName].push(item)
         } else {
             account[item.bankName] = [item]
@@ -46,7 +56,9 @@ class Index extends React.Component {
             loading: false,
             visible: false,
             passwordMsg: '',
-            password: ''
+            password: '',
+            fee: 0,
+            precision: 0.01
         }
     }
 
@@ -57,6 +69,20 @@ class Index extends React.Component {
                 bankList: data[0],
                 accountData: data[1]
             })
+        })
+        const para = {
+            type: 2,
+            coinId: getSearchPara('id')
+        }
+        getLegalConfigInfo(para).then(res => {
+            this.setState({
+                currency: getSearchPara('code'),
+                available: res.data.availableBalance,
+                limit: res.data.min_quantity,
+                rate: format2Percentage(res.data.fee_rate),
+                precision: res.data.withdraw_precision
+            })
+            RATE = res.data.fee_rate || 0
         })
     }
 
@@ -89,7 +115,7 @@ class Index extends React.Component {
     }
 
     handleOk() {
-        if(this.state.password.length < 6) {
+        if (this.state.password.length < 6) {
             this.setState({
                 passwordMsg: intl.get('pwdTip')
             })
@@ -104,7 +130,7 @@ class Index extends React.Component {
                 moneyPassword: this.state.password
             }
             setSessionData('legalWithdrawData', para)
-            removeSessionData(SEND_FLAG)
+            removeSessionData('isValidateCodeSend')
             jumpUrl('validate-code.html', {
                 from: 'legal-withdraw'
             })
@@ -117,6 +143,12 @@ class Index extends React.Component {
         })
     }
 
+    amountChange(val) {
+        this.setState({
+            fee: (RATE * val).toFixed(2)
+        })
+    }
+
     render() {
         return (
             <Spin spinning={this.state.loading}>
@@ -124,20 +156,28 @@ class Index extends React.Component {
                     <div className="tip-part">
                         <div className="tip">
                             Minimum Withdrawal：$100, Max daily withdrawal: $500000 <br/>
-                            Base Withdrawal Fee is 0.2%, subject to a minimum of $20, the fee for over-withdrawal is 3%（Excluding Bank Fees.）<br/>
-                            Over-withdrawal: more than 4 (inclusive) transactions or more than $1,000,000(inclusive) equivalent cash withdrawals within last 30 days. <br/>
-                            The withdraw bank account must have the same name as your Coinsuper account, it normally takes 3 to 5 working days for the money to reflect in your bank account.
+                            Base Withdrawal Fee is 0.2%, subject to a minimum of $20, the fee for over-withdrawal is
+                            3%（Excluding Bank Fees.）<br/>
+                            Over-withdrawal: more than 4 (inclusive) transactions or more than $1,000,000(inclusive)
+                            equivalent cash withdrawals within last 30 days. <br/>
+                            The withdraw bank account must have the same name as your Coinsuper account, it normally
+                            takes 3 to 5 working days for the money to reflect in your bank account.
                         </div>
                     </div>
                     <div className="info-part withdraw-info-part">
                         <div className="withdraw-info">
-                            <div className="available">Available: <span className="total">30.00</span><span className="currency">HKD</span></div>
-                            <div className="limit">Limit Per Transaction: <span className="value">10000.00</span></div>
+                            <div className="available">Available: <span
+                                className="total">{this.state.available}</span><span
+                                className="currency">{this.state.currency}</span></div>
+                            <div className="limit">Limit Per Transaction: <span
+                                className="value">{this.state.limit}</span></div>
                             <div className="clearfix" style={{paddingLeft: '202px'}}>
-                                <Box ref="amount" className="amount-box" placeholder="Please enter withdrawal amount"
+                                <BoxNumber ref="amount" className="amount-box" step={this.state.precision}
+                                     placeholder="Please enter withdrawal amount" onChange={this.amountChange.bind(this)}
                                      validates={['notNull']}/>
                             </div>
-                            <div className="fee">Cash Withdrawal Fee : <span className="value">20.00</span></div>
+                            <div className="fee">Cash Withdrawal Fee({this.state.rate}) : <span
+                                className="value">{this.state.fee}</span></div>
                         </div>
                         <div className="clearfix">
                             <BoxSelect ref="bank" className="auth-box-left"
@@ -164,8 +204,10 @@ class Index extends React.Component {
                         onOk={this.handleOk.bind(this)}
                         onCancel={this.handleCancel.bind(this)}
                         footer={[
-                            <Button key="back" className="btn-cancel" onClick={this.handleCancel.bind(this)}>{intl.get('cancelBtn')}</Button>,
-                            <Button key="submit" className="btn-submit" type="primary" onClick={this.handleOk.bind(this)}>
+                            <Button key="back" className="btn-cancel"
+                                    onClick={this.handleCancel.bind(this)}>{intl.get('cancelBtn')}</Button>,
+                            <Button key="submit" className="btn-submit" type="primary"
+                                    onClick={this.handleOk.bind(this)}>
                                 {intl.get('confirmBtn')}
                             </Button>,
                         ]}
@@ -174,7 +216,8 @@ class Index extends React.Component {
                             <div className="title">{intl.get('capitalPasswordTip')}</div>
                             <div className="submit-div">
                                 {this.state.visible && (
-                                    <ReactCodeInput className="password-value" type='password' fields={6} onChange={this.passwordChange.bind(this)}/>
+                                    <ReactCodeInput className="password-value" type='password' fields={6}
+                                                    onChange={this.passwordChange.bind(this)}/>
                                 )}
                             </div>
                             <div className="error">

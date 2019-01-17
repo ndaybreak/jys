@@ -14,10 +14,12 @@ import userPhoneImg from '@/public/img/user_phone.png'
 import userEmailImg from '@/public/img/user_email.png'
 import userRecommendImg from '@/public/img/user_recommend.png'
 import userAssetImg from '@/public/img/user_asset.png'
-import { getCommissionList, getAssetList, getAccountInfo, getCoinAssetLog, getCoinList } from '@/api'
+import { getCommissionList, getAssetList, getCoinAssetLog, getCoinList, getBankList } from '@/api'
+import { getUser, checkAuth } from '@/utils/auth'
 import { getPriceBtcQuot, getTargetPairsQuot } from '@/api/quot'
-import {getSessionData} from "../../data";
 import AssetDetails from './AssetDetails'
+
+const user = getUser()
 
 const getUserLevelImg = (level) => {
     const imgs = [userLevel1Img, userLevel2Img, userLevel3Img]
@@ -37,16 +39,16 @@ const getBtcTotalPrice = (priceList, assetObj) => {
 }
 
 const getAssets = (data) => {
-    const result = []
-    let index = -1
-    data.forEach((item,i) => {
-        if(item.coin_code === 'HKD') {
-            index = i
+    const resultFiat = []
+    const resultVC = []
+    data.forEach(item => {
+        if(item.isVC === 1) {
+            resultVC.push(item)
+        } else if(item.isVC === 2) {
+            resultFiat.push(item)
         }
     })
-    result[0] = data.splice(index, 1)
-    result[1] = data
-    return result
+    return [resultVC, resultFiat]
 }
 
 class User extends React.Component {
@@ -56,8 +58,6 @@ class User extends React.Component {
             loading: false,
             userLevelImg: '',
             merchantLevelImg: merchantLevelCommonImg,
-            isAuth: false,
-            isMerchant: false,
             assetList: [],
             legalAssetList: [],
             totalBtc: '',
@@ -79,8 +79,8 @@ class User extends React.Component {
         getAssetList().then(res => {
             let asset = getAssets(res.data)
             this.setState({
-                assetList: asset[1],
-                legalAssetList: asset[0]
+                assetList: asset[0],
+                legalAssetList: asset[1]
             })
             return Promise.resolve(res.data)
         }).then(assetList => {
@@ -121,32 +121,24 @@ class User extends React.Component {
                 })
             })
         })
-
-        const user = getSessionData('user')
         this.setState({
-            isMerchant: user.is_merchant,
             userLevelImg: getUserLevelImg(user.customer_level),
-            merchantLevelImg: getMerchantLevelImg(user.merchant_level),
-            isAuth: user.auth_application_status === 2,
-            email: user.email
+            merchantLevelImg: getMerchantLevelImg(user.merchant_level)
         })
-        // getAccountInfo().then(res => {
-        //     this.setState({
-        //         isMerchant: res.data.is_merchant,
-        //         userLevelImg: getUserLevelImg(res.data.customer_level),
-        //         merchantLevelImg: getMerchantLevelImg(res.data.merchant_level),
-        //         isAuth: res.data.auth_application_status === 2,
-        //         email: res.data.email
-        //     })
-        // })
     }
 
-    goAuth() {
-        const user = getSessionData('user')
+    goAuth(isVerifying, e) {
+        if(isVerifying) {
+            ui.tip({
+                width: 300,
+                msg: 'Your KYC information is under review. Please wait patiently.  '
+            })
+            return
+        }
         if(user.type == 1) {
-            jumpUrl('auth.html?from=register')
+            jumpUrl('auth.html')
         } else {
-            jumpUrl('auth-corporate.html?from=register')
+            jumpUrl('auth-corporate.html')
         }
     }
 
@@ -169,6 +161,9 @@ class User extends React.Component {
     }
 
     goDesposit(item) {
+        if(!checkAuth(['auth', 'capitalPassword'])) {
+            return
+        }
         jumpUrl('recharge.html', {
             id: item.id,
             code: item.coin_code
@@ -176,22 +171,56 @@ class User extends React.Component {
     }
 
     goWithdrawal(item) {
+        if(!checkAuth(['auth', 'capitalPassword'])) {
+            return
+        }
         jumpUrl('withdraw.html', {
             id: item.id,
             code: item.coin_code
         })
     }
     goLegalDesposit(item) {
-        jumpUrl('legal-recharge.html', {
-            id: item.id,
-            code: item.coin_code
+        if(!checkAuth(['auth', 'capitalPassword'])) {
+            return
+        }
+        getBankList(item.id).then(res => {
+            if(res.data.length) {
+                jumpUrl('legal-recharge.html', {
+                    id: item.id,
+                    code: item.coin_code
+                })
+            } else {
+                ui.confirm({
+                    msg: 'You need to bind an available bank account first. ',
+                    onOk: () => {
+                        jumpUrl('bank-add.html')
+                    }
+                })
+            }
         })
     }
 
     goLegalWithdrawal(item) {
-        jumpUrl('legal-withdraw.html', {
-            id: item.id,
-            code: item.coin_code
+        if(!checkAuth(['auth', 'capitalPassword'])) {
+            return
+        }
+        getBankList(item.id).then(res => {
+            const isValid = res.data.some(item => {
+                return item.status !== 0
+            })
+            if(!isValid) {
+                ui.confirm({
+                    msg: 'You need to bind an available bank account first. ',
+                    onOk: () => {
+                        jumpUrl('bank-add.html')
+                    }
+                })
+            } else {
+                jumpUrl('legal-withdraw.html', {
+                    id: item.id,
+                    code: item.coin_code
+                })
+            }
         })
     }
 
@@ -212,7 +241,7 @@ class User extends React.Component {
     }
 
     render() {
-        const { userLevelImg, merchantLevelImg, isAuth, isMerchant } = this.state
+        const { userLevelImg, merchantLevelImg, isMerchant } = this.state
 
         return (
             <div className="user-page">
@@ -220,33 +249,36 @@ class User extends React.Component {
                     <div className="user-info-inner">
                         <div className="info-left">
                             <img src={userIconImg} alt=""/>
-                            <span>{this.state.email}</span>
+                            <span>{user.email}</span>
                             <img className="user-level" src={userLevelImg} alt="" onClick={this.showLevel.bind(this)}/>
-                            {isMerchant && (
-                                <img src={merchantLevelImg} alt=""/>
-                            )}
-                            {isAuth && (
+                            {/*{user.is_merchant && (*/}
+                                {/*<img src={merchantLevelImg} alt=""/>*/}
+                            {/*)}*/}
+                            {user.auth_application_status === 2 && (
                                 <button className="btn btn-authed">{intl.get('verified')}</button>
                             )}
-                            {!isAuth && (
-                                <button className="btn btn-auth" onClick={this.goAuth.bind(this)}>{intl.get('toVerified')}</button>
+                            {!user.auth_application_status && (
+                                <button className="btn btn-auth" onClick={this.goAuth.bind(this, false)}>{intl.get('toVerified')}</button>
                             )}
-                            {isMerchant && (
-                                <button className="btn btn-agent">{intl.get('merchantCorner')}</button>
+                            {user.auth_application_status === 3 && (
+                                <button className="btn btn-auth" onClick={this.goAuth.bind(this, true)}>{intl.get('verifying')}</button>
                             )}
+                            {/*{user.is_merchant && (*/}
+                                {/*<button className="btn btn-agent">{intl.get('merchantCorner')}</button>*/}
+                            {/*)}*/}
                         </div>
                         <div className="info-right">
                             <div className="asset-line">
-                                {intl.get('myFunds')}
-                                <a className="info-link link-detail" href="javascript:" onClick={this.showVariationDetails.bind(this)}>Variation details</a>
+                                {/*{intl.get('myFunds')}*/}
+                                <a className="info-link link-detail" href="javascript:" onClick={this.showVariationDetails.bind(this)}>Variation my assets details</a>
                                 {/*<a className="info-link link-recharge" href="recharge.html">{intl.get('deposit')}</a>*/}
                                 {/*<a className="info-link" href="withdraw.html">{intl.get('withdrawal')}</a>*/}
                             </div>
-                            <div>
-                                {intl.get('estimatedValue')}:
-                                {/*{this.state.totalBtc} BTC*/}
-                                <span className="legal-value">{this.state.total}</span>
-                            </div>
+                            {/*<div>*/}
+                                {/*{intl.get('estimatedValue')}:*/}
+                                {/*/!*{this.state.totalBtc} BTC*!/*/}
+                                {/*<span className="legal-value">{this.state.total}</span>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
                 </div>
@@ -268,7 +300,7 @@ class User extends React.Component {
                         <div className="content-item item-left">
                             <img src={userPhoneImg} alt=""/>
                             <span>{intl.get('bindPhone')}</span>
-                            <button className="btn btn-primary btn-update">{intl.get('bind')}</button>
+                            <button className="btn btn-primary btn-update">{user.info ? intl.get('modify') : 'Add'}</button>
                         </div>
                         <div className="content-item">
                             <img src={userEmailImg} alt=""/>
@@ -344,8 +376,9 @@ class User extends React.Component {
                             return (
                                 <div className="clearfix asset-item" key={asset.id}>
                                     <div className="asset-col txt-left">
-                                        <img src={asset.icon} alt=""/>
-                                        {asset.coin_code}<span className="full-name">({asset.coin_name})</span>
+                                        {/*<img src={asset.icon} alt=""/>*/}
+                                        {asset.coin_code}
+                                        {/*<span className="full-name">({asset.coin_name})</span>*/}
                                     </div>
                                     <div className="asset-col">{asset.total_balance}</div>
                                     <div className="asset-col">{asset.available_balance}</div>
@@ -373,29 +406,29 @@ class User extends React.Component {
                             <div className="level-col level-col-1">{intl.get('level')}</div>
                             <div className="level-col level-col-2">{intl.get('withdrawalLimit')}</div>
                             <div className="level-col level-col-3">{intl.get('exchangeAuth')}</div>
-                            <div className="level-col level-col-4">{intl.get('otcLimitAuth')}</div>
-                            <div className="level-col level-col-5">{intl.get('otcLimit')}</div>
+                            {/*<div className="level-col level-col-4">{intl.get('otcLimitAuth')}</div>*/}
+                            {/*<div className="level-col level-col-5">{intl.get('otcLimit')}</div>*/}
                         </div>
                         <div className="clearfix level-body">
                             <div className="level-col level-col-1"><img src={userLevel1Img} alt=""/></div>
                             <div className="level-col level-col-2">{intl.get('level_lower')}</div>
                             <div className="level-col level-col-3">{intl.get('level_has')}</div>
-                            <div className="level-col level-col-4">{intl.get('level_no')}</div>
-                            <div className="level-col level-col-5">{intl.get('level_no')}</div>
+                            {/*<div className="level-col level-col-4">{intl.get('level_no')}</div>*/}
+                            {/*<div className="level-col level-col-5">{intl.get('level_no')}</div>*/}
                         </div>
                         <div className="clearfix level-body">
                             <div className="level-col level-col-1"><img src={userLevel2Img} alt=""/></div>
                             <div className="level-col level-col-2">{intl.get('level_middle')}</div>
                             <div className="level-col level-col-3">{intl.get('level_has')}</div>
-                            <div className="level-col level-col-4">{intl.get('level_has')}</div>
-                            <div className="level-col level-col-5">{intl.get('level_lower')}</div>
+                            {/*<div className="level-col level-col-4">{intl.get('level_has')}</div>*/}
+                            {/*<div className="level-col level-col-5">{intl.get('level_lower')}</div>*/}
                         </div>
                         <div className="clearfix level-body">
                             <div className="level-col level-col-1"><img src={userLevel3Img} alt=""/></div>
                             <div className="level-col level-col-2">{intl.get('level_higher')}</div>
                             <div className="level-col level-col-3">{intl.get('level_has')}</div>
-                            <div className="level-col level-col-4">{intl.get('level_has')}</div>
-                            <div className="level-col level-col-5">{intl.get('level_higher')}</div>
+                            {/*<div className="level-col level-col-4">{intl.get('level_has')}</div>*/}
+                            {/*<div className="level-col level-col-5">{intl.get('level_higher')}</div>*/}
                         </div>
                     </div>
                 </Modal>

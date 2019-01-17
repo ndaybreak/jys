@@ -19,7 +19,8 @@ function Tip(params={}) {
         className: 'tip-success',
         iconType: "none",
         width: (params.width || 209) + "px",
-        style:{top: 250},
+        // style:{top: 250},
+        centered: true,
         content: <Content/>,
         footer: ' '
     });
@@ -34,10 +35,27 @@ function Tip(params={}) {
         params.callback && params.callback()
     }, secondsToGo * 1000);
 }
+function Confirm(params={}) {
+    Modal.confirm({
+        className: 'sto-modal-confirm',
+        title: params.msg,
+        // content: 'Bla bla ...',
+        okText: params.okText || 'Confirm',
+        cancelText: params.cancelText || 'Cancel',
+        centered: true,
+        onOk: () => {
+            params.onOk && params.onOk()
+        },
+        onCancel: () => {
+            params.onCancel && params.onCancel()
+        }
+    });
+}
 
 
 const ui = {
-    tip: Tip
+    tip: Tip,
+    confirm: Confirm
 }
 
 export { ui }

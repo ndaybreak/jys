@@ -1,12 +1,13 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
-import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH} from '@/utils'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isPdf} from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import '@/public/css/auth.pcss';
 import previewImg from '@/public/img/放大镜up.png'
 import deleteImg from '@/public/img/删除.png'
 import videoDemoImg from '@/public/img/register-video-demo.png'
+import pdfImg from '@/public/img/icon_pdf.png'
 import {getCountryList, saveBasicAuthInfo, savePicAuthInfo, queryAuthInfo, getAuthTypeList, getAuthVideoCode} from '@/api'
 import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
@@ -26,6 +27,18 @@ function beforeUpload(file) {
     }
     return isImg && isLt5M;
 }
+function imgOrPdfBeforeUpload(file) {
+    const isImgOrPdf = file.type.indexOf('image') >= 0 || file.type.indexOf('pdf') >= 0;
+    if (!isImgOrPdf) {
+        message.error('Please upload photo or pdf');
+    }
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+        // message.error(intl.get('pic5MTip'));
+        message.error('The max size of the file is 5MB');
+    }
+    return isImgOrPdf && isLt5M;
+}
 
 function beforeVideoUpload(file) {
     const isVideo = file.type.indexOf('video') >= 0;
@@ -38,6 +51,20 @@ function beforeVideoUpload(file) {
     // }
     return isVideo;
 }
+
+const formatPicList = str => {
+    const list = String(str).split(',')
+    const picList = []
+    list.forEach(url => {
+        picList.push({
+            isPdf: isPdf(url),
+            url: url
+        })
+    })
+    return picList
+}
+
+const isSubmit = getSearchPara('isSubmit') === 'Y'
 
 class Index extends React.Component {
     constructor(props) {
@@ -56,25 +83,58 @@ class Index extends React.Component {
             picSignImgUrl: '',
             picOneHover: false,
             picOneError: '',
+            // picOneImgUrl: 'https://hkstox.io/files/coin/e73c82e2-3dd7-4360-8eed-4bd46834053d_BNB.png',
             picOneImgUrl: '',
             picTwoHover: false,
             picTwoError: '',
+            // picTwoImgUrl: 'https://hkstox.io/files/coin/e73c82e2-3dd7-4360-8eed-4bd46834053d_BNB.png',
             picTwoImgUrl: '',
             picThreeHover: false,
             picThreeError: '',
             picThreeImgUrl: '',
+            // picList: [{
+            //     url: 'https://hkstox.io/files/coin/e73c82e2-3dd7-4360-8eed-4bd46834053d_BNB.png',
+            //     isPdf: false
+            // }],
             picList: [],
-            from: '',
+            // videoUrl: 'http://192.169.232.54:8080/files/7ae60467-a938-4f12-992e-aae47e7f39ea_%E7%AC%AC%E5%8D%81%E6%9C%9F.mp4',
             videoUrl: '',
             videoError: '',
-            videoCode: ''
+            videoCode: '',
+            picError: '',
+            educationList: [{
+                id: 1,
+                name: 'Primary or below'
+            },{
+                id: 2,
+                name: 'Secondary'
+            },{
+                id: 3,
+                name: 'University'
+            },{
+                id: 4,
+                name: 'Post Graduate'
+            }],
+            workNatureList: [{
+                id: 1,
+                name: 'Employed'
+            },{
+                id: 2,
+                name: 'Self-employed'
+            },{
+                id: 3,
+                name: 'Student'
+            },{
+                id: 4,
+                name: 'Retired'
+            },{
+                id: 5,
+                name: 'Others'
+            }]
         }
     }
 
     componentDidMount() {
-        this.setState({
-            from: getSearchPara('from')
-        })
         getCountryList().then(res => {
             this.setState({
                 countryList: res.data
@@ -89,7 +149,8 @@ class Index extends React.Component {
         //             picSignImgUrl: data.specimen_signature,
         //             picOneImgUrl: data.credential_front_pic_addr,
         //             picTwoImgUrl: data.credential_back_pic_addr,
-        //             picThreeImgUrl: data.credential_sign_pic_addr
+        //             picList: formatPicList(data.picture_information)
+        //             // picThreeImgUrl: data.credential_sign_pic_addr
         //         }))
         //     }
         // })
@@ -99,7 +160,7 @@ class Index extends React.Component {
             })
         })
 
-        if(getSearchPara('from') === 'question') {
+        if(isSubmit) {
             getAuthVideoCode().then(res => {
                 this.setState({
                     videoCode: res.data.headingCode
@@ -139,7 +200,10 @@ class Index extends React.Component {
         }
         if (info.file.status === 'done') {
             const state = {loading: false, picList: this.state.picList}
-            state.picList.push(info.file.response.data.fileUrl)
+            state.picList.push({
+                isPdf: isPdf(info.file.response.data.fileUrl),
+                url: info.file.response.data.fileUrl
+            })
             this.setState(state)
         }
     }
@@ -148,21 +212,35 @@ class Index extends React.Component {
         const fullNameValid = this.refs['fullName'].validate()
         const birthdayValid = this.refs['birthday'].validate()
         const birthPlaceValid = this.refs['birthPlace'].validate()
-        const presentAddrValid = this.refs['presentAddr'].validate()
+        // const presentAddrValid = this.refs['presentAddr'].validate()
         const premanentAddrValid = this.refs['premanentAddr'].validate()
         const nationalityValid = this.refs['nationality'].validate()
-        const postalCodeValid = this.refs['postalCode'].validate()
+        const mobilePhoneCodeValid = this.refs['mobilePhoneCode'].validate()
+        const mobilePhoneValid = this.refs['mobilePhone'].validate()
+        const educationValid = this.refs['education'].validate()
 
         const fundsSourceValid = this.refs['fundsSource'].validate()
         const workNatureValid = this.refs['workNature'].validate()
         const companyNameValid = this.refs['companyName'].validate()
-        const tinValid = this.refs['tin'].validate()
-        // const sssNoValid = this.refs['sssNo'].validate()
+        const officePhoneCodeValid = this.refs['officePhoneCode'].validate()
+        const officePhoneValid = this.refs['officePhone'].validate()
+        const faxNoValid = this.refs['faxNo'].validate()
+        const picValid = !!this.state.picList.length
+        if(picValid) {
+            this.setState({
+                picError: ''
+            })
+        } else {
+            this.setState({
+                picError: 'Please upload picture.'
+            })
+        }
         //
         // const picSignValid = !!this.state.picSignImgUrl
 
-        return fullNameValid && birthdayValid && postalCodeValid && birthPlaceValid && presentAddrValid && premanentAddrValid &&
-            workNatureValid && companyNameValid && tinValid && fundsSourceValid && nationalityValid
+        return fullNameValid && birthdayValid && birthPlaceValid && premanentAddrValid &&
+            workNatureValid && companyNameValid && fundsSourceValid && nationalityValid && educationValid &&
+            faxNoValid && picValid && mobilePhoneCodeValid && mobilePhoneValid && officePhoneCodeValid && officePhoneValid
     }
 
     validateHighInfo() {
@@ -188,23 +266,28 @@ class Index extends React.Component {
             fullName: this.refs['fullName'].getValue(),
             birthday: this.refs['birthday'].getValue(),
             placeBirth: this.refs['birthPlace'].getValue(),
-            address: this.refs['presentAddr'].getValue(),
+            // address: this.refs['presentAddr'].getValue(),
             premanentAddress: this.refs['premanentAddr'].getValue(),
+            countryAreaId: this.refs['nationality'].getValue(),
+            areaCode: this.refs['mobilePhoneCode'].getValue(),
+            mobileTelephone: this.refs['mobilePhone'].getValue(),
+            education: this.refs['education'].getValue(),
             sourceFunds: this.refs['fundsSource'].getValue(),
             natureWork: this.refs['workNature'].getValue(),
             organizationName: this.refs['companyName'].getValue(),
-            taxIdentificationNumber: this.refs['tin'].getValue(),
-            // sssGsis: this.refs['sssNo'].getValue(),
-            postalCode: this.refs['postalCode'].getValue(),
-            countryAreaId: this.refs['nationality'].getValue()
-            // specimenSignature: this.state.picSignImgUrl,
+            officeAreaCode: this.refs['officePhoneCode'].getValue(),
+            officeTelephone: this.refs['officePhone'].getValue(),
+            officeFax: this.refs['faxNo'].getValue(),
+            pictureInformation: this.state.picList.map(item => {
+                return item.url
+            }).join(','),
         }
         setSessionData('authBasicData', para)
     }
 
     submitInfo() {
-        const para = getSessionData('authBasicData')
         return new Promise((resolve, reject) => {
+            const para = getSessionData('authBasicData')
             saveBasicAuthInfo(para).then(res => {
                 resolve()
             }, error => {
@@ -244,9 +327,6 @@ class Index extends React.Component {
             // }).then(() => {
             //     return refreshAccountInfo()
             }).then(() => {
-                this.setState({
-                    loading: false
-                })
                 ui.tip({
                     msg: 'Register success!',
                     width: 230,
@@ -261,7 +341,9 @@ class Index extends React.Component {
     handleNext() {
         if (this.validateBasicInfo()) {
             this.storeBasicInfo()
-            jumpUrl('commitment-letter.html')
+            jumpUrl('commitment-letter.html', {
+                from: 'person'
+            })
         }
     }
 
@@ -288,6 +370,10 @@ class Index extends React.Component {
         });
     }
 
+    downloadPdf(url) {
+        window.open(url)
+    }
+
     handleDelete(i) {
         let data = this.state.picList
         data.splice(i, 1)
@@ -302,7 +388,7 @@ class Index extends React.Component {
         return (
             <Spin spinning={this.state.loading}>
                 <div className="auth-page">
-                    {this.state.from === 'register' && (
+                    {!isSubmit && (
                         <div>
                             <div className="info-part">
                                 {/*<div className="tip">{intl.get('auth_1')}</div>*/}
@@ -320,7 +406,7 @@ class Index extends React.Component {
                                          validates={['notNull']} defaultValue={this.state.def.place_birth}/>
                                     <BoxSelect ref="education" className="auth-box-right"
                                                placeholder="Education" validates={['isSelect']} defaultValue={this.state.def.education}
-                                               options={this.state.countryList} optValue="id" optLabel="country_name"/>
+                                               options={this.state.educationList} optValue="id" optLabel="name"/>
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="premanentAddr" className="auth-box"
@@ -332,8 +418,12 @@ class Index extends React.Component {
                                                placeholder="Nationality / Citizenship"
                                                validates={['isSelect']} defaultValue={this.state.def.country_area_id}
                                                options={this.state.countryList} optValue="id" optLabel="country_name"/>
-                                    <Box ref="postalCode" className="auth-box-right" placeholder="Mobile Telephone No."
-                                         validates={['notNull']} defaultValue={this.state.def.postal_code}/>
+                                    <BoxSelect ref="mobilePhoneCode" className="area-code-wrap"
+                                               placeholder="Area Code"
+                                               validates={['isSelect']} defaultValue={this.state.def.area_code}
+                                               options={this.state.countryList} optValue="id" optLabel="area_code"/>
+                                    <Box ref="mobilePhone" className="phone-wrap" placeholder="Mobile Telephone No."
+                                         validates={['notNull']} defaultValue={this.state.def.mobile_telephone}/>
                                 </div>
 
                                 {/*财务信息*/}
@@ -342,22 +432,27 @@ class Index extends React.Component {
                                     <Box ref="fundsSource" className="auth-box-left"
                                          placeholder={intl.get('fundsSource')} validates={['notNull']}
                                          defaultValue={this.state.def.source_funds}/>
-                                    <Box ref="workNature" className="auth-box-right"
-                                         placeholder={intl.get('workNature')} validates={['notNull']}
-                                         defaultValue={this.state.def.nature_work}/>
+                                    <BoxSelect ref="workNature" className="auth-box-right"
+                                               placeholder={intl.get('workNature')}
+                                               validates={['isSelect']} defaultValue={this.state.def.nature_work}
+                                               options={this.state.workNatureList} optValue="id" optLabel="name"/>
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="companyName" className="auth-box-left"
                                          placeholder="Company/Organization Name" validates={['notNull']}
                                          defaultValue={this.state.def.organization_name}/>
-                                    <Box ref="tin" className="auth-box-right" placeholder="Office Telephone No."
+                                    <BoxSelect ref="officePhoneCode" className="area-code-wrap"
+                                               placeholder="Area Code"
+                                               validates={['isSelect']} defaultValue={this.state.def.office_area_code}
+                                               options={this.state.countryList} optValue="id" optLabel="area_code"/>
+                                    <Box ref="officePhone" className="phone-wrap" placeholder="Office Telephone No."
                                          validates={['notNull']}
-                                         defaultValue={this.state.def.tax_identification_number}/>
+                                         defaultValue={this.state.def.office_telephone}/>
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="faxNo" className="auth-box-left"
                                          placeholder="Office Fax No." validates={['notNull']}
-                                         defaultValue={this.state.def.faxNo}/>
+                                         defaultValue={this.state.def.office_fax}/>
                                 </div>
                                 {/*<div className="clearfix">*/}
                                 {/*<Box ref="sssNo" className="auth-box-left" placeholder={intl.get('sssNo')} validates={['notNull']} defaultValue={this.state.def.sss_gsis}/>*/}
@@ -398,7 +493,7 @@ class Index extends React.Component {
                                 <div className="tip">In principle, all electronic certification materials require
                                     Chinese or English versions. If they are not in the above two languages, please
                                     provide the official version issued by the formal translation company with personal
-                                    signature or seal.
+                                    signature or seal. <br/>Uploads must be JPEG (.jpg.jpeg.jpe.jfif and.jif), PNG or PDF
                                 </div>
                                 <div className="asset-info">
                                     <div>
@@ -418,15 +513,29 @@ class Index extends React.Component {
                                             return (
                                                 <div className="pic-item" key={i}>
                                                     <div className="pic-wrap">
-                                                        <img className="pic-value" src={pic}/>
+                                                        {pic.isPdf && (
+                                                            <img className="pic-value" src={pdfImg} alt=""/>
+                                                        )}
+                                                        {!pic.isPdf && (
+                                                            <img className="pic-value" src={pic.url}/>
+                                                        )}
                                                     </div>
-                                                    <span className="preview-btn"
-                                                          onClick={this.handlePreview.bind(this, pic)}>
-                                                <img src={previewImg} title={intl.get('clickToPreview')}/>
-                                            </span>
+                                                    {pic.isPdf && (
+                                                        <span className="preview-btn btn-download"
+                                                              onClick={this.downloadPdf.bind(this, pic.url)}>
+                                                            {/*<Icon type="download" />*/}
+                                                            <img src={previewImg} title={intl.get('clickToPreview')}/>
+                                                        </span>
+                                                    )}
+                                                    {!pic.isPdf && (
+                                                        <span className="preview-btn"
+                                                              onClick={this.handlePreview.bind(this, pic.url)}>
+                                                            <img src={previewImg} title={intl.get('clickToPreview')}/>
+                                                        </span>
+                                                    )}
                                                     <span className="preview-btn btn-delete"
-                                                          onClick={this.handleDelete.bind(this, i)}>
-                                                <img src={deleteImg} title={intl.get('delete')}/>
+                                                              onClick={this.handleDelete.bind(this, i)}>
+                                                    <img src={deleteImg} title={intl.get('delete')}/>
                                             </span>
                                                 </div>
                                             )
@@ -441,7 +550,7 @@ class Index extends React.Component {
                                                 className={'pic-uploader'}
                                                 showUploadList={false}
                                                 action={uploadUrl + 'type=4'}
-                                                beforeUpload={beforeUpload}
+                                                beforeUpload={imgOrPdfBeforeUpload}
                                                 onChange={this.handleAssetChange.bind(this)}
                                             >
                                                 <span></span>
@@ -449,6 +558,8 @@ class Index extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+
+                                <div className="error-line">{this.state.picError}</div>
 
                                 <div className="text-center">
                                     <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>
@@ -458,7 +569,7 @@ class Index extends React.Component {
                     )}
 
                     {/*证件照*/}
-                    {this.state.from === 'question' && (
+                    {isSubmit && (
                         <div className="pic-part">
                             <div className="auth-type-wrap">
                                 {/*<div className="label">{intl.get('auth_8')}</div>*/}

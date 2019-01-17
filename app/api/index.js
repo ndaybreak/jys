@@ -153,7 +153,15 @@ export function saveBasicAuthInfo(para) {
     return request({
         url: '/identity/saveBasicInformation',
         method: 'post',
-        params: para
+        data: {authenticationList: [para]}
+    })
+}
+// 企业级用户认证保存
+export function saveCompanyBasicAuthInfo(para) {
+    return request({
+        url: '/identity/saveEnterpriseBasicInformation',
+        method: 'post',
+        data: {authEnterpriseList: [para]}
     })
 }
 
@@ -165,11 +173,26 @@ export function savePicAuthInfo(para) {
         params: para
     })
 }
+// 保存用户认证图片信息
+export function saveCompanyPicAuthInfo(para) {
+    return request({
+        url: '/identity/saveEnterpriseIdentity',
+        method: 'post',
+        data: {authEnterpriseList: [para]}
+    })
+}
 
 // 查询用户认证信息
 export function queryAuthInfo() {
     return request({
         url: '/identity/queryBasicInformation',
+        method: 'post'
+    })
+}
+// 查询用户认证信息
+export function queryCompanyAuthInfo() {
+    return request({
+        url: '/identity/queryEnterpriseInformation',
         method: 'post'
     })
 }
@@ -204,12 +227,15 @@ export function getAccountInfo(para) {
         method: 'get',
         params: Object.assign({
             email:true,
+            mobile: true,
             customerLevel:true,
             merchantLevel:true,
             agentLevel:true,
             icon:true,
             authApplicationStatus:true,
-            type: true
+            type: true,
+            isMoneyPassword: true,
+            cantrade_kyc: true
         }, para)
     })
 }
@@ -359,27 +385,22 @@ export function saveOrUpdatePayAccountInfo(para) {
         params: para
     })
 }
-// 银行卡列表
-export function getBankList() {
+// 银行卡列表(同时也可检验对应的法币是否有绑定银行卡)
+export function getBankList(id) {
     return request({
         url: '/pay/getPayAccountInfo',
-        method: 'get'
+        method: 'get',
+        params: {
+            coinId: id
+        }
     })
 }
 // 删除银行卡
-export function deleteBank(id) {
+export function deleteBank(para) {
     return request({
-        url: '/pay/delPayAccountInfo',
+        url: '/pay/delPayAccount',
         method: 'post',
-        params: {id: id}
-    })
-}
-// 查询提现记录(法币)
-export function queryWithdrawList(id) {
-    return request({
-        url: '/pay/delPayAccountInfo',
-        method: 'post',
-        params: {id: id}
+        params: para
     })
 }
 // 法币提现
@@ -388,6 +409,70 @@ export function legalWithdraw(para) {
         url: '/withdrawCash/withdraw',
         method: 'post',
         params: para
+    })
+}
+// 法币提现记录
+export function getLegalWithdrawRecord(para) {
+    return request({
+        url: '/withdrawCash/getWithdrawList',
+        method: 'get',
+        params: para
+    })
+}
+
+// 法币充值记录
+export function getLegalRechargeRecord(para) {
+    return request({
+        url: '/rechargeCash/getRechargeList',
+        method: 'get',
+        params: para
+    })
+}
+
+// 法币充值账号列表
+export function getRechargeAccountList() {
+    return request({
+        url: '/company/public/bankAccountInfo',
+        method: 'post'
+    })
+}
+// 法币充值
+export function legalRecharge(para) {
+    return request({
+        url: '/rechargeCash/recharge',
+        method: 'post',
+        params: para
+    })
+}
+// 法币充值提现配置项
+export function getLegalConfigInfo(para) {
+    return request({
+        url: '/withdrawCash/getRechargeOrWithdrawLimit',
+        method: 'get',
+        params: para
+    })
+}
+// 问卷调查考题
+export function getQuestions(para) {
+    return request({
+        url: '/kyc/getAllQuestions',
+        method: 'get'
+    })
+}
+// 问卷调查考题
+export function answerQuestions(data) {
+    return request({
+        url: '/kyc/answerMoreQuestion',
+        method: 'post',
+        data: {list: data}
+    })
+}
+// 数字币充值
+export function vcRecharge(data) {
+    return request({
+        url: '/rechargeCash/saveRecharge',
+        method: 'post',
+        params: data
     })
 }
 

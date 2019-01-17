@@ -13,7 +13,6 @@ import { getCodeForEmail, validateRegisterInfo } from '@/api'
 
 const RadioGroup = Radio.Group;
 
-const SEND_FLAG = 'isValidateCodeSend'
 // let copyData = {}
 
 class Index extends React.Component {
@@ -193,7 +192,7 @@ class Index extends React.Component {
                     imageCode: this.state.imageCode
                 }
                 setSessionData('registerInfo', copyData)
-                removeSessionData(SEND_FLAG)
+                removeSessionData('isValidateCodeSend')
                 jumpUrl('validate-code.html', {
                     from: 'register'
                 })
@@ -202,7 +201,7 @@ class Index extends React.Component {
                     imageCode: '',
                     loading: false,
                     modalVisible: false,
-                    errorMsg: error
+                    errorMsg: error.info
                 })
             })
         }
