@@ -110,7 +110,7 @@ class Index extends React.Component {
                 value: 'Active NFE'
             }, {
                 id: 3,
-                value: 'Passive NFE '
+                value: 'Passive NFE'
             }],
             bankList: [],
             bankData: [[{

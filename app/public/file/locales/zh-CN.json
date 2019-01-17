@@ -10,7 +10,7 @@
   "enterTip": "请输入",
   "isSelectErrorMsg": "请选择",
   "emailErrorMsg": "邮箱地址不正确",
-  "passwordErrorMsg": "8~12位密码，必须包含大写字母和数字",
+  "passwordErrorMsg": "长度为8-12位，最少包括一位大写字母、一位小写字母、一位数字及一个特殊字符",
   "sixDigitNumberErrorMsg": "请输入六位数字",
 
   "market": "市场",

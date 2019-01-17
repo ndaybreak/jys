@@ -10,7 +10,7 @@
   "enterTip": "Please enter ",
   "isSelectErrorMsg": "Please select ",
   "emailErrorMsg": "email invalid",
-  "passwordErrorMsg": "8~12 bits must contain uppercase letters and numbers",
+  "passwordErrorMsg": "8-12 bits in length, including at least one capital letter, one lowercase letter, one digit and a special character",
   "sixDigitNumberErrorMsg": "Please enter 6 digits",
 
   "market": "Market",
