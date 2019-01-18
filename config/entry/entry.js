@@ -138,6 +138,51 @@ module.exports = [{
     title: '资金密码',
     keywords: '验证码'
 }, {
+    name: 'forget-login-password',
+    path: 'login-password/ForgetLoginPassword.jsx',
+    title: '忘记密码',
+    keywords: '忘记密码'
+}, {
+    name: 'modify-login-password',
+    path: 'login-password/ModifyLoginPassword.jsx',
+    title: '修改密码',
+    keywords: '修改密码'
+}, {
+    name: 'modify-phone',
+    path: 'user/ModifyPhone.jsx',
+    title: '绑定手机号',
+    keywords: '绑定手机号'
+}, {
+    name: 'verify-old-phone',
+    path: 'user/VerifyOldPhone.jsx',
+    title: '验证老手机号',
+    keywords: '验证老手机号'
+}, {
+    name: 'modify-email',
+    path: 'user/ModifyEmail.jsx',
+    title: '绑定邮箱号',
+    keywords: '绑定邮箱号'
+}, {
+    name: 'verify-old-email',
+    path: 'user/VerifyOldEmail.jsx',
+    title: '验证老邮箱号',
+    keywords: '验证老邮箱号'
+}, {
+    name: 'fees',
+    path: 'legal/Fees.jsx',
+    title: '费率',
+    keywords: '费率'
+}, {
+    name: 'privacy-policy',
+    path: 'legal/Policy.jsx',
+    title: '费率',
+    keywords: '费率'
+}, {
+    name: 'terms-of-service',
+    path: 'legal/Service.jsx',
+    title: '费率',
+    keywords: '费率'
+}, {
     name: 'commitment-letter',
     path: 'commitment-letter/Index.jsx',
     title: '承诺书',

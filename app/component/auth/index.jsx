@@ -45,10 +45,10 @@ function beforeVideoUpload(file) {
     if (!isVideo) {
         message.error('Please upload video');
     }
-    // const isLt5M = file.size / 1024 / 1024 < 5;
-    // if (!isLt5M) {
-    //     message.error(intl.get('pic5MTip'));
-    // }
+    const isLt5M = file.size / 1024 / 1024 < 100;
+    if (!isLt5M) {
+        message.error('The max size of the file is 100MB');
+    }
     return isVideo;
 }
 

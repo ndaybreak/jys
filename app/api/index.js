@@ -235,6 +235,7 @@ export function getAccountInfo(para) {
             authApplicationStatus:true,
             type: true,
             isMoneyPassword: true,
+            country: true,
             cantrade_kyc: true
         }, para)
     })
@@ -476,3 +477,56 @@ export function vcRecharge(data) {
     })
 }
 
+// 修改登录密码
+export function modifyLoginPwd(para) {
+    return request({
+        url: '/account/updatePassword',
+        method: 'post',
+        params: para
+    })
+}
+
+// 重置登录密码
+export function resetLoginPwd(para) {
+    return request({
+        url: '/account/public/resetPasswordByEmail',
+        method: 'post',
+        params: para
+    })
+}
+
+// 根据手机号获取验证码
+export function getVerifyCodeByPhone(para) {
+    return request({
+        url: '/account/public/sendSmsVerificationCode',
+        method: 'get',
+        params: para
+    })
+}
+
+// 设置手机号码
+export function setPhoneToServer(para) {
+    return request({
+        url: '/account/bindingMobile',
+        method: 'post',
+        params: para
+    })
+}
+
+// 修改手机号码
+export function modifyPhoneToServer(para) {
+    return request({
+        url: '/account/changeMobile',
+        method: 'post',
+        params: para
+    })
+}
+
+// 设置邮箱
+export function modifyEmailToServer(para) {
+    return request({
+        url: '/account/changeEmail',
+        method: 'post',
+        params: para
+    })
+}

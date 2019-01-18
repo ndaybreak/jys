@@ -2,6 +2,7 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import { Icon, Modal, Button, Upload, message, Spin } from 'antd'
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
+import { setSessionData } from '@/data'
 import '@/public/css/user.pcss';
 import userIconImg from '@/public/img/user_icon.png'
 import userLevel1Img from '@/public/img/user_level_1.png'
@@ -157,7 +158,23 @@ class User extends React.Component {
     openModifyPage(page) {
         if(page === 'capitalPassword') {
             jumpUrl('set-capital-password.html')
+        } else {
+            setSessionData('nextPageName', 'modify-phone');
+            jumpUrl('validate-code.html', {'from': 'user'});
         }
+    }
+
+    modifyPhone() {
+        if (user.mobile_number) {
+            jumpUrl('verify-old-phone.html');
+        } else {
+            setSessionData('nextPageName', 'modify-phone');
+            jumpUrl('validate-code.html', {'from': 'user'});
+        }
+    }
+
+    modifyEmail() {
+        jumpUrl('verify-old-email.html');
     }
 
     goDesposit(item) {
@@ -184,17 +201,23 @@ class User extends React.Component {
             return
         }
         getBankList(item.id).then(res => {
-            if(res.data.length) {
-                jumpUrl('legal-recharge.html', {
-                    id: item.id,
-                    code: item.coin_code
-                })
-            } else {
+            if(!res.data.length) {
                 ui.confirm({
                     msg: 'You need to bind an available bank account first. ',
                     onOk: () => {
                         jumpUrl('bank-add.html')
                     }
+                })
+            } else if(res.data.every(item => {
+                return item.state === 0
+            })) {
+                ui.tip({
+                    msg: 'Your bank account information is under review. Please wait patiently. '
+                })
+            } else {
+                jumpUrl('legal-recharge.html', {
+                    id: item.id,
+                    code: item.coin_code
                 })
             }
         })
@@ -205,15 +228,18 @@ class User extends React.Component {
             return
         }
         getBankList(item.id).then(res => {
-            const isValid = res.data.some(item => {
-                return item.status !== 0
-            })
-            if(!isValid) {
+            if(!res.data.length) {
                 ui.confirm({
                     msg: 'You need to bind an available bank account first. ',
                     onOk: () => {
                         jumpUrl('bank-add.html')
                     }
+                })
+            } else if(res.data.every(item => {
+                return item.state === 0
+            })) {
+                ui.tip({
+                    msg: 'Your bank account information is under review. Please wait patiently. '
                 })
             } else {
                 jumpUrl('legal-withdraw.html', {
@@ -288,7 +314,7 @@ class User extends React.Component {
                         <div className="content-item item-left">
                             <img src={userPwdImg} alt=""/>
                             <span>{intl.get('loginPwd')}</span>
-                            <button className="btn btn-primary btn-update">{intl.get('modify')}</button>
+                            <button className="btn btn-primary btn-update" onClick={this.openModifyPage.bind(this, 'modifyLoginPassword')}>{intl.get('modify')}</button>
                         </div>
                         <div className="content-item">
                             <img src={userPwdImg} alt=""/>
@@ -300,12 +326,13 @@ class User extends React.Component {
                         <div className="content-item item-left">
                             <img src={userPhoneImg} alt=""/>
                             <span>{intl.get('bindPhone')}</span>
-                            <button className="btn btn-primary btn-update">{user.info ? intl.get('modify') : 'Add'}</button>
+                            <button className="btn btn-primary btn-update"
+                                    onClick={this.modifyPhone.bind(this)}>{user.info ? intl.get('modify') : 'Add'}</button>
                         </div>
                         <div className="content-item">
                             <img src={userEmailImg} alt=""/>
                             <span>{intl.get('bindEmail')}</span>
-                            <button className="btn btn-primary btn-update">{intl.get('bind')}</button>
+                            <button className="btn btn-primary btn-update" onClick={this.modifyEmail.bind(this)}>{intl.get('bind')}</button>
                         </div>
                     </div>
 

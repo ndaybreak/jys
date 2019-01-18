@@ -32,7 +32,7 @@ function imgOrPdfBeforeUpload(file) {
     if (!isImgOrPdf) {
         message.error('Please upload photo or pdf');
     }
-    const isLt5M = file.size / 1024 / 1024 < 5;
+    const isLt5M = file.size / 1024 / 1024 < 100;
     if (!isLt5M) {
         // message.error(intl.get('pic5MTip'));
         message.error('The max size of the file is 5MB');
@@ -304,8 +304,11 @@ class Index extends React.Component {
             position: this.state.position,
             mobile: this.state.mobile,
             passport: this.state.passport,
-            explainInfo: this.state.explainInfo,
-            list: this.state.infoList
+            explaininfo: this.state.explainInfo,
+            list: this.state.infoList,
+            pictureInformation: this.state.picList.map(item => {
+                return item.url
+            }).join(',')
         }
         setSessionData('authBasicData', para)
     }
@@ -328,9 +331,10 @@ class Index extends React.Component {
         const para = {
             authPathwayId: this.refs['authType'].getValue(),
             countryCredentialsId: this.refs['countryCredentialsId'].getValue(),
-            credentialFrontPicAddr: this.state.picOneImgUrl,
-            credentialBackPicAddr: this.state.picTwoImgUrl,
-            verifyVideo: this.state.videoUrl
+            credentialFrontAddr: this.state.picOneImgUrl,
+            credentialBackAddr: this.state.picTwoImgUrl,
+            verifyVideo: this.state.videoUrl,
+            headingCode: this.state.videoCode
         }
         return new Promise((resolve, reject) => {
             saveCompanyPicAuthInfo(para).then(res => {

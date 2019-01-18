@@ -4,7 +4,7 @@ import {Icon, Modal, Button} from 'antd'
 import '@/public/css/validate-code.pcss';
 import ReactCodeInput from 'react-code-input'
 import {jumpUrl, validate, getSearchPara, ui} from '@/utils'
-import {setToken, getUser, refreshAccountInfo} from '@/utils/auth'
+import {setToken, getUser, refreshAccountInfo, removeToken} from '@/utils/auth'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import {
     sendEmailValidateCode,
@@ -14,7 +14,8 @@ import {
     legalWithdraw,
     withdrawApplication,
     saveOrUpdatePayAccountInfo,
-    deleteBank
+    deleteBank,
+    resetLoginPwd
 } from '@/api'
 import emailImg from '@/public/img/邮件.png'
 
@@ -23,6 +24,7 @@ const REMAIN_TIME = 'validate_code_remain_time'
 let data = {}
 let email = ''
 let type = ''
+let nextPageName = undefined;
 
 class Index extends React.Component {
     constructor(props) {
@@ -31,7 +33,8 @@ class Index extends React.Component {
             submitLoading: false,
             verifyCode: '',
             remainingTime: 60,
-            errorMsg: ''
+            errorMsg: '',
+            submitBtnText: intl.get('submit')
         }
     }
 
@@ -56,9 +59,19 @@ class Index extends React.Component {
             type = 7
         } else if (getSearchPara('from') === 'bank-list') {
             type = 7
+        } else if (getSearchPara('from') === 'forget-login-password') {
+            data = getSessionData('forgetLoginPassword')
+            type = 4
+        } else if(getSearchPara('from') === 'user'){
+            type = 1
+            this.setState({
+                submitBtnText: intl.get('next')
+            })
+            nextPageName = getSessionData('nextPageName')
+            removeSessionData('nextPageName')
         }
 
-        if (getSearchPara('from') === 'register') {
+        if (getSearchPara('from') === 'register' || getSearchPara('from') === 'forget-login-password') {
             email = data.email
         } else {
             email = getUser().email
@@ -83,6 +96,13 @@ class Index extends React.Component {
             })
             return
         }
+
+        if (nextPageName) {
+            setSessionData('verifyCode', this.state.verifyCode);
+            jumpUrl(nextPageName + '.html');
+            return;
+        }
+
         this.setState({
             submitLoading: true
         })
@@ -100,8 +120,29 @@ class Index extends React.Component {
             this.bankAddSubmit()
         } else if (getSearchPara('from') === 'bank-list') {
             this.bankDeleteSubmit()
+        } else if (getSearchPara('from') === 'forget-login-password') {
+            this.setLoginPasswordSubmit();
         }
     }
+
+    setLoginPasswordSubmit() {
+        const para = Object.assign({}, data, {verifyCode: this.state.verifyCode})
+        resetLoginPwd(para).then(res => {
+            removeToken();
+            ui.tip({
+                msg: intl.get('Login password modify successfully'),
+                callback: () => {
+                    jumpUrl('login.html')
+                }
+            })
+        }, error => {
+            this.setState({
+                submitLoading: false,
+                errorMsg: error
+            })
+        })
+    }
+
 
     registerSubmit() {
         const para = Object.assign({}, data, {verifyCode: this.state.verifyCode})

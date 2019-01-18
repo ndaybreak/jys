@@ -455,9 +455,11 @@ ul, ol {
     width: 100%;
     height: 100%;
   }
+
   position: relative;
   width: 100%;
   height: 100%;
+
   .a-header {
     position: relative;
     height: 55px;
@@ -466,25 +468,30 @@ ul, ol {
     color: #ffffff;
     background-color: #15181f;
     z-index: 50;
+
     .header-wrap {
       width: 1500px;
       height: 45px;
       margin: auto;
       background-color: #15181f;
+
       .logo-wrap {
         float: left;
         width: 150px;
         text-align: right;
         padding-right: 15px;
       }
+
       .content {
         float: left;
         width: 1200px;
         margin: auto;
         background-color: #15181f;
+
         .nav {
           float: left;
           padding-left: 10px;
+
           .menu {
             height: 45px;
             position: relative;
@@ -492,17 +499,20 @@ ul, ol {
             width: 103px;
             text-align: center;
             color: #ffffff;
+
             .submenu-wrap {
               position: absolute;
-              background-color: #0da9ff;
+              background-color: #044f9c;
               left: 0;
               top: 45px;
               min-width: 103px;
               text-align: center;
               z-index: 5;
+
               li {
                 height: 35px;
                 line-height: 35px;
+
                 .sub-menu {
                   color: #ffffff;
                   display: block;
@@ -510,23 +520,28 @@ ul, ol {
                   text-align: left;
                   text-align: center;
                 }
+
                 .sub-menu:hover {
                   background-color: #1b73ce;
                 }
               }
             }
           }
+
           .active {
-            color: #0da9ff;
-            border-bottom: 1px solid #0da9ff;
+            color: #0e71d7;
+            border-bottom: 1px solid #0e71d7;
           }
+
           .menu:hover {
-            background-color: #0da9ff;
+            background-color: #044f9c;
             color: white;
           }
         }
+
         .login-register {
           float: right;
+
           .btn {
             display: inline-block;
             color: white;
@@ -535,29 +550,157 @@ ul, ol {
       }
     }
   }
+
   .a-footer {
     position: relative;
-    //height: 92px;
-    //margin-top: -92px;
-    margin-top: -59px;
-    line-height: 33px;
-    //line-height: 67px;
-    text-align: center;
+    box-sizing: border-box;
     background-color: #15181f;
-    padding: 13px 0;
-    color: #888f9e;
-    font-size: 14px;
+    margin-top: -167px;
+    .footer-wrap {
+      width: 1200px;
+      padding-top: 14px;
+      padding-bottom: 10px;
+      margin: 0 auto;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .link-block-wrap {
+      padding-right: 50px;
+      padding-top: 6px;
+
+      .link-block-title {
+        margin-left: 12px;
+        font-family:Microsoft YaHei;
+        font-size: 16px;
+        line-height: 28px;
+        color: rgba(255, 255, 255, 1);
+      }
+
+      .company-address-wrap {
+        margin-top: 7px;
+        margin-left: 12px;
+      }
+
+      .company-address {
+        font-size: 12px;
+        line-height: 32px;
+        font-family:Microsoft YaHei;
+        color: rgba(140, 200, 255, 1);
+
+        span {
+          font-family:Microsoft YaHei;
+          color: rgba(255, 255, 255, 1);
+        }
+      }
+
+      .link-item-wrap {
+        color: rgba(255, 255, 255, 1);
+        margin-top: 12px;
+        margin-bottom: 1px;
+        list-style-position: inside;
+
+        a:link, a:active, a.visited, a:hover {
+          text-decoration: none;
+        }
+
+        .link-item-img {
+          width: 5px;
+          height: 5px;
+          margin-right: 7px;
+        }
+
+        .link-block-item {
+          font-family:Microsoft YaHei;
+          height: 12px;
+          font-size: 12px;
+          line-height: 21px;
+          text-decoration: none;
+          border-bottom: 1px solid;
+          padding-bottom: 1px;
+          color: rgba(140, 200, 255, 1);
+        }
+      }
+    }
+
+    .logo {
+      padding-right: 50px;
+
+      .logo-font {
+        font-size: 24px;
+        color: rgba(255, 255, 255, 1);
+      }
+
+      .support-wrap {
+        margin-top: 14px;
+        margin-bottom: 9px;
+      }
+
+      .support-email {
+        font-family:Microsoft YaHei;
+        font-size: 12px;
+        margin-left: 7px;
+        line-height: 21px;
+        color: rgba(140, 200, 255, 1);
+        align-self: center;
+        text-align: center;
+
+        span {
+          font-family:Microsoft YaHei;
+          color: rgba(255, 255, 255, 1);
+        }
+      }
+
+      .support-email-img {
+        height: 17px;
+        border: 0;
+        filter: grayscale(100%)  brightness(200%);
+        -webkit-filter: grayscale(100%) brightness(200%);
+        -moz-filter: grayscale(100%) brightness(200%);
+        -o-filter: grayscale(100%) brightness(200%);
+      }
+
+      .out-link {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        margin-top: 14px;
+        justify-content: space-between;
+
+        .out-link-wrap {
+          flex: 1;
+
+          .out-link-img {
+            height: 20px;
+            filter: grayscale(100%)  brightness(200%);
+            -webkit-filter: grayscale(100%) brightness(200%);
+            -moz-filter: grayscale(100%) brightness(200%);
+            -o-filter: grayscale(100%) brightness(200%);
+            border: 0;
+          }
+
+          .out-link-img:hover {
+            filter: none
+          }
+        }
+      }
+    }
   }
+
   .a-content {
     width: 100%;
     min-height: 100%;
     margin-top: -55px;
     padding-top: 55px;
-    //padding-bottom: 92px;
-    padding-bottom: 59px;
+    padding-bottom: 167px;
     position: relative;
   }
 }
+
 .lang-select {
   height: 45px;
   text-align: right;
@@ -566,13 +709,16 @@ ul, ol {
   padding: 0 6px;
   width: 110px;
 }
+
 .lang-select:hover {
   background-color: #044f9c;
 }
+
 .btn-lang {
   border: none;
   background-color: transparent;
 }
+
 .lang-wrap {
   z-index: 10;
   position: absolute;
@@ -582,10 +728,12 @@ ul, ol {
   background-color: #044f9c;
   height: 35px;
   line-height: 35px;
+
   li {
     cursor: pointer;
     text-align: center;
   }
+
   li:hover {
     background-color: #1b73ce;
   }
@@ -595,6 +743,7 @@ ul, ol {
   font-size: 16px;
   font-weight: bold;
 }
+
 .p-up {
   color: #4ea915;
 }

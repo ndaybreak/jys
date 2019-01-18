@@ -1,14 +1,9 @@
 import React from 'react';
-import intl from 'react-intl-universal'
-import { Icon, Modal, Button, Upload, message, Spin } from 'antd'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
-import { setSessionData, getSessionData, removeSessionData } from '@/data'
+import {getSearchPara, isLangZH, jumpUrl, kebabCaseData2Camel, ui, validate} from '@/utils'
+import {getSessionData, removeSessionData, setSessionData} from '@/data'
 import '@/public/css/set-capital-password.pcss';
-import previewImg from '@/public/img/放大镜up.png'
-import { getCountryList, saveBasicAuthInfo, savePicAuthInfo, queryAuthInfo, getAuthTypeList } from '@/api'
+import {getAuthTypeList, getCountryList, queryAuthInfo, saveBasicAuthInfo, savePicAuthInfo} from '@/api'
 import Box from '@/component/common/ui/Box'
-import BoxDate from '@/component/common/ui/BoxDate'
-import BoxSelect from '@/component/common/ui/BoxSelect'
 import Breadcrumb from '@/component/common/Breadcrumb'
 import userPwdImg from '@/public/img/user_pwd.png'
 
@@ -34,8 +29,8 @@ class Index extends React.Component {
     validate() {
         const result1 = this.refs['password'].validate()
         const result2 = this.refs['confirmPassword'].validate()
-        if(result1 && result2) {
-            if(this.refs['password'].getValue() !== this.refs['confirmPassword'].getValue()) {
+        if (result1 && result2) {
+            if (this.refs['password'].getValue() !== this.refs['confirmPassword'].getValue()) {
                 this.setState({
                     errorMsg: 'Entered passwords differ!'
                 })
@@ -53,8 +48,9 @@ class Index extends React.Component {
             return false
         }
     }
+
     confirm() {
-        if(this.validate()) {
+        if (this.validate()) {
             setSessionData('capitalPassword', {
                 moneyPassword: this.refs['password'].getValue()
             })
@@ -76,11 +72,14 @@ class Index extends React.Component {
                     </div>
                     <div className="clearfix modify-item">
                         <img src={userPwdImg} alt=""/>
-                        <Box ref="password" type="password" placeholder="Please set your capital password(6 digit numbers)" validates={['notNull', 'sixDigitNumber']}/>
+                        <Box ref="password" type="password"
+                             placeholder="Please set your capital password(6 digit numbers)"
+                             validates={['notNull', 'sixDigitNumber']}/>
                     </div>
                     <div className="clearfix modify-item">
                         <img src={userPwdImg} alt=""/>
-                        <Box ref="confirmPassword" type="password" placeholder="Confirm the new password" validates={['notNull']}/>
+                        <Box ref="confirmPassword" type="password" placeholder="Confirm the new password"
+                             validates={['notNull']}/>
                     </div>
                     <button className="btn btn-confirm" onClick={this.confirm.bind(this)}>Confirm</button>
                 </div>
