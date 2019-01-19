@@ -29,8 +29,14 @@ class Box extends React.Component {
         const value = e.target.value
         this.setState({
             value: value
+        }, () => {
+            this.props.onChange && this.props.onChange(value)
+            this.validate()
         })
-        this.props.onChange && this.props.onChange(value)
+    }
+
+    onBlur() {
+        this.validate()
     }
 
     getValue() {
@@ -38,6 +44,9 @@ class Box extends React.Component {
     }
 
     validate() {
+        if(!Array.isArray(this.props.validates)) {
+            return true
+        }
         const result = validate({
             value: this.state.value,
             validates: this.props.validates
@@ -54,7 +63,7 @@ class Box extends React.Component {
         return (
             <div className={'box-wrap ' + className}>
                 <input className={'box ' + (this.state.isValid ? '' : 'box-invalid')} type={type ? type : 'text'} placeholder={placeholder}
-                       value={this.state.value || ''} onChange={this.boxChange.bind(this)}/>
+                       value={this.state.value || ''} onChange={this.boxChange.bind(this)} onBlur={this.onBlur.bind(this)}/>
                 <div className="box-error">
                     {!this.state.isValid && (
                         <span>{this.state.errorMsg}</span>

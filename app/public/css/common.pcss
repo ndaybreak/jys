@@ -470,23 +470,28 @@ ul, ol {
     z-index: 50;
 
     .header-wrap {
-      width: 1500px;
+      width: 1200px;
       height: 45px;
       margin: auto;
       background-color: #15181f;
 
       .logo-wrap {
-        float: left;
-        width: 150px;
+        position: absolute;
+        left: 0;
+        width: 95px;
         text-align: right;
-        padding-right: 15px;
+        background: url("../img/logo.png") no-repeat center;
+        height: 40px;
+        cursor: pointer;
       }
 
       .content {
+        position: relative;
         float: left;
         width: 1200px;
         margin: auto;
         background-color: #15181f;
+        padding-left: 95px;
 
         .nav {
           float: left;
@@ -835,6 +840,7 @@ ul, ol {
     }
   }
   .box-time {
+    float: left;
     width: 100%;
     .ant-input {
       width: 100%;
@@ -852,6 +858,7 @@ ul, ol {
     }
   }
   .box-select {
+    float: left;
     width: 100%;
     .ant-select-selection {
       width: 100%;
@@ -908,6 +915,11 @@ ul, ol {
     font-size: 14px;
     color: #ff3f3f;
   }
+}
+.box-time-wrap .box-error,
+.box-select-wrap .box-error {
+  overflow: hidden;
+  width: 100%;
 }
 
 .box-invalid .box-select .ant-select-selection {
@@ -1098,7 +1110,8 @@ textarea {
 }
 
 .error-line {
-  color: red;
+  font-size: 14px;
+  color: #ff3f3f;
 }
 
 .sto-modal-confirm {

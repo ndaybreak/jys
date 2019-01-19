@@ -105,14 +105,24 @@ class Header extends React.Component {
         })
     }
 
+    goFeedback() {
+        if(isLogin()) {
+            jumpUrl('feedback.html')
+        } else {
+            jumpUrl('login.html')
+        }
+    }
+    goHome() {
+        jumpUrl('index.html')
+    }
+
     render() {
         return (
             <div className="a-header">
                 <div className="header-wrap">
-                    <div className="logo-wrap">
-                        <img src={logoImg} alt="" className="logo"/>
-                    </div>
                     <div className="content clearfix">
+                        <div className="logo-wrap" onClick={this.goHome.bind(this)}>
+                        </div>
                         <nav className="nav">
                             <a className={activeMenu === 'index' ? 'menu active' : 'menu'}  href="index.html">{intl.get('name')}</a>
                             <a className={activeMenu === 'download' ? 'menu active' : 'menu'} href="download.html">{intl.get('download')}</a>
@@ -140,9 +150,10 @@ class Header extends React.Component {
                                 {/*)}*/}
                             {/*</span>*/}
                             {/*<a className={activeMenu === 'about' ? 'menu active' : 'menu'} href="index.html">{intl.get('aboutUs')}</a>*/}
-                            {isLogin() && (
-                                <a className={activeMenu === 'feedback' ? 'menu active' : 'menu'} href="feedback.html">{intl.get('feedback')}</a>
-                            )}
+                            {/*{isLogin() && (*/}
+                                {/*<a className={activeMenu === 'feedback' ? 'menu active' : 'menu'} href="javascript:">{intl.get('feedback')}</a>*/}
+                            {/*)}*/}
+                            <a className={activeMenu === 'feedback' ? 'menu active' : 'menu'} href="javascript:" onClick={this.goFeedback.bind(this)}>{intl.get('feedback')}</a>
                         </nav>
                         <div className="login-register">
                             {/*<span className="phone"><img src={phoneImg} style={{marginRight: '5px'}} alt=""/>400-666-666</span>*/}
@@ -167,15 +178,15 @@ class Header extends React.Component {
                             )}
                         </div>
                     </div>
-                    <div className="lang-select" onMouseEnter={this.showSubmenu.bind(this, 'showLang')}
-                         onMouseLeave={this.hideSubmenu.bind(this, 'showLang')}>
-                        <button className="btn-lang">{this.state.langLabel}</button><i className="icon icon-arrow-down"></i>
-                        {this.state.showLang && (
-                            <ul className="lang-wrap">
-                                <li onClick={this.changeLang.bind(this)}>{this.state.langSelect}</li>
-                            </ul>
-                        )}
-                    </div>
+                    {/*<div className="lang-select" onMouseEnter={this.showSubmenu.bind(this, 'showLang')}*/}
+                         {/*onMouseLeave={this.hideSubmenu.bind(this, 'showLang')}>*/}
+                        {/*<button className="btn-lang">{this.state.langLabel}</button><i className="icon icon-arrow-down"></i>*/}
+                        {/*{this.state.showLang && (*/}
+                            {/*<ul className="lang-wrap">*/}
+                                {/*<li onClick={this.changeLang.bind(this)}>{this.state.langSelect}</li>*/}
+                            {/*</ul>*/}
+                        {/*)}*/}
+                    {/*</div>*/}
                 </div>
             </div>
         );

@@ -4,7 +4,7 @@ import {getSearchPara, isLangZH, jumpUrl, kebabCaseData2Camel, ui, validate} fro
 import {getSessionData, removeSessionData, setSessionData} from '@/data'
 import {Button} from 'antd'
 import {removeToken} from '@/utils/auth'
-import '@/public/css/set-capital-password.pcss';
+import '@/public/css/modify-login-password.pcss';
 import {modifyLoginPwd} from '@/api'
 import Box from '@/component/common/ui/Box'
 import Breadcrumb from '@/component/common/Breadcrumb'
@@ -95,19 +95,19 @@ class ModifyLoginPassword extends React.Component {
                     <div className="clearfix modify-item">
                         <img src={userPwdImg} alt=""/>
                         <Box ref="oldPassword" type="password"
-                             placeholder={intl.get('Please enter the old password')}
-                             validates={['notNull', 'password']}/>
+                             placeholder="Please enter old password"
+                             validates={['notNull']}/>
                     </div>
                     <div className="clearfix modify-item">
                         <img src={userPwdImg} alt=""/>
                         <Box ref="newPassword" type="password"
-                             placeholder={intl.get('Please set new login password')}
+                             placeholder="Please enter new password"
                              validates={['notNull', 'password']}/>
                     </div>
                     <div className="clearfix modify-item">
                         <img src={userPwdImg} alt=""/>
                         <Box ref="confirmPassword" type="password"
-                             placeholder={intl.get('Confirm the new login password')}
+                             placeholder="Please confirm the new password"
                              validates={['notNull']}/>
                     </div>
                     <Button className="btn btn-confirm" key="submit" type="primary" loading={this.state.loading}

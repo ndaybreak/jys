@@ -58,7 +58,8 @@ class Index extends React.Component {
             passwordMsg: '',
             password: '',
             fee: 0,
-            precision: 0.01
+            precision: 0.01,
+            bankDefault: ''
         }
     }
 
@@ -67,8 +68,10 @@ class Index extends React.Component {
             const data = formatBankData(res.data)
             this.setState({
                 bankList: data[0],
-                accountData: data[1]
+                accountData: data[1],
+                bankDefault: data[0][0].id
             })
+            this.bankChange(data[0][0].id)
         })
         const para = {
             type: 2,
@@ -106,6 +109,7 @@ class Index extends React.Component {
         this.setState({
             accountList: this.state.accountData[bank]
         })
+        this.refs.account.setValue(this.state.accountData[bank][0].id)
     }
 
     handleCancel() {
@@ -183,6 +187,7 @@ class Index extends React.Component {
                             <BoxSelect ref="bank" className="auth-box-left"
                                        placeholder="Bank Name" validates={['isSelect']}
                                        onChange={this.bankChange.bind(this)}
+                                       defaultValue={this.state.bankDefault}
                                        options={this.state.bankList} optValue="id" optLabel="bankName"/>
                             <BoxSelect ref="account" className="auth-box-right"
                                        placeholder="Bank Account" validates={['isSelect']}

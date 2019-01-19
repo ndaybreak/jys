@@ -110,7 +110,7 @@ class ForgetLoginPassword extends React.Component {
                              placeholder={intl.get('Please set new login password')}
                              validates={['notNull', 'password']}/>
                     </div>
-                    <Button className="btn btn-confirm" key="submit" type="primary" loading={this.state.loading}
+                    <Button className="btn btn-confirm btn-submit" key="submit" type="primary" loading={this.state.loading}
                             onClick={this.confirm.bind(this)}>{intl.get('confirmBtn')}</Button>
                 </div>
 

@@ -235,23 +235,23 @@ class Index extends React.Component {
                                         </div>
                                     )
                                 })}
-                            </div>
-
-                            <div className="pic-item">
-                                <div className={'pic '}>
-                                    <Upload
-                                        name="file"
-                                        listType="picture-card"
-                                        className={'pic-uploader'}
-                                        showUploadList={false}
-                                        action={uploadUrl + 'type=4'}
-                                        beforeUpload={beforeUpload}
-                                        onChange={this.handleAssetChange.bind(this)}
-                                    >
-                                        <span></span>
-                                    </Upload>
+                                <div className="pic-item">
+                                    <div className={'pic '}>
+                                        <Upload
+                                            name="file"
+                                            listType="picture-card"
+                                            className={'pic-uploader'}
+                                            showUploadList={false}
+                                            action={uploadUrl + 'type=4'}
+                                            beforeUpload={beforeUpload}
+                                            onChange={this.handleAssetChange.bind(this)}
+                                        >
+                                            <span></span>
+                                        </Upload>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
                         <div className="error-line">{this.state.picError}</div>
 

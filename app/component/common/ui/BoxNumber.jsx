@@ -8,7 +8,7 @@ const getPrecision = (val) => {
     return (val + '').split('.')[1].length
 }
 
-class Box extends React.Component {
+class BoxNumber extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -59,7 +59,12 @@ class Box extends React.Component {
             value: value
         }, () => {
             this.props.onChange && this.props.onChange(value ? parseFloat(value) : 0)
+            this.validate()
         })
+    }
+
+    onBlur() {
+        this.validate()
     }
 
     getValue() {
@@ -67,6 +72,9 @@ class Box extends React.Component {
     }
 
     validate() {
+        if(!Array.isArray(this.props.validates)) {
+            return true
+        }
         const result = validate({
             value: this.state.value,
             validates: this.props.validates
@@ -90,8 +98,8 @@ class Box extends React.Component {
             <div className={'box-wrap box-number-wrap ' + (className ? className : '')}>
                 <span className="label">{label}</span>
                 <div className={'box-number'}>
-                    <input id="numberBox" ref="numberBox" className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number" placeholder={placeholder}
-                           value={this.state.value} onChange={this.boxChange.bind(this)} step={step}/>
+                    <input ref="numberBox" className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number" placeholder={placeholder}
+                           value={this.state.value} onChange={this.boxChange.bind(this)} step={step} onBlur={this.onBlur.bind(this)}/>
                     <span className="box-number-unit">{unit}</span>
                     <div className="box-error">
                         {!this.state.isValid && (
@@ -104,4 +112,4 @@ class Box extends React.Component {
     }
 }
 
-export default Box
+export default BoxNumber

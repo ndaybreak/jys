@@ -4,7 +4,7 @@ var QRCode = require('qrcode-react')
 import Breadcrumb from '@/component/common/Breadcrumb'
 import RechargeSelect from '@/component/recharge/RechargeSelect'
 import { Icon, Modal, Button, Select, Upload } from 'antd'
-import Box from '@/component/common/ui/Box'
+import BoxNumber from '@/component/common/ui/BoxNumber'
 import { jumpUrl, validate, ui, getSearchPara } from '@/utils'
 import { vcRecharge } from '@/api'
 import '@/public/css/recharge.pcss';
@@ -195,11 +195,10 @@ class Index extends React.Component {
                             <div>
                                 <div className="module-name">Submit remittance record</div>
                                 <div className="clearfix">
-                                    <Box ref="amount" className="amount-box" placeholder="Deposit amount"
-                                         validates={['notNull']}/>
+                                    <BoxNumber ref="amount" className="amount-box" placeholder="Deposit amount" validates={['notNull']}/>
                                 </div>
                                 <div className="pic-tip">
-                                    The remittance voucher must display a clear bank name, account holder's name, account number and amount. Please upload colorful, clear jpeg, png, jpg or pdf files up to 5MB in size.
+                                    The remittance voucher must display a clear bank name, account holder's name, account number and amount. Please upload colorful, clear jpeg, png, jpg files up to 5MB in size.
                                 </div>
 
                                 <div className="pic-item pic-one">

@@ -38,7 +38,8 @@ class Index extends React.Component {
             selected: {
                 coin_code: getSearchPara('code'),
                 id: getSearchPara('id')
-            }
+            },
+            initDone: false
         }
     }
 
@@ -49,6 +50,9 @@ class Index extends React.Component {
         getAssetList().then(res => {
             res.data.forEach(item => {
                 assetMap[item.coin_code] = item.available_balance
+            })
+            this.setState({
+                initDone: true
             })
         })
     }
@@ -74,8 +78,8 @@ class Index extends React.Component {
                 coinCode: item.coin_code,
                 withdraw_precision: res.data.single_limit.withdraw_precision,
                 fee: res.data.single_limit.fee_rate,
-                dayLimit: res.data.day_limit.total,
-                dayUsed: res.data.day_limit.used,
+                dayLimit: res.data.day_limit.coinTotal,
+                dayUsed: res.data.day_limit.coinUsed,
                 minQuantity: res.data.single_limit.min_quantity,
                 withdrawValue: '',
                 actualValue: defaultValue
@@ -226,6 +230,7 @@ class Index extends React.Component {
 
     render() {
         return (
+            this.state.initDone &&
             <div className="recharge-withdraw-page">
                 <div className="header">
                     <span className="title">{intl.get('withdrawal')}</span>
@@ -287,7 +292,7 @@ class Index extends React.Component {
                         <div className="title">{intl.get('capitalPasswordTip')}</div>
                         <div className="submit-div">
                             {this.state.visible && (
-                                <ReactCodeInput className="password-value" type='text' fields={6} onChange={this.passwordChange.bind(this)}/>
+                                <ReactCodeInput className="password-value" type='text' type='password' fields={6} onChange={this.passwordChange.bind(this)}/>
                             )}
                         </div>
                         <div className="error">

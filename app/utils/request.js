@@ -43,15 +43,7 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     if (res.code && res.code !== '0') {
-      // Message({
-      //   message: res.info,
-      //   type: 'error',
-      //   duration: 3 * 1000
-      // })
-        // alert(JSON.stringify(res))
       if (res.code === '-1') { // token过期
-        // 请自行在引入 MessageBox
-        // import { Message, MessageBox } from 'element-ui'
           ui.tip({
               width: 280,
               msg: res.info,
@@ -61,7 +53,6 @@ service.interceptors.response.use(
                   jumpUrl('index.html')
               }
           })
-          // window.location.href='login.html'
       } else {
           // message.error(res.info)
       }

@@ -5,129 +5,129 @@
 .modify-phone-page {
     width: 750px;
     margin: 80px auto 50px;
-}
 
-.modify-title {
-    height: 51px;
-    line-height: 51px;
-    background: rgba(76, 85, 104, 1);
-    border-radius: 5px 5px 0 0;
-    color: white;
-    font-size: 21px;
-    margin-top: 15px;
-    text-align: center;
-}
+    .modify-title {
+        height: 51px;
+        line-height: 51px;
+        background: rgba(76, 85, 104, 1);
+        border-radius: 5px 5px 0 0;
+        color: white;
+        font-size: 21px;
+        margin-top: 15px;
+        text-align: center;
+    }
 
-.modify-content {
-    height: 364px;
-    background-color: white;
-    border-radius: 0 0 5px 5px;
-    padding: 0 180px;
-}
+    .modify-content {
+        height: 364px;
+        background-color: white;
+        border-radius: 0 0 5px 5px;
+        padding: 0 180px;
+    }
 
-.country-select{
-    margin-bottom: 11px;
-    width:100%;
-    position: relative;
+    .modify-item {
+        margin-bottom: 11px;
+        position: relative;
 
-    .ant-select-selection {
-        height: 44px;
-        width:100%;
-        line-height: 44px;
-        background-color: #ffffff;
-        border: solid 1px #b5b5b5;
-        color: #111111;
-        font-size: 16px;
-        padding: 0 10px;
-        float: left;
-        border-radius: 0;
-        margin-bottom: 14px;
+        img {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width:21px;
+            height:23px;
+        }
 
-        &:hover {
-            border-color: #2d8ff2;
+        .box-wrap {
+            min-width: 100%;
+        }
+
+        .box {
+            height: 44px;
+            line-height: 44px;
+            border: 1px solid rgba(181, 181, 181, 1);
+            padding-left: 35px;
+            font-size: 16px;
+        }
+
+        .old-phone-number-label {
+            position: absolute;
+            justify-content: end;
+            margin-bottom: 30px;
+            line-height: 44px;
+            padding-left: 35px;
+            font-size: 14px;
+            color: rgba(181, 181, 181, 1);
+        }
+
+        .old-phone-number {
+            height: 44px;
+            width: 100%;
+            text-align: -webkit-right;
+            text-align: right;
+            text-decoration: none;
+            margin-bottom: 30px;
+            line-height: 44px;
+            padding-right: 10px;
+            border: 1px solid rgba(181, 181, 181, 1);
+            color: rgba(181, 181, 181, 1);
+            background:rgba(255,255,255,1);
+            padding-left: 35px;
+            font-size: 14px;
+        }
+
+        .verify-code {
+            float: right;
+            margin-top: -69px;
+            line-height: 44px;
+            font-size: 14px;
+            margin-right: 10px;
+            height: 44px;
+            color: rgba(13, 169, 255, 1);
+            text-decoration: underline;
+            align-self: center;
+            opacity: 1;
+            cursor: pointer;
         }
     }
 
-    .ant-select-selection__rendered {
-        margin-top: 7px;
-    }
-}
-
-.modify-item {
-    margin-bottom: 11px;
-    position: relative;
-
-    img {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        width:21px;
-        height:23px;
+    .error-line {
+        height: 67px;
+        padding-top: 30px;
+        line-height: 1.5;
+        color: red;
     }
 
-    .box-wrap {
-        min-width: 100%;
-    }
-
-    .box {
-        height: 44px;
-        line-height: 44px;
-        border: 1px solid rgba(181, 181, 181, 1);
-        padding-left: 35px;
-        font-size: 16px;
-    }
-
-    .old-phone-number-label {
-        position: absolute;
-        justify-content: end;
-        margin-bottom: 30px;
-        line-height: 44px;
-        padding-left: 35px;
-        font-size: 14px;
-        color: rgba(181, 181, 181, 1);
-    }
-
-    .old-phone-number {
-        height: 44px;
+    .btn-confirm {
+        height: 40px;
+        background: rgba(0, 109, 222, 1);
         width: 100%;
-        text-align: -webkit-right;
-        text-align: right;
-        text-decoration: none;
-        margin-bottom: 30px;
-        line-height: 44px;
-        padding-right: 10px;
-        border: 1px solid rgba(181, 181, 181, 1);
-        color: rgba(181, 181, 181, 1);
-        background:rgba(255,255,255,1);
-        padding-left: 35px;
-        font-size: 14px;
+        color: white;
     }
 
-    .verify-code {
-        float: right;
-        margin-top: -69px;
-        line-height: 44px;
-        font-size: 14px;
-        margin-right: 10px;
-        height: 44px;
-        color: rgba(13, 169, 255, 1);
-        text-decoration: underline;
-        align-self: center;
-        opacity: 1;
-        cursor: pointer;
+    .country-select{
+        margin-bottom: 11px;
+        width:100%;
+        position: relative;
+
+        .ant-select-selection {
+            height: 44px;
+            width:100%;
+            line-height: 44px;
+            background-color: #ffffff;
+            border: solid 1px #b5b5b5;
+            color: #111111;
+            font-size: 16px;
+            padding: 0 10px;
+            float: left;
+            border-radius: 0;
+            margin-bottom: 14px;
+
+            &:hover {
+                border-color: #2d8ff2;
+            }
+        }
+
+        .ant-select-selection__rendered {
+            margin-top: 7px;
+        }
     }
-}
-
-.error-line {
-    height: 67px;
-    padding-top: 30px;
-    line-height: 1.5;
-    color: red;
-}
-
-.btn-confirm {
-    height: 40px;
-    background: rgba(0, 109, 222, 1);
-    width: 100%;
-    color: white;
 }

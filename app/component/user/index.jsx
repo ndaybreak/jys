@@ -12,6 +12,7 @@ import merchantLevelCommonImg from '@/public/img/user_merchant_common.png'
 import merchantLevelHighImg from '@/public/img/user_merchant_high.png'
 import userPwdImg from '@/public/img/user_pwd.png'
 import userPhoneImg from '@/public/img/user_phone.png'
+import userBankImg from '@/public/img/user_bank.png'
 import userEmailImg from '@/public/img/user_email.png'
 import userRecommendImg from '@/public/img/user_recommend.png'
 import userAssetImg from '@/public/img/user_asset.png'
@@ -84,23 +85,25 @@ class User extends React.Component {
                 legalAssetList: asset[1]
             })
             return Promise.resolve(res.data)
-        }).then(assetList => {
-            return new Promise((resolve, reject) => {
-                const assetObj = {}
-                const codeList = []
-                assetList.forEach(item => {
-                    codeList.push(item.coin_code)
-                    assetObj[item.coin_code] = item.total_balance
-                })
-                getPriceBtcQuot(codeList, priceList => {
-                    const totalBtc = getBtcTotalPrice(priceList, assetObj)
-                    this.setState({
-                        totalBtc: totalBtc.toFixed(8) || 0
-                    })
-                    resolve(totalBtc)
-                })
-            })
-        }).then((totalBtc) => {
+        })
+        //     .then(assetList => {
+        //     return new Promise((resolve, reject) => {
+        //         const assetObj = {}
+        //         const codeList = []
+        //         assetList.forEach(item => {
+        //             codeList.push(item.coin_code)
+        //             assetObj[item.coin_code] = item.total_balance
+        //         })
+        //         getPriceBtcQuot(codeList, priceList => {
+        //             const totalBtc = getBtcTotalPrice(priceList, assetObj)
+        //             this.setState({
+        //                 totalBtc: totalBtc.toFixed(8) || 0
+        //             })
+        //             resolve(totalBtc)
+        //         })
+        //     })
+        // })
+            .then((totalBtc) => {
             let para = {
                 // isOnce: true
             }
@@ -108,19 +111,19 @@ class User extends React.Component {
                 targetCoinCode: 'BTC',
                 mainCoinCode: 'USDT'
             }]
-            getTargetPairsQuot(para, data => {
-                let value = 0
-                // if(isLangZH()) {
-                //     value = '￥ ' + (totalBtc * data[0].rmbPrice).toFixed(2)
-                // } else {
-                //     value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
-                // }
-                value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
-
-                this.setState({
-                    total: value
-                })
-            })
+            // getTargetPairsQuot(para, data => {
+            //     let value = 0
+            //     if(isLangZH()) {
+            //         value = '￥ ' + (totalBtc * data[0].rmbPrice).toFixed(2)
+            //     } else {
+            //         value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
+            //     }
+            //     value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
+            //
+            //     this.setState({
+            //         total: value
+            //     })
+            // })
         })
         this.setState({
             userLevelImg: getUserLevelImg(user.customer_level),
@@ -158,9 +161,8 @@ class User extends React.Component {
     openModifyPage(page) {
         if(page === 'capitalPassword') {
             jumpUrl('set-capital-password.html')
-        } else {
-            setSessionData('nextPageName', 'modify-phone');
-            jumpUrl('validate-code.html', {'from': 'user'});
+        } else if(page === 'modifyLoginPassword') {
+            jumpUrl('modify-login-password.html');
         }
     }
 
@@ -319,38 +321,35 @@ class User extends React.Component {
                         <div className="content-item">
                             <img src={userPwdImg} alt=""/>
                             <span>{intl.get('capitalPassword')}</span>
-                            <button className="btn btn-primary btn-update" onClick={this.openModifyPage.bind(this, 'capitalPassword')}>{intl.get('modify')}</button>
+                            <button className="btn btn-primary btn-update" onClick={this.openModifyPage.bind(this, 'capitalPassword')}>{user.hasMoneyPwd ? 'Reset' : 'Add'}</button>
                         </div>
                     </div>
                     <div className="clearfix">
+                        {/*<div className="content-item item-left">*/}
+                            {/*<img src={userPhoneImg} alt=""/>*/}
+                            {/*<span>{intl.get('bindPhone')}</span>*/}
+                            {/*<button className="btn btn-primary btn-update"*/}
+                                    {/*onClick={this.modifyPhone.bind(this)}>{user.info ? intl.get('modify') : 'Add'}</button>*/}
+                        {/*</div>*/}
                         <div className="content-item item-left">
-                            <img src={userPhoneImg} alt=""/>
-                            <span>{intl.get('bindPhone')}</span>
-                            <button className="btn btn-primary btn-update"
-                                    onClick={this.modifyPhone.bind(this)}>{user.info ? intl.get('modify') : 'Add'}</button>
+                            <img src={userBankImg} alt=""/>
+                            <span>Bank Accounts</span>
+                            <button className="btn btn-primary btn-update" onClick={this.bindBank.bind(this)}>Edit</button>
                         </div>
                         <div className="content-item">
                             <img src={userEmailImg} alt=""/>
                             <span>{intl.get('bindEmail')}</span>
-                            <button className="btn btn-primary btn-update" onClick={this.modifyEmail.bind(this)}>{intl.get('bind')}</button>
-                        </div>
-                    </div>
-
-                    <div className="clearfix">
-                        <div className="content-item item-left">
-                            <img src={userPhoneImg} alt=""/>
-                            <span>Binding Bank Cards</span>
-                            <button className="btn btn-primary btn-update" onClick={this.bindBank.bind(this)}>{intl.get('bind')}</button>
+                            <button className="btn btn-primary btn-update" onClick={this.modifyEmail.bind(this)}>{intl.get('modify')}</button>
                         </div>
                     </div>
 
                     <div className="title">{intl.get('referralRebate')}</div>
                     <div className="clearfix">
-                        <div className="content-item recommend-item recommend-left">
+                        <div className="content-item recommend-left">
                             <span className="recommend-label">{intl.get('myReferralId')}:</span>
                             <span className="recommend-value">{this.state.recommendId}</span>
                         </div>
-                        <div className="content-item recommend-item recommend-left">
+                        <div className="content-item">
                             <img src={userRecommendImg} alt=""/>
                             <span className="recommend-label">{intl.get('download_5')}:</span>
                             <span className="recommend-value">{this.state.recommendFriends}</span>
@@ -374,6 +373,7 @@ class User extends React.Component {
                         {this.state.assetList.map(asset => {
                             return (
                                 <div className="clearfix asset-item" key={asset.id}>
+                                    {/*txt-left*/}
                                     <div className="asset-col txt-left">
                                         <img src={asset.icon} alt=""/>
                                         {asset.coin_code}<span className="full-name">({asset.coin_name})</span>
@@ -402,7 +402,7 @@ class User extends React.Component {
                         {this.state.legalAssetList.map(asset => {
                             return (
                                 <div className="clearfix asset-item" key={asset.id}>
-                                    <div className="asset-col txt-left">
+                                    <div className="asset-col">
                                         {/*<img src={asset.icon} alt=""/>*/}
                                         {asset.coin_code}
                                         {/*<span className="full-name">({asset.coin_name})</span>*/}

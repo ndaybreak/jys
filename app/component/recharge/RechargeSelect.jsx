@@ -36,7 +36,9 @@ class Index extends React.Component {
         }
         getCoinList(para).then(res => {
             this.setState({
-                assetList: res.data
+                assetList: res.data.filter(item => {
+                    return item.isVC === 1
+                })
             })
         })
     }

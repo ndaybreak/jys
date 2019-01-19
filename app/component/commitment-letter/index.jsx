@@ -38,7 +38,7 @@ class Index extends React.Component {
                 {/*<div>ID or Passport Number: C668668(E)</div>*/}
                 {/*<div>Address: No. 100, Tim Qi Road, Admiralty, Hong Kong</div>*/}
                 <p>
-                    I/We confirm that all information and representations I/We provide to HKSTOX Limited (the <b>“HKSTOX”</b>) are true, correct and complete, and authorize HKSTOX to confirm and verify such information from any source HKSTOX considers appropriate, including but not limited to the conduct of any credit checks on me/us. HKSTOX is entitled to rely fully on such information and representations for all purposes, unless HKSTOX receives notice in writing of any change from me/us. I/We confirm that I/we will update HKSTOX immediately on any change of such information and representations.
+                    I/We confirm that all information and representations I/We provide to HKSTOX Limited (the <b>“HKSTOx”</b>) are true, correct and complete, and authorize HKSTOX to confirm and verify such information from any source HKSTOX considers appropriate, including but not limited to the conduct of any credit checks on me/us. HKSTOX is entitled to rely fully on such information and representations for all purposes, unless HKSTOX receives notice in writing of any change from me/us. I/We confirm that I/we will update HKSTOX immediately on any change of such information and representations.
                 </p>
                 <p>
                     I/We confirm that I am/we are acting for my/our own account and as principal in relation to each transaction entered with HKSTOX and I/we shall also be the beneficiary of any of the transaction entered into with HKSTOX.

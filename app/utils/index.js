@@ -149,7 +149,6 @@ export function scrollTo(element, to, duration) {
   const difference = to - element.scrollTop
   const perTick = difference / duration * 10
   setTimeout(() => {
-    console.log(new Date())
     element.scrollTop = element.scrollTop + perTick
     if (element.scrollTop === to) return
     scrollTo(element, to, duration - 10)
@@ -473,4 +472,18 @@ export function format2Percentage(value) {
     } else {
         return parseFloat(value) * 100 + '%'
     }
+}
+
+// 年龄满18
+export function isAgeGreater18(val) {
+    var date = new Date(val)
+    var current = new Date()
+    if(isNaN(date.getTime())) {
+        return false
+    }
+    current.setFullYear(current.getFullYear() - 18)
+    if(date > current.getTime()) {
+        return false
+    }
+    return true
 }

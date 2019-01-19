@@ -54,13 +54,13 @@ export function checkAuth(list = []) {
     if(list.indexOf('auth') > -1 && !user.isAuth) {
         ui.tip({
             width: 310,
-            msg: 'Your account has no transaction/withdrawl/depoist authority yet.'
+            msg: 'Due to your KYC information is not verified, your account has no transaction / withdrawl / depoist authorities yet.'
         })
         return false
     }
 
     // 问卷调查是否完成
-    if(list.indexOf('questionnaire') > -1 && !user.cantrade_kyc) {
+    if(list.indexOf('questionnaire') > -1 && !user.cantradeKyc) {
         ui.confirm({
             width: 300,
             msg: 'In order to ensure the appropriateness of product or service sales and protect investors\'rights and interests, you need to do an investment knowledge assessment.',

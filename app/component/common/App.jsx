@@ -38,16 +38,18 @@ class App extends React.Component {
         //     urlLocaleKey: "lang",
         //     cookieLocaleKey: "lang"
         // });
-        let currentLocale = localStorage.getItem(LANG.name)
-        if (!_.find(SUPPOER_LOCALES, { value: currentLocale })) {
-            // currentLocale = "en-US";
-            localStorage.setItem(LANG.name, LANG.en)
-            currentLocale = LANG.en;
-        }
+        // let currentLocale = localStorage.getItem(LANG.name)
+        // if (!_.find(SUPPOER_LOCALES, { value: currentLocale })) {
+        //     // currentLocale = "en-US";
+        //     localStorage.setItem(LANG.name, LANG.en)
+        //     currentLocale = LANG.en;
+        // }
+
+        localStorage.setItem(LANG.name, LANG.en)
+        let currentLocale = LANG.en;
 
         http.get(`resource/locales/${currentLocale}.json`)
             .then(res => {
-                console.log("App locale data", res.data);
                 // init method will load CLDR locale data according to currentLocale
                 return intl.init({
                     currentLocale,

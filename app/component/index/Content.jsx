@@ -42,21 +42,21 @@ class Content extends React.Component {
                 })
             })
         })
-        getRecommendCoins().then( res => {
-            let data = res.data
-            let para = {}
-            para.targetPairs = data.map(item => {
-                return {
-                    targetCoinCode: item.BaseCoin,
-                    mainCoinCode: item.QuoteCoin
-                }
-            })
-            getTargetPairsQuot(para, data => {
-                this.setState({
-                    recommendData: data
-                })
-            })
-        })
+        // getRecommendCoins().then( res => {
+        //     let data = res.data
+        //     let para = {}
+        //     para.targetPairs = data.map(item => {
+        //         return {
+        //             targetCoinCode: item.BaseCoin,
+        //             mainCoinCode: item.QuoteCoin
+        //         }
+        //     })
+        //     getTargetPairsQuot(para, data => {
+        //         this.setState({
+        //             recommendData: data
+        //         })
+        //     })
+        // })
     }
 
     componentWillUnmount() {
@@ -85,61 +85,60 @@ class Content extends React.Component {
 
     render() {
         return (
-            <div className="home-content">
-                <div className="common-list clearfix">
-                    {
-                        this.state.recommendData.map( (row, index) => {
+            <div className="market-wrap">
+                {/*<div className="common-list clearfix">*/}
+                    {/*{*/}
+                        {/*this.state.recommendData.map( (row, index) => {*/}
+                            {/*return (*/}
+                                {/*<a className={'recommend ' + (index % 6 === 5 ? 'recommend-last' : '')} href="javascript:"*/}
+                                   {/*key={row.targetPair.mainCoinCode + '_recommend' + index} onClick={this.handleClick.bind(this, row.targetPair)}>*/}
+                                    {/*<div className="common-item">*/}
+                                        {/*<div>{row.targetPair.targetCoinCode}/{row.targetPair.mainCoinCode}*/}
+                                            {/*<span className={`percent ${row.risePercent24h > 0 ? 'p-up' : (row.risePercent24h < 0 ? 'p-down' : '')}`}>{(row.risePercent24h*100).toFixed(2)}%</span>*/}
+                                        {/*</div>*/}
+                                        {/*<div className="strong-txt">{row.price}</div>*/}
+                                    {/*</div>*/}
+                                {/*</a>*/}
+                            {/*)*/}
+                        {/*})*/}
+                    {/*}*/}
+                {/*</div>*/}
+                <div className="market-wrap-inner">
+                    <div className="market-category clearfix">
+                        {this.state.categoryList.map((category, i) => {
                             return (
-                                <a className={'recommend ' + (index % 6 === 5 ? 'recommend-last' : '')} href="javascript:"
-                                   key={row.targetPair.mainCoinCode + '_recommend' + index} onClick={this.handleClick.bind(this, row.targetPair)}>
-                                    <div className="common-item">
-                                        <div>{row.targetPair.targetCoinCode}/{row.targetPair.mainCoinCode}
-                                            <span className={`percent ${row.risePercent24h > 0 ? 'p-up' : (row.risePercent24h < 0 ? 'p-down' : '')}`}>{(row.risePercent24h*100).toFixed(2)}%</span>
-                                        </div>
-                                        <div className="strong-txt">{row.price}</div>
-                                    </div>
-                                </a>
+                                <span key={i} className={'category ' + (this.state.activeCategory === category ? 'active' : '')} onClick={this.changeCategory.bind(this, category)}>{category}</span>
                             )
-                        })
-                    }
-                </div>
-                <div className="market-category clearfix">
-                    {this.state.categoryList.map((category, i) => {
-                        return (
-                            <span key={i} className={'category ' + (this.state.activeCategory === category ? 'active' : '')} onMouseEnter={this.changeCategory.bind(this, category)}>{category}</span>
-                        )
-                    })}
-                    {/*<span className={`category ${this.state.activeCategory === 'MY' ? 'active' : ''}`} onClick={this.changeCategory.bind(this, 'MY')}>自选</span>*/}
-                    {/*<span className={`category ${this.state.activeCategory === 'HKD' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'HKD')}>HKD</span>*/}
-                    {/*<span className={`category ${this.state.activeCategory === 'BTC' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'BTC')}>BTC</span>*/}
-                    {/*<span className={`category ${this.state.activeCategory === 'ETH' ? 'active' : ''}`} onMouseEnter={this.changeCategory.bind(this, 'ETH')}>ETH</span>*/}
-                </div>
-                <div className="market-detail">
-                    <div className="row">
-                        <div className="th col-1">{intl.get('market')}</div>
-                        <div className="th col-2 txt-right" style={{paddingRight: '90px'}}>{intl.get('latestPrice')}</div>
-                        <div className="th col-3 txt-right" style={{paddingRight: '50px'}}>{intl.get('volume')}</div>
-                        <div className="th col-4 txt-right" style={{paddingRight: '6px'}}>{intl.get('dayChg')}</div>
-                        <div className="th col-5 txt-right" style={{paddingRight: '20px'}}>{intl.get('dayHighestPrice')}</div>
-                        <div className="th col-6 txt-right" style={{paddingRight: '20px'}}>{intl.get('dayLowestPrice')}</div>
+                        })}
                     </div>
-                    {
-                        this.state.data.map( (row, index) => {
-                            return (
-                                <div className="row" key={row.targetPair.mainCoinCode + '_' + index} onClick={this.handleClick.bind(this, row.targetPair)}>
-                                    <div className="td col-1">{row.targetPair.targetCoinCode}/{row.targetPair.mainCoinCode}</div>
-                                    <div className="td col-2 txt-right">{row.price} / {isZh ? ('￥' + row.rmbPrice) : ('$' + row.legalTenderPrice)}</div>
-                                    <div className="td col-3 txt-right">{row.volumes}</div>
-                                    <div className="td col-4 txt-right"
-                                         className={`td col-4 txt-right ${row.risePercent24h > 0 ? 'p-up' : (row.risePercent24h < 0 ? 'p-down' : '')}`}>
-                                        {(row.risePercent24h*100).toFixed(2)}%
+                    <div className="market-detail market-title">
+                        <div className="row">
+                            <div className="th col-1">{intl.get('market')}</div>
+                            <div className="th col-2">{intl.get('latestPrice')}</div>
+                            <div className="th col-3" style={{paddingRight: '0px'}}>{intl.get('volume')}</div>
+                            <div className="th col-4" style={{paddingRight: '0px'}}>{intl.get('dayChg')}</div>
+                            <div className="th col-5" style={{paddingRight: '0px'}}>{intl.get('dayHighestPrice')}</div>
+                            <div className="th col-6" style={{paddingRight: '0px'}}>{intl.get('dayLowestPrice')}</div>
+                        </div>
+                    </div>
+                    <div className="market-detail market-content">
+                        {
+                            this.state.data.map( (row, index) => {
+                                return (
+                                    <div className={'row ' + (index%2 === 0 ? 'row-odd' : '')} key={row.targetPair.mainCoinCode + '_' + index} onClick={this.handleClick.bind(this, row.targetPair)}>
+                                        <div className="td col-1">{row.targetPair.targetCoinCode}/{row.targetPair.mainCoinCode}</div>
+                                        <div className="td col-2">{row.price} / {isZh ? ('￥' + row.rmbPrice) : ('$' + row.legalTenderPrice)}</div>
+                                        <div className="td col-3">{row.volumes}</div>
+                                        <div className={`td col-4 ${row.risePercent24h > 0 ? 'p-up' : (row.risePercent24h < 0 ? 'p-down' : '')}`}>
+                                            {(row.risePercent24h*100).toFixed(2)}%
+                                        </div>
+                                        <div className="td col-5">{row.highestPrice}</div>
+                                        <div className="td col-6">{row.lowestPrice}</div>
                                     </div>
-                                    <div className="td col-5 txt-right">{row.highestPrice}</div>
-                                    <div className="td col-6 txt-right">{row.lowestPrice}</div>
-                                </div>
-                            )
-                        })
-                    }
+                                )
+                            })
+                        }
+                    </div>
                 </div>
             </div>
         );

@@ -236,7 +236,7 @@ export function getAccountInfo(para) {
             type: true,
             isMoneyPassword: true,
             country: true,
-            cantrade_kyc: true
+            cantradeKyc: true
         }, para)
     })
 }

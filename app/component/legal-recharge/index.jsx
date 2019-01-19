@@ -9,6 +9,7 @@ import deleteImg from '@/public/img/删除.png'
 import videoDemoImg from '@/public/img/register-video-demo.png'
 import {legalRecharge, getRechargeAccountList} from '@/api'
 import Box from '@/component/common/ui/Box'
+import BoxNumber from '@/component/common/ui/BoxNumber'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
 import { refreshAccountInfo } from '@/utils/auth'
@@ -293,7 +294,7 @@ class Index extends React.Component {
                         <div className="asset-part">
                             <div className="label">Submit remittance record</div>
                             <div className="clearfix">
-                                <Box ref="amount" className="auth-box-left" placeholder="Deposit amount"
+                                <Box type="number" ref="amount" className="auth-box-left" placeholder="Deposit amount"
                                      validates={['notNull']} defaultValue={this.state.def.amount}/>
                                 <Box ref="number" className="auth-box-right"
                                      placeholder="Remittance number" validates={['notNull']}

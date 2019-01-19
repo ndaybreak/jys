@@ -6,7 +6,7 @@ class BoxSelect extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: props.defaultValue || '',
+            value: props.defaultValue || undefined,
             errorMsg: '',
             isValid: true
         }
@@ -30,15 +30,29 @@ class BoxSelect extends React.Component {
         const value = id
         this.setState({
             value: value
+        }, () => {
+            this.props.onChange && this.props.onChange(value)
+            this.validate()
         })
-        this.props.onChange && this.props.onChange(value)
+    }
+
+    onBlur() {
+        this.validate()
     }
 
     getValue() {
         return this.state.value
     }
+    setValue(val) {
+        this.setState({
+            value: val
+        })
+    }
 
     validate() {
+        if(!Array.isArray(this.props.validates)) {
+            return true
+        }
         const result = validate({
             value: this.state.value,
             validates: this.props.validates
@@ -54,7 +68,7 @@ class BoxSelect extends React.Component {
         const {placeholder, className, optValue, optLabel, defaultValue} = this.props
         const options = this.props.options || []
         return (
-            <div className={'box-wrap ' + className + (this.state.isValid ? '' : ' box-invalid')}>
+            <div className={'box-wrap box-select-wrap ' + className + (this.state.isValid ? '' : ' box-invalid')}>
                 {typeof defaultValue !== 'undefined' && (
                     <Select
                         className="box-select"
@@ -62,7 +76,9 @@ class BoxSelect extends React.Component {
                         placeholder={placeholder}
                         defaultValue={defaultValue}
                         optionFilterProp="children"
+                        value={this.state.value}
                         onChange={this.boxChange.bind(this)}
+                        onBlur={this.onBlur.bind(this)}
                         filterOption={(input, option) => (option.props.children + '').toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
                         {options.map((item, index) => {
@@ -70,14 +86,15 @@ class BoxSelect extends React.Component {
                         })}
                     </Select>
                 )}
-
                 {typeof defaultValue === 'undefined' && (
                     <Select
                         className="box-select"
                         showSearch
                         placeholder={placeholder}
                         optionFilterProp="children"
+                        value={this.state.value}
                         onChange={this.boxChange.bind(this)}
+                        onBlur={this.onBlur.bind(this)}
                         filterOption={(input, option) => (option.props.children + '').toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
                         {options.map((item, index) => {
@@ -85,7 +102,6 @@ class BoxSelect extends React.Component {
                         })}
                     </Select>
                 )}
-
                 <div className="box-error">
                     {!this.state.isValid && (
                         <span>{this.state.errorMsg}</span>

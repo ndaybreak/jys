@@ -177,3 +177,5 @@ export function validate(option) {
     }
     return result
 }
+
+validate.prototype = _c

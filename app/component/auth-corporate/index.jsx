@@ -296,6 +296,7 @@ class Index extends React.Component {
             companyRegistrationDate: this.refs['companyRegistrationDate'].getValue(),
             companyRegistrationNumber: this.refs['companyRegistrationNumber'].getValue(),
             areaCodeId: this.refs['areaCode'].getValue(),
+            areaCode: this.refs['areaCode'].getValue(),
             contactAddress: this.refs['contactAddress'].getValue(),
             contactNumber: this.refs['contactNumber'].getValue(),
             code: this.refs['corporationType'].getValue(),
@@ -478,7 +479,7 @@ class Index extends React.Component {
                                                placeholder="Area Code"
                                                validates={['isSelect']} defaultValue={this.state.def.phone_area_id}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
-                                    <Box ref="contactNumber" className="phone-wrap" placeholder="Contact No."
+                                    <Box ref="contactNumber" className="phone-wrap" placeholder="Contact No." type="number"
                                          validates={['notNull']} defaultValue={this.state.def.contactNumber}/>
                                 </div>
 
@@ -632,26 +633,27 @@ class Index extends React.Component {
                                                 </div>
                                             )
                                         })}
-                                    </div>
-
-                                    <div className="pic-item">
-                                        <div className={'pic '}>
-                                            <Upload
-                                                name="file"
-                                                listType="picture-card"
-                                                className={'pic-uploader'}
-                                                showUploadList={false}
-                                                action={uploadUrl + 'type=4'}
-                                                beforeUpload={imgOrPdfBeforeUpload}
-                                                onChange={this.handleAssetChange.bind(this)}
-                                            >
-                                                <span></span>
-                                            </Upload>
+                                        <div className="pic-item">
+                                            <div className={'pic '}>
+                                                <Upload
+                                                    name="file"
+                                                    listType="picture-card"
+                                                    className={'pic-uploader'}
+                                                    showUploadList={false}
+                                                    action={uploadUrl + 'type=4'}
+                                                    beforeUpload={imgOrPdfBeforeUpload}
+                                                    onChange={this.handleAssetChange.bind(this)}
+                                                >
+                                                    <span></span>
+                                                </Upload>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="error-line">{this.state.picError}</div>
+                                {this.state.picList.length === 0 && (
+                                    <div className="error-line">{this.state.picError}</div>
+                                )}
 
                                 <div className="text-center">
                                     <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>

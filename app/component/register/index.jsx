@@ -268,7 +268,7 @@ class Index extends React.Component {
                                 <img src={unCheckedImg} alt=""/>
                             )}
                         </label>
-                        <span>{intl.get('readAndAgree')} <a className="protocol" href="protocol.html" target="_blank">《{intl.get('platformProtocol')}》</a></span>
+                        <span>{intl.get('readAndAgree')} <a className="protocol" href="terms-of-service.html" target="_blank">《{intl.get('platformProtocol')}》</a></span>
                     </div>
                     <div className="item-wrap btn-wrap">
                         <button className={'btn-login-big ' + (this.state.userName && this.state.password && this.state.isUserNameValid && this.state.isPasswordValid && this.state.isChecked ? '' : 'btn-disabled')} onClick={this.register.bind(this)}>{intl.get('register')}</button>

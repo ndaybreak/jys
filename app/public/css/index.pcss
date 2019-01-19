@@ -1,3 +1,41 @@
+body {
+  background: url("../img/home_banner_blue.png") no-repeat;
+  background-position-x: center;
+  background-position-y: top;
+}
+#app .a-header,
+#app .a-header .header-wrap,
+#app .a-header .header-wrap .content {
+  background-color: transparent;
+}
+#app .a-header .header-wrap .logo-wrap {
+  background-image: url("../img/logo_niu.png");
+  height: 95px;
+  left: -15px;
+  top: -20px;
+}
+.a-header {
+  margin-top: 15px;
+}
+#app .a-header .header-wrap .content .nav .active {
+  color: #E3C246;
+  border-bottom: 1px solid #E3C246;
+}
+#app .a-header .header-wrap .content .nav .menu:hover {
+  background-color: #E3C246;
+}
+#app .a-header .header-wrap .content .nav .menu .submenu-wrap li .sub-menu:hover {
+  background-color: #d5b641;
+}
+#app .a-header .header-wrap .content .nav .menu .submenu-wrap {
+  background-color: #E3C246;
+}
+.login-register .btn-primary {
+  background-color: transparent;
+  border: 1px solid #E3C246;
+  color: #E3C246 !important;
+}
+
 .home {
   .banner {
     width: 100%;
@@ -17,11 +55,16 @@
   }
 }
 .a-content {
-  background-color: #f0f0f6;
+  background-color: transparent !important;
 }
-.home-content {
-  width: 1200px;
-  margin: 20px auto 30px auto;
+.market-wrap {
+  height: 300px;
+  background-color: #0E5292;
+  color: white;
+  .market-wrap-inner {
+    width: 1200px;
+    margin: 0 auto;
+  }
   .common-list {
     margin-bottom: 25px;
     height: 88px;
@@ -64,34 +107,30 @@
 }
 
 .market-category {
+  padding: 25px 0 20px 27px;
   .category {
     float: left;
-    width: 135px;
-    height: 42px;
-    background-color: #ffffff;
+    width: 66px;
+    height: 36px;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    margin-right: 10px;
+    margin-right: 27px;
     line-height: 42px;
     text-align: center;
-    color: #666666;
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
   }
   .category:hover {
-    color: #006dde;
+    color: #E3C246;
   }
   .active {
-    height: 46px;
-    margin-top: -4px;
-    color: #006dde;
-    //line-height: 49px;
+    color: #E3C246;
+    border-bottom: 1px solid #E3C246;
   }
 }
 .market-detail {
-  padding: 0 30px 10px 30px;
-  background-color: #ffffff;
+  background-color: #4199EC;
   text-align: center;
   font-size: 14px;
   .row:after {
@@ -106,13 +145,11 @@
   .th {
     height: 40px;
     vertical-align: bottom;
-    color: #666666;
     padding-top: 12px;
   }
   .td {
     font-size: 12px;
     padding: 7px 10px;
-    border-bottom: 1px solid #f0f0f6;
     height: 36px;
     cursor: pointer;
   }
@@ -137,4 +174,120 @@
 }
 #app .a-footer {
   background-color: #175d9e;
+}
+
+.blue-banner-wrap {
+  height: 715px;
+  color: white;
+  text-align: left;
+}
+.banner-inner {
+  width: 1200px;
+  margin: 0 auto;
+}
+.info-1 {
+  font-size: 42px;
+  padding: 150px 0 25px 0;
+  span {
+    color: #E3C246;
+  }
+}
+.info-2 {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.features-wrap {
+  text-align: center;
+  margin-top: 125px;
+}
+.feature {
+  float: left;
+  width: 33.33%;
+}
+.feature-icon {
+  padding-bottom: 10px;
+}
+.feature-info {
+  line-height: 30px;
+}
+.row-odd {
+  background-color: rgba(11, 76, 138, 0.2);
+}
+.market-title {
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+.market-content {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  overflow-y: auto;
+  max-height: 178px;
+}
+
+/*定义滚动条高宽及背景
+ 高宽分别对应横竖滚动条的尺寸*/
+.market-content::-webkit-scrollbar
+{
+  width:0px;
+  height:0px;
+  background-color:transparent;
+}
+/*定义滚动条轨道
+ 内阴影+圆角*/
+.market-content::-webkit-scrollbar-track
+{
+  -webkit-box-shadow:inset 0 0 0px rgba(0,0,0,0.3);
+  background-color:#222931;
+}
+/*定义滑块
+ 内阴影+圆角*/
+.market-content::-webkit-scrollbar-thumb
+{
+  border-radius:0px;
+  -webkit-box-shadow:inset 0 0 0px rgba(0,0,0,.3);
+  background-color:rgb(61, 76, 95);
+}
+
+.intro-wrap {
+  height: 900px;
+  background: url("../img/home_intro.png") no-repeat;
+  background-position-y: bottom;
+  background-position-x: center;
+  text-align: left;
+  color: #111111;
+}
+.intro-wrap-inner {
+  width: 1200px;
+  margin: 0 auto;
+  padding-top: 90px;
+}
+.intro-item {
+  float: left;
+}
+.intro-item-left {
+  width: 33%;
+  .intro-info {
+    padding-right: 115px;
+  }
+}
+.intro-item-center {
+  width: 40%;
+  .intro-info {
+    padding-right: 205px;
+  }
+}
+.intro-item-right {
+  width: 27%;
+  .intro-info {
+    padding-right: 65px;
+  }
+}
+.intro-label {
+  font-size: 21px;
+  margin: 10px 0 25px 0;
+}
+.intro-info {
+  font-size:14px;
+  line-height:25px;
 }

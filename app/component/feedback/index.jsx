@@ -82,15 +82,15 @@ class Index extends React.Component {
 
     validateAll() {
         const authTypeValid = this.refs['questionType'].validate()
-
-        // const picOneValid = !!this.state.picOneImgUrl
-        // const picTwoValid = !!this.state.picTwoImgUrl
-        // const picThreeValid = !!this.state.picThreeImgUrl
-        // this.setState({
-        //     picOneError: picOneValid ? '' : intl.get('uploadPhotoTip'),
-        //     picTwoError: picTwoValid ? '' : intl.get('uploadPhotoTip'),
-        //     picThreeError: picThreeValid ? '' : intl.get('uploadPhotoTip')
-        // })
+        if(this.state.description.trim().length === 0) {
+            this.setState({
+                errorMsg: 'Please enter'
+            })
+        } else {
+            this.setState({
+                errorMsg: ''
+            })
+        }
 
         return authTypeValid
     }
@@ -180,6 +180,7 @@ class Index extends React.Component {
                             <textarea className="description" name="" id="" cols="30" rows="8" placeholder={intl.get('feedback_3')}
                                 value={this.state.description} onChange={this.descriptionChange.bind(this)}></textarea>
                             <span className="description-count">{this.state.description.length}/500</span>
+                            <div className="error-line">{this.state.errorMsg}</div>
                         </div>
 
                         <div className="clearfix upload-wrap">

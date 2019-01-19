@@ -6,6 +6,7 @@ import redditIcon from '@/public/img/reddit.png';
 import telegramIcon from '@/public/img/telegram.png';
 import linkinIcon from '@/public/img/linkin.png';
 import linkDotIcon from '@/public/img/dot.png';
+import { getPageName, isLogin, isLangZH, jumpUrl } from '@/utils'
 
 class Logo extends React.Component {
 
@@ -61,34 +62,14 @@ class ListBlock extends React.Component {
     }
 }
 
-
-class Contact extends React.Component {
-    render() {
-        const listLink = this.props.linkArray ?
-            (
-                this.props.linkArray.map((val) => {
-                    return <div className={'link-item-wrap'} key={val.linkTitle}>
-                        <img className={'link-item-img'} src={linkDotIcon}></img>
-                        <a href={val.linkPath}>
-                        <span
-                            className={'link-block-item'}>{val.linkTitle}</span></a>
-                    </div>
-                })
-            ) : "";
-        return (<div className={'link-block-wrap'}>
-            <p className={'link-block-title'}>{this.props.blockTitle}</p>
-            {listLink}
-            <div className={'company-address-wrap'}>
-                <div className={'company-address'}>
-                    Unit 4308,Far East Finance Center,No.16 Harcourt Road,Admiralty,Hong Kong
-                </div>
-                <div className={'company-address'}>Phone: <span>852 3528 0178</span> FAX: <span>852 3258 0371</span></div>
-            </div>
-        </div>)
-    }
-}
-
 class Footer extends React.Component {
+    goFeedback() {
+        if(isLogin()) {
+            jumpUrl('feedback.html')
+        } else {
+            jumpUrl('login.html')
+        }
+    }
 
     render() {
         const legal = [{linkPath: 'terms-of-service.html', linkTitle: 'Terms of Service'},
@@ -97,13 +78,26 @@ class Footer extends React.Component {
             {linkTitle: 'Fees', linkPath: 'fees.html'},
             {linkPath: 'news.html', linkTitle: 'Announcement and News'},
             {linkPath: 'help.html', linkTitle: 'FAQ and Support'}];
-        const contact = [{linkPath: 'feedback.html', linkTitle: 'Feedback'}]
         return <div className="a-footer">
             <div className={"footer-wrap"}>
-                <Logo />
+                <Logo/>
                 <ListBlock key={'Legal'} blockTitle={'Legal'} linkArray={legal}/>
                 <ListBlock key={'Information'} blockTitle={'Information'} linkArray={information}/>
-                <Contact blockTitle={'Contact'} linkArray={contact}/>
+
+                <div className={'link-block-wrap'}>
+                    <p className={'link-block-title'}>Contact</p>
+                    <div className={'link-item-wrap'}>
+                        <img className={'link-item-img'} src={linkDotIcon}></img>
+                        <a href="javascript:" onClick={this.goFeedback.bind(this)}><span className={'link-block-item'}>Feedback</span></a>
+                    </div>
+                    <div className={'company-address-wrap'}>
+                        <div className={'company-address'}>
+                            Unit 4308,Far East Finance Center,No.16 Harcourt Road,Admiralty,Hong Kong
+                        </div>
+                        <div className={'company-address'}>Phone: <span>852 3528 0178</span> FAX: <span>852 3258 0371</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     }

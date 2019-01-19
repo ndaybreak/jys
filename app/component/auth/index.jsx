@@ -1,7 +1,7 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
-import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isPdf} from '@/utils'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isPdf, isAgeGreater18 } from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import '@/public/css/auth.pcss';
 import previewImg from '@/public/img/放大镜up.png'
@@ -304,7 +304,8 @@ class Index extends React.Component {
             countryCredentialsId: this.refs['countryCredentialsId'].getValue(),
             credentialFrontPicAddr: this.state.picOneImgUrl,
             credentialBackPicAddr: this.state.picTwoImgUrl,
-            verifyVideo: this.state.videoUrl
+            verifyVideo: this.state.videoUrl,
+            headingCode: this.state.videoCode
         }
         return new Promise((resolve, reject) => {
             savePicAuthInfo(para).then(res => {
@@ -340,6 +341,14 @@ class Index extends React.Component {
 
     handleNext() {
         if (this.validateBasicInfo()) {
+            if(!isAgeGreater18(this.refs['birthday'].getValue())) {
+                ui.tip({
+                    width: 300,
+                    seconds: 5,
+                    msg: 'Due to you are under 18 years old , you are not allowed to register.'
+                })
+                return
+            }
             this.storeBasicInfo()
             jumpUrl('commitment-letter.html', {
                 from: 'person'
@@ -422,7 +431,7 @@ class Index extends React.Component {
                                                placeholder="Area Code"
                                                validates={['isSelect']} defaultValue={this.state.def.area_code}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
-                                    <Box ref="mobilePhone" className="phone-wrap" placeholder="Mobile Telephone No."
+                                    <Box ref="mobilePhone" type="number" className="phone-wrap" placeholder="Mobile Telephone No."
                                          validates={['notNull']} defaultValue={this.state.def.mobile_telephone}/>
                                 </div>
 
@@ -439,19 +448,18 @@ class Index extends React.Component {
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="companyName" className="auth-box-left"
-                                         placeholder="Company/Organization Name" validates={['notNull']}
+                                         placeholder="Company/Organization Name"
                                          defaultValue={this.state.def.organization_name}/>
                                     <BoxSelect ref="officePhoneCode" className="area-code-wrap"
                                                placeholder="Area Code"
-                                               validates={['isSelect']} defaultValue={this.state.def.office_area_code}
+                                               defaultValue={this.state.def.office_area_code}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
-                                    <Box ref="officePhone" className="phone-wrap" placeholder="Office Telephone No."
-                                         validates={['notNull']}
+                                    <Box ref="officePhone" type="number" className="phone-wrap" placeholder="Office Telephone No."
                                          defaultValue={this.state.def.office_telephone}/>
                                 </div>
                                 <div className="clearfix">
-                                    <Box ref="faxNo" className="auth-box-left"
-                                         placeholder="Office Fax No." validates={['notNull']}
+                                    <Box ref="faxNo" className="auth-box-left" type="number"
+                                         placeholder="Office Fax No."
                                          defaultValue={this.state.def.office_fax}/>
                                 </div>
                                 {/*<div className="clearfix">*/}
@@ -540,26 +548,27 @@ class Index extends React.Component {
                                                 </div>
                                             )
                                         })}
-                                    </div>
-
-                                    <div className="pic-item">
-                                        <div className={'pic '}>
-                                            <Upload
-                                                name="file"
-                                                listType="picture-card"
-                                                className={'pic-uploader'}
-                                                showUploadList={false}
-                                                action={uploadUrl + 'type=4'}
-                                                beforeUpload={imgOrPdfBeforeUpload}
-                                                onChange={this.handleAssetChange.bind(this)}
-                                            >
-                                                <span></span>
-                                            </Upload>
+                                        <div className="pic-item">
+                                            <div className={'pic '}>
+                                                <Upload
+                                                    name="file"
+                                                    listType="picture-card"
+                                                    className={'pic-uploader'}
+                                                    showUploadList={false}
+                                                    action={uploadUrl + 'type=4'}
+                                                    beforeUpload={imgOrPdfBeforeUpload}
+                                                    onChange={this.handleAssetChange.bind(this)}
+                                                >
+                                                    <span></span>
+                                                </Upload>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="error-line">{this.state.picError}</div>
+                                {this.state.picList.length === 0 && (
+                                    <div className="error-line">{this.state.picError}</div>
+                                )}
 
                                 <div className="text-center">
                                     <button className="btn btn-next" onClick={this.handleNext.bind(this)}>Next</button>

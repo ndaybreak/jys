@@ -34,8 +34,14 @@ class BoxDate extends React.Component {
     boxChange(moment, value) {
         this.setState({
             value: value
+        }, () => {
+            this.props.onChange && this.props.onChange(value)
+            this.validate()
         })
-        this.props.onChange && this.props.onChange(value)
+    }
+
+    onBlur() {
+        this.validate()
     }
 
     getValue() {
@@ -43,6 +49,9 @@ class BoxDate extends React.Component {
     }
 
     validate() {
+        if(!Array.isArray(this.props.validates)) {
+            return true
+        }
         const result = validate({
             value: this.state.value,
             validates: this.props.validates
@@ -57,14 +66,16 @@ class BoxDate extends React.Component {
     render() {
         const {placeholder, className} = this.props
         return (
-            <div className={'box-wrap ' + className}>
+            <div className={'box-wrap box-time-wrap ' + className}>
                 {this.state.defaultValue && (
                     <DatePicker className={'box-time ' + (this.state.isValid ? '' : 'box-invalid')} placeholder={placeholder}
                                 defaultValue={moment(this.state.value, dateFormat)}
+                                onBlur={this.onBlur.bind(this)}
                                 format={dateFormat} onChange={this.boxChange.bind(this)} />
                 )}
                 {!this.state.defaultValue && (
                     <DatePicker className={'box-time ' + (this.state.isValid ? '' : 'box-invalid')} placeholder={placeholder}
+                                onBlur={this.onBlur.bind(this)}
                                 format={dateFormat} onChange={this.boxChange.bind(this)}/>
                 )}
                 <div className="box-error">
