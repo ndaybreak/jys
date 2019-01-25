@@ -169,7 +169,6 @@ class Index extends React.Component {
                 idObj[key.split('-')[1]] = 1
             }
         }
-        debugger
         const total = singleCount + Object.keys(idObj).length
         const orignalTotal = this.state.partOneData.length + this.state.partTwoData.length
         const staticMultipleAnswers = this.state.staticMultipleAnswers

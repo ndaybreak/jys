@@ -487,3 +487,35 @@ export function isAgeGreater18(val) {
     }
     return true
 }
+export function toFixed(val, precision) {
+    if(isNaN(val)) {
+        return val
+    }
+    val = parseFloat(val)
+    val = val.toFixed(precision)
+    return val
+}
+export function getPrecision(val) {
+    if(String(val).indexOf('.') === -1) {
+        return 0
+    }
+    return (val + '').split('.')[1].length
+}
+
+// 按精度截取或补零
+export function truncateByPrecision(val, precision) {
+    val = String(val)
+    let index = val.indexOf('.')
+    if(index === -1) {
+        val += '.00000000'
+        index = val.indexOf('.')
+    } else {
+        val += '0000000'
+    }
+
+    if(precision) {
+        return val.substring(0, index) + val.substring(index, index + precision + 1)
+    } else {
+        return val.substring(0, index)
+    }
+}

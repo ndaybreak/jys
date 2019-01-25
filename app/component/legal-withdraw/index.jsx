@@ -28,6 +28,9 @@ function formatBankData(data) {
     const bank = {}
     const list = []
     const account = {}
+    data = data.filter(item => {
+        return item.status === 3
+    })
     data.forEach((item, i) => {
         item.account = item.pay_account_name + ' (' + item.pay_account_number + ')'
         bank[item.bankName] = 1
@@ -64,14 +67,15 @@ class Index extends React.Component {
     }
 
     componentDidMount() {
-        getBankList().then(res => {
+        getBankList(getSearchPara('id')).then(res => {
             const data = formatBankData(res.data)
+            const defaultBankId = data[0].length ? data[0][0].id : ''
             this.setState({
                 bankList: data[0],
                 accountData: data[1],
-                bankDefault: data[0][0].id
+                bankDefault: defaultBankId
             })
-            this.bankChange(data[0][0].id)
+            defaultBankId && this.bankChange(defaultBankId)
         })
         const para = {
             type: 2,
@@ -159,13 +163,9 @@ class Index extends React.Component {
                 <div className="legal-recharge-page">
                     <div className="tip-part">
                         <div className="tip">
-                            Minimum Withdrawal：$100, Max daily withdrawal: $500000 <br/>
-                            Base Withdrawal Fee is 0.2%, subject to a minimum of $20, the fee for over-withdrawal is
-                            3%（Excluding Bank Fees.）<br/>
-                            Over-withdrawal: more than 4 (inclusive) transactions or more than $1,000,000(inclusive)
-                            equivalent cash withdrawals within last 30 days. <br/>
-                            The withdraw bank account must have the same name as your Coinsuper account, it normally
-                            takes 3 to 5 working days for the money to reflect in your bank account.
+                            Minimum Withdrawal：HK$100, Max daily withdrawal: HK$100,000 <br/>
+                            Base Withdrawal Fee is 0.1% (Excluding Bank Fees）<br/>
+                            The withdraw bank account must have the same name as your Coinsuper account, asset arrival time depends on bank processing time.<br/>
                         </div>
                     </div>
                     <div className="info-part withdraw-info-part">

@@ -12,11 +12,6 @@
 }
 .info-part {
   padding: 30px 285px 10px;
-  .tip {
-    font-size: 15px;
-    color: #e9a400;
-    margin-bottom: 30px;
-  }
 }
 .pic-part {
   padding: 25px 80px 50px 117px;
@@ -171,12 +166,6 @@
   }
 }
 
-
-.tip {
-  font-size: 15px;
-  color: #e9a400;
-  margin-bottom: 30px;
-}
 .info-part {
   margin-bottom: 0;
 }
@@ -323,7 +312,7 @@
       left: 0;
       width: 3px;
       height: 15px;
-      background-color: #006dde;
+      background-color: #0DA9FF;
     }
   }
   .pic-item {
@@ -384,20 +373,26 @@
   .auth-td {
     float: left;
     width: 20%;
-    height:53px;
-    line-height:53px;
+    height:31px;
+    line-height:31px;
     border:1px solid rgba(181,181,181,1);
     border-left: 0;
   }
   .cell-first {
     border-left: 1px solid rgba(181,181,181,1);
   }
-  input {
+  input,
+  .box-wrap .box-select .ant-select-selection {
     border: none;
     outline: none;
     width: 100%;
-    height: 40px;
+    height: 100%;
     text-align: center;
+    vertical-align: top;
+    padding: 0 3px;
+  }
+  .box-wrap {
+    width: 100%;
   }
 
   .auth-td {
@@ -425,4 +420,13 @@
 }
 .phone-wrap {
   width: 197px;
+}
+.item-invalid .box-select .ant-select-selection,
+.item-invalid {
+  background-color: #FFDEDE;
+}
+.director-select-wrap {
+  .box-error {
+    display: none;
+  }
 }

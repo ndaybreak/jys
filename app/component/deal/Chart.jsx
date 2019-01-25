@@ -43,9 +43,9 @@ import {
 import { ema, sma, macd, rsi, bollingerBand } from "react-stockcharts/lib/indicator";
 import { fitWidth } from "react-stockcharts/lib/helper";
 
-import { getIntervalQuot, getIntervalReq } from '@/api/quot'
+import { getIntervalQuot, getIntervalReq, getTargetPairsQuot } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
-import { deepClone } from '@/utils'
+import { deepClone, getPrecision, truncateByPrecision } from '@/utils'
 
 function getMaxUndefined(calculators) {
     return calculators
@@ -129,13 +129,37 @@ class CandleStickChartPanToLoadMore extends React.Component {
         }
 
         eventProxy.on('coinsUpdate', (data) => {
+            const precision = getPrecision(data.targetPrecision)
             this.setState({
                 target: data.target,
-                base: data.base
+                base: data.base,
+                targetPrecision: precision
             }, () => {
                 this.loadData()
             })
+            let para = {}
+            para.targetPairs = [{
+                targetCoinCode: data.base,
+                mainCoinCode: data.target
+            }]
+            getTargetPairsQuot(para, data => {
+                const item = data[0]
+                const diff = item.price - item.startPrice
+                const percent = item.startPrice ? (diff/item.startPrice*100).toFixed(2) : 0
+                this.setState({
+                    price: truncateByPrecision(item.price, precision),
+                    isUp: diff >= 0,
+                    priceChange: Math.abs(diff).toFixed(precision),
+                    percent: diff >= 0 ? ('+' + percent + '%') : ('-' + percent + '%'),
+                    highestPrice: truncateByPrecision(item.highestPrice, precision),
+                    lowestPrice: truncateByPrecision(item.lowestPrice, precision),
+                    volumes: item.volumes
+                })
+            })
         })
+    }
+
+    componentDidMount() {
     }
 
     loadData() {
@@ -512,8 +536,21 @@ class CandleStickChartPanToLoadMore extends React.Component {
 
         return (
             <div className="chart-wrap">
+                <div className="latest-market-wrap">
+                    Last Price:<span className="market-value">{this.state.price}</span>
+                    24h Change:<span className={'market-value ' + (this.state.isUp ? 'txt-up' : 'txt-down')}>{this.state.priceChange} {this.state.percent}</span>
+                    24h High:<span className="market-value">{this.state.highestPrice}</span>
+                    24h Low:<span className="market-value">{this.state.lowestPrice}</span>
+                    24h Volume:<span className="market-value">{this.state.volumes}</span>
+                    <span className="coin-select" onMouseEnter={this.toggleCoins.bind(this, 'enter')} onMouseLeave={this.toggleCoins.bind(this, 'leave')}>
+                        {this.state.base}/{this.state.target}<i className={'icon icon-arrow-down icon-coin ' + (this.state.showCoins ? 'icon-arrow-up' : '')}></i>
+                        <div className={'coin-list-outer ' + (this.state.showCoins ? '' : 'hide')}>
+                            <CoinList />
+                        </div>
+                    </span>
+                </div>
                 <div className="coin-select-wrap">
-                    <span className={'chart-type ' + (chartType === 'line' ? 'active' : '')} onClick={this.changeType.bind(this, 'line')}>Lime Chart</span>
+                    <span className={'chart-type ' + (chartType === 'line' ? 'active' : '')} onClick={this.changeType.bind(this, 'line')}>Line Chart</span>
                     <span className={'chart-type ' + (chartType === 'candle' ? 'active' : '')} onClick={this.changeType.bind(this, 'candle')}>Candlestick Chart</span>
                     <span className="time-type-wrap" onMouseEnter={this.toggleTimeType.bind(this, 'enter')} onMouseLeave={this.toggleTimeType.bind(this, 'leave')}>
                         {timeType}<i className={'icon icon-arrow-down icon-coin ' + (this.state.showTimeType ? 'icon-arrow-up' : '')}></i>
@@ -521,14 +558,8 @@ class CandleStickChartPanToLoadMore extends React.Component {
                             <TimeTypeList changeTimeType={this.changeTimeType.bind(this)}/>
                         </div>
                     </span>
-                    <span className="coin-select" onMouseEnter={this.toggleCoins.bind(this, 'enter')} onMouseLeave={this.toggleCoins.bind(this, 'leave')}>
-                        {this.state.base}/{this.state.target}<i className={'icon icon-arrow-down icon-coin ' + (this.state.showCoins ? 'icon-arrow-up' : '')}></i>
-                        <div className={'coin-list-outer ' + (this.state.showCoins ? '' : 'hide')}>
-                            <CoinList />
-                        </div>
-                    </span>
 
-                    <span className="coin-select" onMouseEnter={this.toggleIndicator.bind(this, 'enter')} onMouseLeave={this.toggleIndicator.bind(this, 'leave')}>
+                    <span className="coin-select indicator-select-wrap" onMouseEnter={this.toggleIndicator.bind(this, 'enter')} onMouseLeave={this.toggleIndicator.bind(this, 'leave')}>
                         {intl.get('indicator')}<i className={'icon icon-arrow-down icon-coin ' + (this.state.showIndicator ? 'icon-arrow-up' : '')}></i>
                         <div className={'coin-list-outer indicator-list ' + (this.state.showIndicator ? '' : 'hide')}>
                             <IndicatorList map={deepClone(indicatorMap)} resetIndicator={this.resetIndicator.bind(this)}/>

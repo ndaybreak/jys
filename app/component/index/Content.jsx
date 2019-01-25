@@ -127,7 +127,8 @@ class Content extends React.Component {
                                 return (
                                     <div className={'row ' + (index%2 === 0 ? 'row-odd' : '')} key={row.targetPair.mainCoinCode + '_' + index} onClick={this.handleClick.bind(this, row.targetPair)}>
                                         <div className="td col-1">{row.targetPair.targetCoinCode}/{row.targetPair.mainCoinCode}</div>
-                                        <div className="td col-2">{row.price} / {isZh ? ('￥' + row.rmbPrice) : ('$' + row.legalTenderPrice)}</div>
+                                        {/*<div className="td col-2">{row.price} / {isZh ? ('￥' + row.rmbPrice) : ('$' + row.legalTenderPrice)}</div>*/}
+                                        <div className="td col-2">{row.price}</div>
                                         <div className="td col-3">{row.volumes}</div>
                                         <div className={`td col-4 ${row.risePercent24h > 0 ? 'p-up' : (row.risePercent24h < 0 ? 'p-down' : '')}`}>
                                             {(row.risePercent24h*100).toFixed(2)}%

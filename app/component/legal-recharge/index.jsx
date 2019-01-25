@@ -234,8 +234,7 @@ class Index extends React.Component {
                 <div className="legal-recharge-page">
                     <div className="tip-part">
                         <div className="tip">Please follow the remittance address belw to remit. <br/>
-                            The daily cutoff time for deposit is in line with Banking Business Hour 17:00 Hong Kong time.
-                            Customer's deposit will be reflected in his/her account immediately when money is received on or before 17:00. Otherwise,it will be possessed on the next business day.
+                            The time to deposit assets depends on the processing time of the bank. If the deposit application exceeds the working time of the bank on the same day, it may not be available until the next day.
                         </div>
                     </div>
                     {getSearchPara('isSubmit') !== 'true' && (

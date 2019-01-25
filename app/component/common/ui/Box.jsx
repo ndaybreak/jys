@@ -7,7 +7,8 @@ class Box extends React.Component {
         this.state = {
             value: props.defaultValue || '',
             errorMsg: '',
-            isValid: true
+            isValid: true,
+            maxLength: props.maxLength || 50
         }
     }
 
@@ -31,12 +32,17 @@ class Box extends React.Component {
             value: value
         }, () => {
             this.props.onChange && this.props.onChange(value)
-            this.validate()
+
+            if(!this.props.disableTimelyValidate) {
+                this.validate()
+            }
         })
     }
 
     onBlur() {
-        this.validate()
+        if(!this.props.disableTimelyValidate) {
+            this.validate()
+        }
     }
 
     getValue() {
@@ -63,7 +69,7 @@ class Box extends React.Component {
         return (
             <div className={'box-wrap ' + className}>
                 <input className={'box ' + (this.state.isValid ? '' : 'box-invalid')} type={type ? type : 'text'} placeholder={placeholder}
-                       value={this.state.value || ''} onChange={this.boxChange.bind(this)} onBlur={this.onBlur.bind(this)}/>
+                       value={this.state.value || ''} onChange={this.boxChange.bind(this)} onBlur={this.onBlur.bind(this)} maxLength={this.state.maxLength}/>
                 <div className="box-error">
                     {!this.state.isValid && (
                         <span>{this.state.errorMsg}</span>

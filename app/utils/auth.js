@@ -60,7 +60,7 @@ export function checkAuth(list = []) {
     }
 
     // 问卷调查是否完成
-    if(list.indexOf('questionnaire') > -1 && !user.cantradeKyc) {
+    if(list.indexOf('questionnaire') > -1 && !user.cantrade_kyc) {
         ui.confirm({
             width: 300,
             msg: 'In order to ensure the appropriateness of product or service sales and protect investors\'rights and interests, you need to do an investment knowledge assessment.',

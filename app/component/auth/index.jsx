@@ -134,7 +134,23 @@ class Index extends React.Component {
         }
     }
 
+    fillData() {
+        let data = getSessionData('authBasicData')
+        if(!data) {
+            return
+        }
+        let state = {def: Object.assign(this.state.def, data)}
+        state.picList = data.pictureInformation.split(',').map(url => {
+            return {
+                url: url,
+                isPdf: isPdf(url)
+            }
+        })
+        this.setState(state)
+    }
+
     componentDidMount() {
+        this.fillData()
         getCountryList().then(res => {
             this.setState({
                 countryList: res.data
@@ -328,9 +344,11 @@ class Index extends React.Component {
             // }).then(() => {
             //     return refreshAccountInfo()
             }).then(() => {
+                removeSessionData('authBasicData')
                 ui.tip({
-                    msg: 'Register success!',
-                    width: 230,
+                    msg: 'Your KYC information send successfully and we will verify it as soon as possible.',
+                    width: 300,
+                    seconds: 5,
                     callback: () => {
                         jumpUrl('index.html')
                     }
@@ -405,14 +423,14 @@ class Index extends React.Component {
                                 {/*基本信息*/}
                                 <div className="clearfix">
                                     <Box ref="fullName" className="auth-box-left" placeholder="Name"
-                                         validates={['notNull']} defaultValue={this.state.def.full_name}/>
+                                         validates={['notNull']} defaultValue={this.state.def.fullName}/>
                                     <BoxDate ref="birthday" className="auth-box-right"
                                              placeholder={intl.get('birthDateTip')} validates={['isSelect']}
                                              defaultValue={this.state.def.birthday}/>
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="birthPlace" className="auth-box-left" placeholder={intl.get('birthPlace')}
-                                         validates={['notNull']} defaultValue={this.state.def.place_birth}/>
+                                         validates={['notNull']} defaultValue={this.state.def.placeBirth} maxLength={200}/>
                                     <BoxSelect ref="education" className="auth-box-right"
                                                placeholder="Education" validates={['isSelect']} defaultValue={this.state.def.education}
                                                options={this.state.educationList} optValue="id" optLabel="name"/>
@@ -420,19 +438,19 @@ class Index extends React.Component {
                                 <div className="clearfix">
                                     <Box ref="premanentAddr" className="auth-box"
                                          placeholder={intl.get('premanentAddr')} validates={['notNull']}
-                                         defaultValue={this.state.def.premanent_address}/>
+                                         defaultValue={this.state.def.premanentAddress} maxLength={200}/>
                                 </div>
                                 <div className="clearfix">
                                     <BoxSelect ref="nationality" className="auth-box-left"
                                                placeholder="Nationality / Citizenship"
-                                               validates={['isSelect']} defaultValue={this.state.def.country_area_id}
+                                               validates={['isSelect']} defaultValue={this.state.def.countryAreaId}
                                                options={this.state.countryList} optValue="id" optLabel="country_name"/>
                                     <BoxSelect ref="mobilePhoneCode" className="area-code-wrap"
                                                placeholder="Area Code"
-                                               validates={['isSelect']} defaultValue={this.state.def.area_code}
+                                               validates={['isSelect']} defaultValue={this.state.def.areaCode}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
                                     <Box ref="mobilePhone" type="number" className="phone-wrap" placeholder="Mobile Telephone No."
-                                         validates={['notNull']} defaultValue={this.state.def.mobile_telephone}/>
+                                         validates={['notNull']} defaultValue={this.state.def.mobileTelephone}/>
                                 </div>
 
                                 {/*财务信息*/}
@@ -440,27 +458,27 @@ class Index extends React.Component {
                                 <div className="clearfix">
                                     <Box ref="fundsSource" className="auth-box-left"
                                          placeholder={intl.get('fundsSource')} validates={['notNull']}
-                                         defaultValue={this.state.def.source_funds}/>
+                                         defaultValue={this.state.def.sourceFunds}/>
                                     <BoxSelect ref="workNature" className="auth-box-right"
                                                placeholder={intl.get('workNature')}
-                                               validates={['isSelect']} defaultValue={this.state.def.nature_work}
+                                               validates={['isSelect']} defaultValue={this.state.def.natureWork}
                                                options={this.state.workNatureList} optValue="id" optLabel="name"/>
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="companyName" className="auth-box-left"
                                          placeholder="Company/Organization Name"
-                                         defaultValue={this.state.def.organization_name}/>
+                                         defaultValue={this.state.def.organizationName}/>
                                     <BoxSelect ref="officePhoneCode" className="area-code-wrap"
                                                placeholder="Area Code"
-                                               defaultValue={this.state.def.office_area_code}
+                                               defaultValue={this.state.def.officeAreaCode}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
                                     <Box ref="officePhone" type="number" className="phone-wrap" placeholder="Office Telephone No."
-                                         defaultValue={this.state.def.office_telephone}/>
+                                         defaultValue={this.state.def.officeTelephone}/>
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="faxNo" className="auth-box-left" type="number"
                                          placeholder="Office Fax No."
-                                         defaultValue={this.state.def.office_fax}/>
+                                         defaultValue={this.state.def.officeFax}/>
                                 </div>
                                 {/*<div className="clearfix">*/}
                                 {/*<Box ref="sssNo" className="auth-box-left" placeholder={intl.get('sssNo')} validates={['notNull']} defaultValue={this.state.def.sss_gsis}/>*/}

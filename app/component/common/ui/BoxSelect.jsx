@@ -32,12 +32,16 @@ class BoxSelect extends React.Component {
             value: value
         }, () => {
             this.props.onChange && this.props.onChange(value)
-            this.validate()
+            if(!this.props.disableTimelyValidate) {
+                this.validate()
+            }
         })
     }
 
     onBlur() {
-        this.validate()
+        if(!this.props.disableTimelyValidate) {
+            this.validate()
+        }
     }
 
     getValue() {
@@ -73,6 +77,7 @@ class BoxSelect extends React.Component {
                     <Select
                         className="box-select"
                         showSearch
+                        allowClear
                         placeholder={placeholder}
                         defaultValue={defaultValue}
                         optionFilterProp="children"
@@ -90,6 +95,7 @@ class BoxSelect extends React.Component {
                     <Select
                         className="box-select"
                         showSearch
+                        allowClear
                         placeholder={placeholder}
                         optionFilterProp="children"
                         value={this.state.value}

@@ -22,7 +22,7 @@ class VerifyOldEmail extends React.Component {
                 path: 'user.html',
                 val: intl.get('personalCenter')
             }, {
-                val: intl.get('Bind email')
+                val: 'Modify email'
             }],
             errorMsg: '',
             remainTime: 0,
@@ -84,8 +84,11 @@ class VerifyOldEmail extends React.Component {
         return (
             <div className="modify-phone-page">
                 <Breadcrumb data={this.state.breadcrumbData}></Breadcrumb>
-                <div className="modify-title">{intl.get('Bind email')}</div>
+                <div className="modify-title">Modify email</div>
                 <div className="modify-content">
+                    <div className="tip tip-assets">
+                        You cannot withdraw assets within 24 hours after reset the capital password.
+                    </div>
                     <div className="error-line">
                         {this.state.errorMsg}
                     </div>

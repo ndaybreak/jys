@@ -20,9 +20,15 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-    .item:hover {
-      color: #006dde;
+      .link {
+        transition: none;
+        color: #000;
+        display: inline-block;
+        &:hover {
+          color: #0DA9FF;
+          text-decoration: underline;
+        }
+      }
     }
     .check-more {
       margin-top: 20px;

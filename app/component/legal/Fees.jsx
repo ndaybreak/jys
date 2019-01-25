@@ -1,70 +1,75 @@
 import React from 'react';
 import '@/public/css/fees.pcss';
+import {Table} from "antd";
 
 class Fees extends React.Component {
-
-    createTabRow(cols) {
-        const rowCell = cols ? cols.map((cellVal) => {
-            return <div className={'tab-cell-wrap'}> <span className={'table-cell'}>
-                    {cellVal}</span></div>
-        }) : "";
-        return (<div className={'tab-row'}>{rowCell}</div>)
-    }
-
-    createTable(tab) {
-        const tabColNames = tab.header ? (tab.header.map((headerName) => {
-            return <div className={'tab-column-header-wrap'}>
-                <span className={'tab-header-cell'}>
-                    {headerName}</span></div>
-        })) : "";
-        return (<div className={'table'}>
-            <div className={'tab-row'}>
-                {tabColNames}
-            </div>
-            {tab.rows ? (tab.rows.map((cols) => {
-                return this.createTabRow(cols)
-            })) : ""}
-        </div>)
-    }
-
     render() {
-        const tab = [{
-            name: 'Deposit Fee',
-            tab: {
-                header: ['Assets', 'Minimum Account', 'Fee'],
-                rows: [['BTC', '0.01 BTC', 'Free'],
-                    ['ETH', '0.01 ETH', 'Free'],
-                    ['HKD', 'Unlimited', 'Free (Excluding Bank Fees)'],]
-            }
-        },
+        const tab = [
+            {
+                name: 'Deposit Fee',
+                tab: {
+                    columns: [
+                        {title: 'Assets', key: 'name', dataIndex: 'name', width: 300},
+                        {title: 'Minimum Account', key: 'account', dataIndex: 'account', width: 300},
+                        {title: 'Fee', key: 'fee', dataIndex: 'fee', width: 300}
+                    ],
+                    data: [
+                        {key: '1', name: 'BTC', account: 'Unlimited', fee: 'Free'},
+                        {key: '2', name: 'ETH', account: 'Unlimited', fee: 'Free'},
+                        {key: '3', name: 'HKD', account: 'Unlimited', fee: 'Free (Excluding Bank Fees)'}
+                    ]
+                }
+            },
             {
                 name: 'Withdrawal Fee',
                 tab: {
-                    header: ['Assets', 'Minimum Amount Per Each Time', 'Maximum Amount Per Each Time', 'Maximum Amount Per day', 'Fee', 'Maximum times of withdrawal per day'],
-                    rows: [
-                        ['BTC', '0.01 BTC', '20 BTC', '20 BTC', '0.0005 BTC', '10'],
-                        ['ETH', '0.2 ETH', '800 ETH', '800 ETH', '0.01 ETH', '10'],
-                        ['HKD', '100 HKD', '100,000 HKD', '100,000 HKD', '1‰(Excluding Bank Fees)', '1'],
+                    columns: [
+                        {title: 'Assets', key: 'name', dataIndex: 'name', width: 180},
+                        {title: 'Minimum Amount Per Each Time', key: 'minAmtTime', dataIndex: 'minAmtTime', width: 180},
+                        {title: 'Maximum Amount Per Each Time', key: 'maxAmtTime', dataIndex: 'maxAmtTime', width: 180},
+                        {title: 'Fee', key: 'fee', dataIndex: 'fee', width: 180},
+                        {title: 'Maximum Amount Per day', key: 'maxAmtDay', dataIndex: 'maxAmtDay', width: 180,
+                            render: (text, row, index) => {
+                                return {
+                                    children: text,
+                                    props: {
+                                        rowSpan: index > 1 ? 1 : (index === 0 ? 2 : 0),
+                                    }
+                                };
+                            }
+                        }
+                    ],
+                    data: [
+                        {key: '1', name: 'BTC', minAmtTime: '0.01 BTC', maxAmtTime: '20 BTC', fee: '0.0005 BTC', maxAmtDay: 'The total withdrawal value of all virtual currencies does not exceed 40BTC'},
+                        {key: '2', name: 'ETH',minAmtTime: '0.2 ETH', maxAmtTime: '800 ETH', fee: '0.01 ETH', },
+                        {key: '3', name: 'HKD', minAmtTime: '100 HKD', maxAmtTime: '100,000 HKD', fee: '1‰ (Excluding Bank Fees)',  maxAmtDay: '100,000 HKD'}
                     ]
                 }
             },
             {
                 name: 'Trade',
                 tab: {
-                    header: ['Maker', 'Taker'],
-                    rows: [['1‰', '1‰']]
+                    columns: [
+                        {title: 'Maker', key: 'maker', dataIndex: 'maker', width: 450},
+                        {title: 'Trader', key: 'trader', dataIndex: 'trader', width: 450}
+                    ],
+                    data: [
+                        {key: '1',maker: '1‰',trader: '1‰' }
+                    ]
                 }
-            }].map((tabVal) => {
+            }
+        ].map((tabVal) => {
                 return (<div key={tabVal.name}>
                         <div className={'tab-name'}>{tabVal.name}</div>
-                        {this.createTable(tabVal.tab)}
+                        <Table className={'table'} dataSource={tabVal.tab.data} bordered={true} columns={tabVal.tab.columns}
+                               pagination={false}/>
                     </div>
                 )
             }
         );
         return (<div className={'fees-page'}>
                 <div className={'page-title'}>{"Fees"}</div>
-                <div className={'time'}>{'2019-01-18 18:18'}</div>
+                <div className={'time'}>{'2019-01'}</div>
                 {tab}
             </div>
         );

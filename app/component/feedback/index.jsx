@@ -82,17 +82,19 @@ class Index extends React.Component {
 
     validateAll() {
         const authTypeValid = this.refs['questionType'].validate()
+        let contentValid = true
         if(this.state.description.trim().length === 0) {
             this.setState({
                 errorMsg: 'Please enter'
             })
+            contentValid = false
         } else {
             this.setState({
                 errorMsg: ''
             })
         }
 
-        return authTypeValid
+        return authTypeValid && contentValid
     }
 
     submit() {
@@ -219,12 +221,12 @@ class Index extends React.Component {
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="submit-part">
-                        <Button className="btn-submit" type="primary" onClick={this.submit.bind(this)}>
-                            {intl.get('submitNow')}
-                        </Button>
+                        <div className="txt-center">
+                            <button className="btn btn-submit" type="primary" onClick={this.submit.bind(this)}>
+                                {intl.get('submitNow')}
+                            </button>
+                        </div>
                     </div>
 
                     <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel.bind(this)}>

@@ -2,9 +2,10 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import { Icon, Modal, Button, Upload, message, Spin } from 'antd'
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
-import { setSessionData } from '@/data'
+import { setSessionData, removeSessionData } from '@/data'
 import '@/public/css/user.pcss';
 import userIconImg from '@/public/img/user_icon.png'
+import companyIcon from '@/public/img/icon_company.png'
 import userLevel1Img from '@/public/img/user_level_1.png'
 import userLevel2Img from '@/public/img/user_level_2.png'
 import userLevel3Img from '@/public/img/user_level_3.png'
@@ -134,11 +135,12 @@ class User extends React.Component {
     goAuth(isVerifying, e) {
         if(isVerifying) {
             ui.tip({
-                width: 300,
+                width: 330,
                 msg: 'Your KYC information is under review. Please wait patiently.  '
             })
             return
         }
+        removeSessionData('authBasicData')
         if(user.type == 1) {
             jumpUrl('auth.html')
         } else {
@@ -162,7 +164,7 @@ class User extends React.Component {
         if(page === 'capitalPassword') {
             jumpUrl('set-capital-password.html')
         } else if(page === 'modifyLoginPassword') {
-            jumpUrl('modify-login-password.html');
+            jumpUrl('modify-login-password.html')
         }
     }
 
@@ -276,7 +278,7 @@ class User extends React.Component {
                 <div className="user-info">
                     <div className="user-info-inner">
                         <div className="info-left">
-                            <img src={userIconImg} alt=""/>
+                            <img src={user.type == 1 ? userIconImg : companyIcon} alt=""/>
                             <span>{user.email}</span>
                             <img className="user-level" src={userLevelImg} alt="" onClick={this.showLevel.bind(this)}/>
                             {/*{user.is_merchant && (*/}
@@ -285,8 +287,8 @@ class User extends React.Component {
                             {user.auth_application_status === 2 && (
                                 <button className="btn btn-authed">{intl.get('verified')}</button>
                             )}
-                            {!user.auth_application_status && (
-                                <button className="btn btn-auth" onClick={this.goAuth.bind(this, false)}>{intl.get('toVerified')}</button>
+                            {(!user.auth_application_status || user.auth_application_status === 1) && (
+                                <button className="btn btn-auth" onClick={this.goAuth.bind(this, false)}>GO KYC</button>
                             )}
                             {user.auth_application_status === 3 && (
                                 <button className="btn btn-auth" onClick={this.goAuth.bind(this, true)}>{intl.get('verifying')}</button>
@@ -298,7 +300,7 @@ class User extends React.Component {
                         <div className="info-right">
                             <div className="asset-line">
                                 {/*{intl.get('myFunds')}*/}
-                                <a className="info-link link-detail" href="javascript:" onClick={this.showVariationDetails.bind(this)}>Variation my assets details</a>
+                                <a className="info-link link-detail" href="javascript:" onClick={this.showVariationDetails.bind(this)}>History of Asset Change</a>
                                 {/*<a className="info-link link-recharge" href="recharge.html">{intl.get('deposit')}</a>*/}
                                 {/*<a className="info-link" href="withdraw.html">{intl.get('withdrawal')}</a>*/}
                             </div>
@@ -450,13 +452,13 @@ class User extends React.Component {
                             {/*<div className="level-col level-col-4">{intl.get('level_has')}</div>*/}
                             {/*<div className="level-col level-col-5">{intl.get('level_lower')}</div>*/}
                         </div>
-                        <div className="clearfix level-body">
-                            <div className="level-col level-col-1"><img src={userLevel3Img} alt=""/></div>
-                            <div className="level-col level-col-2">{intl.get('level_higher')}</div>
-                            <div className="level-col level-col-3">{intl.get('level_has')}</div>
-                            {/*<div className="level-col level-col-4">{intl.get('level_has')}</div>*/}
-                            {/*<div className="level-col level-col-5">{intl.get('level_higher')}</div>*/}
-                        </div>
+                        {/*<div className="clearfix level-body">*/}
+                            {/*<div className="level-col level-col-1"><img src={userLevel3Img} alt=""/></div>*/}
+                            {/*<div className="level-col level-col-2">{intl.get('level_higher')}</div>*/}
+                            {/*<div className="level-col level-col-3">{intl.get('level_has')}</div>*/}
+                            {/*/!*<div className="level-col level-col-4">{intl.get('level_has')}</div>*!/*/}
+                            {/*/!*<div className="level-col level-col-5">{intl.get('level_higher')}</div>*!/*/}
+                        {/*</div>*/}
                     </div>
                 </Modal>
 

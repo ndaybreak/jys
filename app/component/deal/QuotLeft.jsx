@@ -1,7 +1,7 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import QuotSelect from './QuotSelect';
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
+import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, toFixed, getPrecision } from '@/utils'
 import { getCommissionList, getAssetList } from '@/api'
 import { entrustOrderSub } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
@@ -35,12 +35,6 @@ class User extends React.Component {
         }
     }
 
-    getPrecision(val) {
-        if(String(val).indexOf('.') === -1) {
-            return 0
-        }
-        return (val + '').split('.')[1].length
-    }
     getPrecisionList(precision) {
         var list = []
         while(list.length < 3 && precision > 0) {
@@ -55,10 +49,10 @@ class User extends React.Component {
 
     componentDidMount() {
         eventProxy.on('coinsUpdate', (data) => {
-            const precision = this.getPrecision(data.targetPrecision)
+            const precision = getPrecision(data.targetPrecision)
             this.setState({
                 precisionValue: precision,
-                precistionList: this.getPrecisionList(precision)
+                precisionList: this.getPrecisionList(precision)
             })
             COIN.base = data.base
             COIN.target = data.target
@@ -85,7 +79,7 @@ class User extends React.Component {
     }
 
     precisionChange(val) {
-        this.queryEntrustOrder(val, val)
+        this.queryEntrustOrder(val)
     }
     typeChange(val) {
         this.setState({
@@ -104,7 +98,7 @@ class User extends React.Component {
             <div className="quot-left">
                 <div className="quot-title clearfix">
                     <div className="quot-col quot-col-1">{intl.get('price')}</div>
-                    <div className="quot-col quot-col-2">{intl.get('amount')}</div>
+                    <div className="quot-col quot-col-2">Amount</div>
                 </div>
                 <div className="quot-body">
                     {this.state.typeValue !== 2 && (
@@ -112,7 +106,7 @@ class User extends React.Component {
                             {saleOrders.map((item, index) => {
                                 return (
                                     <div className="quot-item clearfix" key={index} onClick={this.selectItem.bind(this, item)}>
-                                        <div className="quot-col quot-col-1">{item.price}</div>
+                                        <div className="quot-col quot-col-1">{toFixed(item.price, this.state.precisionValue)}</div>
                                         <div className="quot-col quot-col-2">{item.quantity}</div>
                                     </div>
                                 )
@@ -120,7 +114,7 @@ class User extends React.Component {
                         </div>
                     )}
                     <div className="quot-current">
-                        {this.state.price}
+                        {COIN.target} {this.state.price}
                         {/*{this.state.otcPrice}*/}
                     </div>
                     {this.state.typeValue !== 1 && (
@@ -128,7 +122,7 @@ class User extends React.Component {
                             {buyOrders.map((item, index) => {
                                 return (
                                     <div className="quot-item clearfix" key={index} onClick={this.selectItem.bind(this, item)}>
-                                        <div className="quot-col quot-col-1">{item.price}</div>
+                                        <div className="quot-col quot-col-1">{toFixed(item.price, this.state.precisionValue)}</div>
                                         <div className="quot-col quot-col-2">{item.quantity}</div>
                                     </div>
                                 )
@@ -138,7 +132,7 @@ class User extends React.Component {
                 </div>
                 <div className="quot-footer clearfix">
                     <div className="footer-left">
-                        {/*<QuotSelect value={this.state.precisionValue} data={this.state.precistionList} onChange={this.precisionChange.bind(this)}/>*/}
+                        {/*<QuotSelect value={this.state.precisionValue} data={this.state.precisionList} onChange={this.precisionChange.bind(this)}/>*/}
                     </div>
                     <div className="footer-right">
                         <QuotSelect value={this.state.typeValue} data={this.state.typeList} onChange={this.typeChange.bind(this)}/>

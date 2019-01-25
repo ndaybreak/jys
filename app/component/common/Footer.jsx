@@ -81,7 +81,7 @@ class Footer extends React.Component {
         return <div className="a-footer">
             <div className={"footer-wrap"}>
                 <Logo/>
-                <ListBlock key={'Legal'} blockTitle={'Legal'} linkArray={legal}/>
+                <ListBlock key={'Legal'} blockTitle={'Legal Terms'} linkArray={legal}/>
                 <ListBlock key={'Information'} blockTitle={'Information'} linkArray={information}/>
 
                 <div className={'link-block-wrap'}>

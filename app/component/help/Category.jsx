@@ -34,7 +34,7 @@ class Header extends React.Component {
                 {this.state.category.data.slice(0, 6).map( (item, index) => {
                     return (
                         <div className="item" key={this.state.category.id + '_' + item.info_id}
-                            onClick={this.toDetail.bind(this, item)}>{item.title}</div>
+                            onClick={this.toDetail.bind(this, item)}><a className="link" href="javascript:">{item.title}</a></div>
                     )
                 })}
                 {this.state.category.data.length >6 && (

@@ -93,12 +93,12 @@ class List extends React.Component {
                                 <div className="name">{bank.pay_account_name} </div>
                                 <div className="number">{bank.pay_account_number}</div>
                                 <button className="btn btn-delete" onClick={this.handleDelete.bind(this, bank)}>Delete</button>
-                                {bank.status === 0 && (
+                                {bank.status !== 3 && (
                                     <span className="status status-verifying">
                                         <img src={verifyingImg} alt=""/> verifying
                                     </span>
                                 )}
-                                {bank.status !== 0 && (
+                                {bank.status === 3 && (
                                     <span className="status status-verified">
                                         <img src={verifiedImg} alt=""/> verified
                                     </span>

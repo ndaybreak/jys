@@ -45,7 +45,7 @@ let config = merge(baseWebpackConfig, {
                 common: {
                     chunks: "initial",
                     name: "common",
-                    minChunks: 2,
+                    minChunks: 10,
                     maxInitialRequests: 5,
                     minSize: 0
                 },

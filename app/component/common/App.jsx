@@ -6,6 +6,8 @@ import 'antd/dist/antd.css';
 import Header from '@/component/common/Header';
 import Footer from '@/component/common/Footer';
 import { LANG } from '@/data/static'
+import { isLogin } from '@/utils'
+import { refreshAccountInfo } from '@/utils/auth'
 
 const SUPPOER_LOCALES = [
     {
@@ -64,8 +66,14 @@ class App extends React.Component {
             })
             .then(() => {
                 // After loading CLDR locale data, start to render
-                this.setState({ initDone: true });
-            });
+                if(isLogin()) {
+                    refreshAccountInfo().then(res => {
+                        this.setState({ initDone: true })
+                    })
+                } else {
+                    this.setState({ initDone: true })
+                }
+            })
     }
 
     render() {

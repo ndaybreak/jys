@@ -40,9 +40,14 @@ class User extends React.Component {
             let date = new Date(value)
             if (isEnd) {
                 date.setHours(0)
+                date.setMinutes(0)
+                date.setSeconds(0)
                 date.setDate(date.getDate() + 1)
                 return date.getTime()
             } else {
+                date.setHours(0)
+                date.setMinutes(0)
+                date.setSeconds(0)
                 return date.getTime()
             }
         } else {
@@ -103,18 +108,17 @@ class User extends React.Component {
     confirm() {
         cancelCoinsOrder(this.state.cancelId).then(res => {
             this.cancel()
+            eventProxy.trigger('orderDone')
+            this.queryOrders()
             ui.tip({
-                msg: intl.get('successTip'),
-                callback: () => {
-                    this.queryOrders()
-                }
+                msg: intl.get('successTip')
             })
         })
     }
 
     checkValidDate(isStartTime, moment) {
-        return isStartTime ? moment.isSameOrAfter(this.state.endTime, "day") :
-            moment.isSameOrBefore(this.state.startTime,"day");
+        return isStartTime ? moment.isAfter(this.state.endTime, "day") :
+            moment.isBefore(this.state.startTime,"day");
     }
 
     render() {
@@ -151,9 +155,9 @@ class User extends React.Component {
                         <div className="order-col order-col-1">{intl.get('market')}</div>
                         <div className="order-col order-col-2">{intl.get('time')}</div>
                         <div className="order-col order-col-3">{intl.get('price')}</div>
-                        <div className="order-col order-col-4">{intl.get('avgPrice')}</div>
-                        <div className="order-col order-col-5">{intl.get('amt')}</div>
-                        <div className="order-col order-col-6">{intl.get('trades')}</div>
+                        <div className="order-col order-col-4">Average</div>
+                        <div className="order-col order-col-5">Amount</div>
+                        <div className="order-col order-col-6">Filled</div>
                         <div className="order-col order-col-7">{intl.get('operation')}</div>
                     </div>
 
@@ -173,11 +177,11 @@ class User extends React.Component {
                                     className="order-col order-col-5">{item.orderType === 1 ? intl.get('marketPrice') : item.quantity}</div>
                                 <div className="order-col order-col-6">{item.dealQuantity}</div>
                                 <div className="order-col order-col-7">
-                                    {item.status === 0 && (
+                                    {(item.status === 0 || item.status === 2) && (
                                         <a href="javascript:" className="oper-cancel"
                                            onClick={this.cancelOrder.bind(this, item.id)}>{intl.get('revocation')}</a>
                                     )}
-                                    {item.status !== 0 && (
+                                    {item.status !== 0 && item.status !== 2 && (
                                         <span className="status-canceled">{getOrderStatus(item.status)}</span>
                                     )}
                                 </div>

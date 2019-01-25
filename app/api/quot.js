@@ -314,6 +314,10 @@ export function latestDealSub(targetPair, callback) {
 
         obj.websocket.onmessage = function(res) {
             let data = QuotMessage.decode(res.data).content.response.latestDealQuotResp.data
+            data.map(item => {
+                item.date = new Date(parseInt(new Long(item.time.low, item.time.high, item.time.unsigned).toString()))
+                return item
+            })
             callback && callback(data)
         }
     }

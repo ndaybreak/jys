@@ -53,8 +53,14 @@ service.interceptors.response.use(
                   jumpUrl('index.html')
               }
           })
-      } else {
-          // message.error(res.info)
+      } else if (res.code === '10001') { // token过期
+          ui.confirm({
+              msg: res.info,
+              onOk: () => {
+                  removeToken()
+                  jumpUrl('forget-login-password.html')
+              }
+          })
       }
       return Promise.reject(res)
     } else {

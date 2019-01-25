@@ -211,9 +211,8 @@ class Index extends React.Component {
                     </div>
 
                     <div className="asset-part">
-                        {/*Upload Asset Certificate Documents*/}
-                        <div className="label">Upload Asset Certificate Documents</div>
-                        <div className="tip">Stox requires the bank card account number and the name on the bank card be the same as the real name linked to your account. Otherwise, currency withdrawal is not allowed.
+                        <div className="label">Upload bank bill（Please show the bank account No. clearly）</div>
+                        <div className="tip">Stox requires the bank account number and the name on the bank card be the same as the real name linked to your account. Otherwise, currency withdrawal is not allowed.
                         </div>
 
                         <div className="clearfix upload-wrap">

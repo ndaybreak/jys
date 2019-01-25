@@ -154,11 +154,43 @@ class Index extends React.Component {
             position: '',
             mobile: '',
             passport: '',
-            behalfError: ''
+            behalfError: '',
+            directorList: [{
+                id: 1,
+                value: 'Director'
+            }, {
+                id: 2,
+                value: 'Shareholder'
+            }]
         }
     }
 
+    fillData() {
+        let data = getSessionData('authBasicData')
+        if(!data) {
+            return
+        }
+        let state = {
+            def: Object.assign(this.state.def, data),
+            authorizedName: data.authorizedName,
+            position: data.position,
+            mobile: data.mobile,
+            passport: data.passport,
+            infoList: data.list,
+            explainInfo: data.explaininfo
+        }
+        state.picList = data.pictureInformation.split(',').map(url => {
+            return {
+                url: url,
+                isPdf: isPdf(url)
+            }
+        })
+        this.setState(state)
+    }
+
     componentDidMount() {
+        this.fillData()
+
         this.setState({
             bankList: this.state.bankData[0]
         })
@@ -256,6 +288,54 @@ class Index extends React.Component {
             })
         }
 
+        const attrs = ['name', 'residentialAddress', 'incorpration', 'directorShareholder', 'shareholding']
+        function isEmptyRow(item) {
+            return !item[attrs[0]] && !item[attrs[1]] && !item[attrs[2]] && !item[attrs[3]] && !item[attrs[4]]
+        }
+        let infoValid = true
+        const infoList = this.state.infoList
+        const allEmpty = infoList.every(item => {
+            return isEmptyRow(item)
+        })
+        if(allEmpty) {
+            infoList.forEach((item, i) => {
+                if(i === 0) {
+                    attrs.forEach(attr => {
+                        item[attr + 'Invalid'] = true
+                    })
+                } else {
+                    attrs.forEach(attr => {
+                        item[attr + 'Invalid'] = false
+                    })
+                }
+            })
+            infoValid = false
+        } else {
+            infoList.forEach(item => {
+                if(!isEmptyRow(item)) {
+                    attrs.forEach(attr => {
+                        if(!item[attr]) {
+                            item[attr + 'Invalid'] = true
+                            infoValid = false
+                        }
+                    })
+                } else {
+                    attrs.forEach(attr => {
+                        item[attr + 'Invalid'] = false
+                    })
+                }
+            })
+        }
+        if(infoValid) {
+            this.setState({
+                infoError: ''
+            })
+        } else {
+            this.setState({
+                infoError: 'Please enter'
+            })
+        }
+
         const behalfValid = this.state.authorizedName || this.state.position || this.state.mobile || this.state.passport
         if(behalfValid) {
             this.setState({
@@ -269,7 +349,7 @@ class Index extends React.Component {
 
         return companyNameValid && companyRegistrationDateValid && contactNumberValid && registeredAddressValid && contactAddressValid &&
             companyNameValid && contactPersonValid && natureWorkValid && corporationTypeValid && bankValid && companyRegistrationNumberValid
-            && picValid && behalfValid && areaCodeValid
+            && picValid && behalfValid && areaCodeValid && infoValid
     }
 
     validateHighInfo() {
@@ -318,7 +398,6 @@ class Index extends React.Component {
         return new Promise((resolve, reject) => {
             const para = getSessionData('authBasicData')
             saveCompanyBasicAuthInfo(para).then(res => {
-                debugger
                 resolve()
             }, error => {
                 this.setState({
@@ -355,10 +434,11 @@ class Index extends React.Component {
             })
             this.submitInfo().then(() => {
                 this.submitPic().then((info) => {
-                    debugger
+                    removeSessionData('authBasicData')
                     ui.tip({
-                        msg: 'Register success!',
-                        width: 230,
+                        msg: 'Your KYC information send successfully and we will verify it as soon as possible.',
+                        width: 300,
+                        seconds: 5,
                         callback: () => {
                             jumpUrl('index.html')
                         }
@@ -420,13 +500,25 @@ class Index extends React.Component {
 
     institutionChange(key) {
         this.setState({
-            bankList: this.state.bankData[key]
+            bankList: this.state.bankData[key - 1]
         })
+        this.refs.bank.setValue(undefined)
     }
 
     directorChange(key, i, e) {
         const list = this.state.infoList
-        list[i][key] = e.target.value
+        let value = ''
+        if(key === 'directorShareholder') {
+            value = e
+        } else {
+            value = e.target.value
+        }
+        list[i][key] = value
+
+        if(value && list[i][key + 'Invalid']) {
+            list[i][key + 'Invalid'] = false
+        }
+
         this.setState({
             infoList: list
         })
@@ -458,7 +550,7 @@ class Index extends React.Component {
                                 </div>
                                 <div className="clearfix">
                                     <Box ref="contactPerson" className="auth-box-left" placeholder="Contact Person"
-                                         validates={['notNull']} defaultValue={this.state.def.incorpration}/>
+                                         validates={['notNull']} defaultValue={this.state.def.liaisonPerson}/>
                                     <Box ref="registeredAddress" className="auth-box-right"
                                          placeholder="Registered Address" validates={['notNull']}
                                          defaultValue={this.state.def.registeredAddress}/>
@@ -477,7 +569,7 @@ class Index extends React.Component {
                                          defaultValue={this.state.def.contactAddress}/>
                                     <BoxSelect ref="areaCode" className="area-code-wrap"
                                                placeholder="Area Code"
-                                               validates={['isSelect']} defaultValue={this.state.def.phone_area_id}
+                                               validates={['isSelect']} defaultValue={this.state.def.areaCodeId}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
                                     <Box ref="contactNumber" className="phone-wrap" placeholder="Contact No." type="number"
                                          validates={['notNull']} defaultValue={this.state.def.contactNumber}/>
@@ -527,15 +619,21 @@ class Index extends React.Component {
                                     {this.state.infoList.map((item, i) => {
                                         return (
                                             <div className="auth-tr clearfix" key={i}>
-                                                <div className="auth-td cell-first"><input type="text" value={item.name} onChange={this.directorChange.bind(this, 'name', i)}/></div>
-                                                <div className="auth-td"><input type="text" value={item.residentialAddress} onChange={this.directorChange.bind(this, 'residentialAddress', i)}/></div>
-                                                <div className="auth-td"><input type="text" value={item.incorpration} onChange={this.directorChange.bind(this, 'incorpration', i)}/></div>
-                                                <div className="auth-td"><input type="text" value={item.directorShareholder} onChange={this.directorChange.bind(this, 'directorShareholder', i)}/></div>
-                                                <div className="auth-td"><input type="text" value={item.shareholding} onChange={this.directorChange.bind(this, 'shareholding', i)}/></div>
-                                                {/*<a href="javascript:" className="btn-delete" onClick={this.directorDelete.bind(this, i)}>delete</a>*/}
+                                                <div className="auth-td cell-first"><input className={item.nameInvalid ? 'item-invalid' : ''} type="text" value={item.name} onChange={this.directorChange.bind(this, 'name', i)} maxLength={100}/></div>
+                                                <div className="auth-td"><input className={item.residentialAddressInvalid ? 'item-invalid' : ''} type="text" value={item.residentialAddress} onChange={this.directorChange.bind(this, 'residentialAddress', i)} maxLength={200}/></div>
+                                                <div className="auth-td"><input className={item.incorprationInvalid ? 'item-invalid' : ''} type="text" value={item.incorpration} onChange={this.directorChange.bind(this, 'incorpration', i)} maxLength={200}/></div>
+                                                <div className="auth-td">
+                                                    <BoxSelect className={'director-select-wrap ' + (item.directorShareholderInvalid ? 'item-invalid' : '')}
+                                                               placeholder="Please select"
+                                                               defaultValue={item.directorShareholder}
+                                                               onChange={this.directorChange.bind(this, 'directorShareholder', i)}
+                                                               options={this.state.directorList} optValue="id" optLabel="value" allowClear={true}/>
+                                                </div>
+                                                <div className="auth-td"><input className={item.shareholdingInvalid ? 'item-invalid' : ''} type="text" value={item.shareholding} onChange={this.directorChange.bind(this, 'shareholding', i)} maxLength={50}/></div>
                                             </div>
                                         )
                                     })}
+                                    <div className="error-line txt-left">{this.state.infoError}</div>
                                 </div>
                             </div>
 
@@ -550,10 +648,10 @@ class Index extends React.Component {
                                         <div className="auth-th">Passport/I.D. no.</div>
                                     </div>
                                     <div className="auth-tr clearfix">
-                                        <div className="auth-td cell-first"><input type="text" value={this.state.authorizedName} onChange={this.inputChange.bind(this, 'authorizedName')}/></div>
-                                        <div className="auth-td"><input type="text" value={this.state.position} onChange={this.inputChange.bind(this, 'position')}/></div>
-                                        <div className="auth-td"><input type="text" value={this.state.mobile} onChange={this.inputChange.bind(this, 'mobile')}/></div>
-                                        <div className="auth-td"><input type="text" value={this.state.passport} onChange={this.inputChange.bind(this, 'passport')}/></div>
+                                        <div className="auth-td cell-first"><input type="text" value={this.state.authorizedName} onChange={this.inputChange.bind(this, 'authorizedName')} maxLength={100}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.position} onChange={this.inputChange.bind(this, 'position')} maxLength={100}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.mobile} onChange={this.inputChange.bind(this, 'mobile')} maxLength={100}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.passport} onChange={this.inputChange.bind(this, 'passport')} maxLength={100}/></div>
                                     </div>
                                 </div>
                                 <div className="error-line">{this.state.behalfError}</div>
@@ -564,7 +662,7 @@ class Index extends React.Component {
                                 <div className="clearfix">
                                     <BoxSelect ref="corporationType" className="auth-box-left"
                                                placeholder="Please select financial institution"
-                                               validates={['isSelect']} defaultValue={this.state.def.financial_institution}
+                                               validates={['isSelect']} defaultValue={this.state.def.code}
                                                onChange={this.institutionChange.bind(this)}
                                                options={this.state.institutionList} optValue="id" optLabel="value"/>
                                     <BoxSelect ref="bank" className="auth-box-right"

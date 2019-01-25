@@ -17,9 +17,15 @@
       cursor: pointer;
       padding: 8px 0;
       word-wrap: break-word;
-    }
-    .item:hover {
-      color: #006dde;
+      .link {
+        transition: none;
+        color: #000;
+        display: inline-block;
+        &:hover {
+          color: #0DA9FF;
+          text-decoration: underline;
+        }
+      }
     }
     .check-more {
       margin-top: 20px;

@@ -64,7 +64,7 @@ class Index extends React.Component {
         coinId = item.id
         getWithdrawAddress(item.id).then(res => {
             this.setState({
-                address: res.data[0] && res.data[0].address
+                address: (res.data[0] && res.data[0].address) || ''
             })
         }, error => {
             ui.tip({
@@ -82,7 +82,9 @@ class Index extends React.Component {
                 dayUsed: res.data.day_limit.coinUsed,
                 minQuantity: res.data.single_limit.min_quantity,
                 withdrawValue: '',
-                actualValue: defaultValue
+                actualValue: defaultValue,
+                errorMsg: '',
+                addressMsg: ''
             })
         }, error => {
             ui.tip({
@@ -104,6 +106,11 @@ class Index extends React.Component {
             withdrawValue: value,
             actualValue: actualVal < 0 ? 0 : actualVal
         })
+        if(value && this.state.errorMsg === intl.get('enterTip')) {
+            this.setState({
+                errorMsg: ''
+            })
+        }
     }
     allIn() {
         if(!this.state.coinCode) {
@@ -226,6 +233,11 @@ class Index extends React.Component {
         this.setState({
             address: e.target.value
         })
+        if(e.target.value && this.state.addressMsg === intl.get('enterTip')) {
+            this.setState({
+                addressMsg: ''
+            })
+        }
     }
 
     render() {

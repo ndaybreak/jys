@@ -35,7 +35,12 @@ class ModifyLoginPassword extends React.Component {
         const result1 = this.refs['newPassword'].validate()
         const result2 = this.refs['confirmPassword'].validate()
         if (result1 && result2 && resultOld) {
-            if (this.refs['newPassword'].getValue() !== this.refs['confirmPassword'].getValue()) {
+            if (this.refs['newPassword'].getValue() === this.refs['oldPassword'].getValue()) {
+                this.setState({
+                    errorMsg: 'The new password cannot be the same as the old password.'
+                })
+                return false
+            } else if (this.refs['newPassword'].getValue() !== this.refs['confirmPassword'].getValue()) {
                 this.setState({
                     errorMsg: intl.get('Different about the two new password')
                 })
@@ -89,6 +94,9 @@ class ModifyLoginPassword extends React.Component {
                 <Breadcrumb data={this.state.breadcrumbData}></Breadcrumb>
                 <div className="modify-title">{intl.get('Modify login password')}</div>
                 <div className="modify-content">
+                    <div className="tip tip-assets">
+                        You cannot withdraw assets within 24 hours after reset the capital password.
+                    </div>
                     <div className="error-line">
                         {this.state.errorMsg}
                     </div>

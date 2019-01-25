@@ -15,7 +15,7 @@ class BoxNumber extends React.Component {
             errorMsg: '',
             isValid: true,
             step: props.step || 0.0000001,
-            precision: props.step ? getPrecision(props.step) : 8
+            precision: props.precision || (props.step ? getPrecision(props.step) : 8)
         }
         this.state.value = this.formatValue(this.props.value)
     }
@@ -56,15 +56,19 @@ class BoxNumber extends React.Component {
         }
 
         this.setState({
-            value: value
+            value: new Number(value + '')
         }, () => {
             this.props.onChange && this.props.onChange(value ? parseFloat(value) : 0)
-            this.validate()
+            if(!this.props.disableTimelyValidate) {
+                this.validate()
+            }
         })
     }
 
     onBlur() {
-        this.validate()
+        if(!this.props.disableTimelyValidate) {
+            this.validate()
+        }
     }
 
     getValue() {
@@ -99,7 +103,7 @@ class BoxNumber extends React.Component {
                 <span className="label">{label}</span>
                 <div className={'box-number'}>
                     <input ref="numberBox" className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number" placeholder={placeholder}
-                           value={this.state.value} onChange={this.boxChange.bind(this)} step={step} onBlur={this.onBlur.bind(this)}/>
+                           value={this.state.value} onChange={this.boxChange.bind(this)} step={step} onBlur={this.onBlur.bind(this)} maxLength={50}/>
                     <span className="box-number-unit">{unit}</span>
                     <div className="box-error">
                         {!this.state.isValid && (

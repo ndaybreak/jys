@@ -36,12 +36,16 @@ class BoxDate extends React.Component {
             value: value
         }, () => {
             this.props.onChange && this.props.onChange(value)
-            this.validate()
+            if(!this.props.disableTimelyValidate) {
+                this.validate()
+            }
         })
     }
 
     onBlur() {
-        this.validate()
+        if(!this.props.disableTimelyValidate) {
+            this.validate()
+        }
     }
 
     getValue() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import { getMarketCoinQuot, getTargetPairsQuot } from '@/api/quot'
+import { getMarketCoinQuot } from '@/api/quot'
 import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
 import { getRecommendCoins, getCoin2CoinList } from '@/api'
 
@@ -86,7 +86,7 @@ class CoinList extends React.Component {
                     {
                         this.state.data.map( (row, index) => {
                             return (
-                                <div className="row" key={row.targetPair.mainCoinCode + '_' + index}>
+                                <div className="row row-item" key={row.targetPair.mainCoinCode + '_' + index}>
                                     <div className="td col-1" onClick={this.handleClick.bind(this, row.targetPair)}>{row.targetPair.targetCoinCode}/{row.targetPair.mainCoinCode}</div>
                                     <div className="td col-2 txt-right" onClick={this.handleClick.bind(this, row.targetPair)}>{row.price}</div>
                                     <div className={`td col-3 txt-right ${row.risePercent24h > 0 ? 'p-up' : (row.risePercent24h < 0 ? 'p-down' : '')}`} onClick={this.handleClick.bind(this, row.targetPair)}>

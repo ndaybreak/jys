@@ -1,20 +1,14 @@
 import React from 'react'
 import intl from 'react-intl-universal'
 import { getPageName, isLogin, isLangZH, jumpUrl } from '@/utils'
-import { removeToken, refreshAccountInfo } from '@/utils/auth'
+import { removeToken } from '@/utils/auth'
 import { logout } from '@/api'
 import { LANG } from '@/data/static'
 import '@/public/css/common.pcss'
-import phoneImg from '@/public/img/phone.png'
-import logoImg from '@/public/img/logo.png'
 import userUpImg from '@/public/img/个人中心up.png'
 import userDownImg from '@/public/img/个人中心down.png'
 
 const activeMenu = getPageName()
-
-if(isLogin()) {
-    refreshAccountInfo()
-}
 
 class Header extends React.Component {
     constructor(props) {
@@ -125,7 +119,7 @@ class Header extends React.Component {
                         </div>
                         <nav className="nav">
                             <a className={activeMenu === 'index' ? 'menu active' : 'menu'}  href="index.html">{intl.get('name')}</a>
-                            <a className={activeMenu === 'download' ? 'menu active' : 'menu'} href="download.html">{intl.get('download')}</a>
+                            {/*<a className={activeMenu === 'download' ? 'menu active' : 'menu'} href="download.html">{intl.get('download')}</a>*/}
                             <span className={activeMenu === 'deal' ? 'menu active' : 'menu'}
                                   onMouseEnter={this.showSubmenu.bind(this, 'showDealSubMenu')}
                                   onMouseLeave={this.hideSubmenu.bind(this, 'showDealSubMenu')}>{intl.get('dealCenter')}

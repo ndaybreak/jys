@@ -14,7 +14,7 @@ import { getTradeLimitParameter } from '@/api'
 import { getPriceBtcQuot, getTargetPairsQuot } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
 
-class User extends React.Component {
+class Deal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -73,4 +73,4 @@ class User extends React.Component {
     }
 }
 
-export default User;
+export default Deal;

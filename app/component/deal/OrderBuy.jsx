@@ -2,7 +2,7 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import { Modal, Button } from 'antd';
 import ReactCodeInput from 'react-code-input'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isLogin } from '@/utils'
+import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isLogin, getPrecision, truncateByPrecision } from '@/utils'
 import { setSessionData, getSessionData, removeSessionData } from '@/data'
 import { getEntrustmentList, entrustmentTrade } from '@/api'
 import BoxNumber from '@/component/common/ui/BoxNumber'
@@ -10,14 +10,17 @@ import BoxNumber from '@/component/common/ui/BoxNumber'
 import eventProxy from '@/utils/eventProxy'
 import { checkAuth } from '@/utils/auth'
 
-class User extends React.Component {
+class OrderBuy extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             visible: false,
             password: '',
             passwordMsg: '',
-            loading: false
+            loading: false,
+            errorBox: '',
+            confirmVisible: false,
+            percent: ''
         }
     }
 
@@ -33,22 +36,25 @@ class User extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(this.props.otcPrice !== prevProps.otcPrice) {
-            this.setOtcPrice()
-        }
+        // if(this.props.otcPrice !== prevProps.otcPrice) {
+        //     this.setOtcPrice()
+        // }
     }
 
-    setOtcPrice(val) {
-        const label = isLangZH() ? '￥ ' : '$ '
-        const price = val || this.refs['priceBox'] && this.refs['priceBox'].getValue() || 0
-        // const quantity = this.refs['quantityBox'] && this.refs['quantityBox'].getValue() || 0
-
-        this.setState({
-            otcPrice: label + (parseFloat(price) * this.props.otcPrice).toFixed(2)
-        })
-    }
+    // setOtcPrice(val) {
+    //     const label = isLangZH() ? '￥ ' : '$ '
+    //     const price = val || this.refs['priceBox'] && this.refs['priceBox'].getValue() || 0
+    //     // const quantity = this.refs['quantityBox'] && this.refs['quantityBox'].getValue() || 0
+    //
+    //     this.setState({
+    //         otcPrice: label + (parseFloat(price) * this.props.otcPrice).toFixed(2)
+    //     })
+    // }
 
     priceBoxChange(price) {
+        this.setState({
+            price: price
+        })
         const quantity = this.refs['quantityBox'].getValue()
         if(quantity) {
             this.setState({
@@ -56,20 +62,42 @@ class User extends React.Component {
             })
         }
         // this.setOtcPrice(price)
+
+        if(this.state.errorBox == 'price') {
+            if(this.refs['priceBox'].validate()) {
+                this.setState({
+                    errorMsg: ''
+                })
+            }
+        }
     }
 
     quantityBoxChange(quantity) {
+        this.setState({
+            quantity: quantity
+        })
         const price = this.refs['priceBox'].getValue()
         if(price) {
             this.setState({
                 sum: price * quantity
             })
         }
+
+        if(this.state.errorBox == 'quantity') {
+            if(this.refs['quantityBox'].validate()) {
+                this.setState({
+                    errorMsg: ''
+                })
+            }
+        }
     }
     sumBoxChange(sum) {
         if(this.props.type !== 'one') {
             return
         }
+        this.setState({
+            sum: sum
+        })
         const price = this.refs['priceBox'].getValue()
         if(price) {
             this.setState({
@@ -81,7 +109,7 @@ class User extends React.Component {
     changeTotal(percent) {
         const available = this.props.available
         if(available) {
-            let sum = (parseFloat(available) * percent).toFixed(this.props.targetPrecision)
+            let sum = truncateByPrecision(parseFloat(available) * percent, getPrecision(this.props.targetPrecision))
             this.setState({
                 sum: sum
             })
@@ -89,28 +117,39 @@ class User extends React.Component {
                 this.sumBoxChange(sum)
             }
         }
+
+        this.setState({
+            percent: percent
+        })
     }
 
     validate() {
-        let errorMsg
+        let errorMsg,
+            box = ''
         if(this.refs['priceBox'] && !this.refs['priceBox'].validate()) {
             errorMsg = intl.get('priceTip')
+            box = 'price'
         } else if(this.refs['quantityBox'] && !this.refs['quantityBox'].validate()) {
             errorMsg = intl.get('amountTip')
+            box = 'quantity'
         } else if(!this.refs['sumBox'].validate()) {
             errorMsg = intl.get('totalTip')
+            box = 'sum'
         } else if(this.refs['sumBox'].getValue() < this.props.minSum) {
             errorMsg = intl.get('minTotalTip') + this.props.minSum
+            box = 'sum'
             this.refs['sumBox'].setInvalid()
         } else if(this.refs['sumBox'].getValue() > this.props.available) {
             errorMsg = intl.get('availableTip')
+            box = 'sum'
             this.refs['sumBox'].setInvalid()
         } else {
             errorMsg = ''
         }
 
         this.setState({
-            errorMsg: errorMsg
+            errorMsg: errorMsg,
+            errorBox: box
         })
         if(errorMsg) {
             return false
@@ -200,6 +239,7 @@ class User extends React.Component {
             })
             this.cancelConfirm()
             ui.tip({
+                seconds: 1,
                 msg: intl.get('successTip')
             })
         }, error => {
@@ -216,22 +256,17 @@ class User extends React.Component {
         return (
             <div className={'info-left ' + (type === 'one' ? '' : 'info-market')}>
                 <div style={{'height': '12px'}}><span className="order-error">{this.state.errorMsg}</span></div>
-                {type === 'one' && (
-                    <div>
-                        <BoxNumber ref="priceBox" className="box-price" value={this.state.price} label={intl.get('price') + ':'} unit={target} step={targetPrecision} onChange={this.priceBoxChange.bind(this)} validates={['notNull']}/>
-                        {/*<div className="valuation">{intl.get('estimated')}: {this.state.otcPrice}</div>*/}
+                <BoxNumber ref="priceBox" className="box-price" value={this.state.price} label={intl.get('price') + ':'} unit={target} step={targetPrecision} onChange={this.priceBoxChange.bind(this)} validates={['notNull']} disableTimelyValidate={true}/>
+                {/*<div className="valuation">{intl.get('estimated')}: {this.state.otcPrice}</div>*/}
+                <BoxNumber ref="quantityBox" className="box-quantity" value={this.state.quantity} label={intl.get('amount') + ' :'} unit={base} step={basePrecision} onChange={this.quantityBoxChange.bind(this)} validates={['notNull']} disableTimelyValidate={true}/>
 
-                        <BoxNumber ref="quantityBox" className="box-quantity" value={this.state.quantity} label={intl.get('amount') + ':'} unit={base} step={basePrecision} onChange={this.quantityBoxChange.bind(this)} validates={['notNull']}/>
-                    </div>
-                )}
-
-                <BoxNumber ref="sumBox" className="box-sum" label={intl.get('total') + ':'} value={this.state.sum} unit={target} step='0.00000001' onChange={this.sumBoxChange.bind(this)} validates={['notNull']}/>
+                <BoxNumber ref="sumBox" className="box-sum" label={intl.get('total') + ':'} value={this.state.sum} unit={target} step='0.01' precision={8} onChange={this.sumBoxChange.bind(this)} validates={['notNull']} disableTimelyValidate={true}/>
 
                 <div className="percent-wrap clearfix">
-                    <span className="percent-item" onClick={this.changeTotal.bind(this, 0.25)}>25%</span>
-                    <span className="percent-item" onClick={this.changeTotal.bind(this, 0.5)}>50%</span>
-                    <span className="percent-item" onClick={this.changeTotal.bind(this, 0.75)}>75%</span>
-                    <span className="percent-item" onClick={this.changeTotal.bind(this, 1)}>100%</span>
+                    <span className={'percent-item ' + (this.state.percent == 0.25 ? 'active' : '')} onClick={this.changeTotal.bind(this, 0.25)}>25%</span>
+                    <span className={'percent-item ' + (this.state.percent == 0.5 ? 'active' : '')} onClick={this.changeTotal.bind(this, 0.5)}>50%</span>
+                    <span className={'percent-item ' + (this.state.percent == 0.75 ? 'active' : '')} onClick={this.changeTotal.bind(this, 0.75)}>75%</span>
+                    <span className={'percent-item ' + (this.state.percent == 1 ? 'active' : '')} onClick={this.changeTotal.bind(this, 1)}>100%</span>
                 </div>
 
                 {isLogin() && (
@@ -300,21 +335,17 @@ class User extends React.Component {
                             <div className="label">{intl.get('orderType')}</div>
                             <div className="content">{type === 'one' ? intl.get('limitOrder') : intl.get('marketOrder')}</div>
                         </div>
-                        {type === 'one' && (
-                            <div>
-                                <div className="order-info-div clearfix">
-                                    <div className="label">{intl.get('orderUPrice')}</div>
-                                    <div className="content">{this.refs['priceBox'] && this.refs['priceBox'].getValue()}</div>
-                                </div>
-                                <div className="order-info-div clearfix">
-                                    <div className="label">{intl.get('orderAmount')}</div>
-                                    <div className="content">{this.refs['quantityBox'] && this.refs['quantityBox'].getValue()}</div>
-                                </div>
-                            </div>
-                        )}
+                        <div className="order-info-div clearfix">
+                            <div className="label">{intl.get('orderUPrice')}</div>
+                            <div className="content">{this.state.price}</div>
+                        </div>
+                        <div className="order-info-div clearfix">
+                            <div className="label">{intl.get('orderAmount')}</div>
+                            <div className="content">{this.state.quantity}</div>
+                        </div>
                         <div className="order-info-div clearfix">
                             <div className="label">{intl.get('orderTotal')}</div>
-                            <div className="content">{this.refs['sumBox'] && this.refs['sumBox'].getValue()}</div>
+                            <div className="content">{this.state.sum}</div>
                         </div>
                     </div>
                 </Modal>
@@ -323,4 +354,4 @@ class User extends React.Component {
     }
 }
 
-export default User;
+export default OrderBuy;

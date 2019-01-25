@@ -17,9 +17,9 @@ function Tip(params={}) {
     }
     const modal = Modal.success({
         className: 'tip-success',
+        maskClosable: true,
         iconType: "none",
         width: (params.width || 209) + "px",
-        // style:{top: 250},
         centered: true,
         content: <Content/>,
         footer: ' '
@@ -35,6 +35,7 @@ function Tip(params={}) {
         params.callback && params.callback()
     }, secondsToGo * 1000);
 }
+
 function Confirm(params={}) {
     Modal.confirm({
         className: 'sto-modal-confirm',
@@ -52,10 +53,28 @@ function Confirm(params={}) {
     });
 }
 
+function SimpleConfirm(params={}) {
+    const obj = {
+        className: 'sto-modal-simple-confirm',
+        content: params.msg,
+        okText: params.okText || 'Ok',
+        cancelText: params.cancelText || 'Cancel',
+        centered: true,
+        onOk: () => {
+            params.onOk && params.onOk()
+        }
+    }
+    if(params.title) {
+        obj.title = params.title
+    }
+
+    Modal.confirm(obj);
+}
 
 const ui = {
     tip: Tip,
-    confirm: Confirm
+    confirm: Confirm,
+    simpleConfirm: SimpleConfirm
 }
 
 export { ui }

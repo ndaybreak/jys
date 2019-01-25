@@ -16,7 +16,7 @@ class User extends React.Component {
         }
     }
 
-    componentDidMount() {
+    getAssets() {
         if(isLogin()) {
             getAssetList().then(res => {
                 this.setState({
@@ -26,6 +26,13 @@ class User extends React.Component {
                 })
             })
         }
+    }
+
+    componentDidMount() {
+        this.getAssets()
+        eventProxy.on('orderDone', () => {
+            this.getAssets()
+        })
 
         eventProxy.on('coinsUpdate', (data) => {
             this.setState({
@@ -37,28 +44,28 @@ class User extends React.Component {
                 baseMin: data.baseMin
             }, () => {
                 this.setAvailable()
-                this.setOtcPrice()
+                // this.setOtcPrice()
             })
         })
     }
 
-    setOtcPrice() {
-        const attr = isLangZH() ? 'rmbPrice' : 'legalTenderPrice'
-        let para = {
-            // isOnce: true
-        }
-        para.targetPairs = [{
-            targetCoinCode: this.state.base,
-            mainCoinCode: this.state.target
-        }]
-        getTargetPairsQuot(para, data => {
-            const item = data[0]
-            const value = item.price ? (data[0][attr]/data[0].price) : 0
-            this.setState({
-                otcPrice: value
-            })
-        })
-    }
+    // setOtcPrice() {
+    //     const attr = isLangZH() ? 'rmbPrice' : 'legalTenderPrice'
+    //     let para = {
+    //         // isOnce: true
+    //     }
+    //     para.targetPairs = [{
+    //         targetCoinCode: this.state.base,
+    //         mainCoinCode: this.state.target
+    //     }]
+    //     getTargetPairsQuot(para, data => {
+    //         const item = data[0]
+    //         const value = item.price ? (data[0][attr]/data[0].price) : 0
+    //         this.setState({
+    //             otcPrice: value
+    //         })
+    //     })
+    // }
 
     setAvailable() {
         if(this.state.assetList && this.state.base) {
@@ -96,12 +103,14 @@ class User extends React.Component {
                               target={this.state.target} targetPrecision={this.state.targetPrecision}
                               available={this.state.targetAvailable}
                               minSum={this.state.targetMin} type={this.state.type}
-                              otcPrice={this.state.otcPrice}/>
+                              // otcPrice={this.state.otcPrice}
+                    />
                     <OrderSell base={this.state.base} basePrecision={this.state.basePrecision}
                               target={this.state.target} targetPrecision={this.state.targetPrecision}
                                available={this.state.baseAvailable}
-                               minSum={this.state.baseMin} type={this.state.type}
-                               otcPrice={this.state.otcPrice}/>
+                               minSum={this.state.targetMin} type={this.state.type}
+                               // otcPrice={this.state.otcPrice}
+                    />
 
                 </div>
             </div>
