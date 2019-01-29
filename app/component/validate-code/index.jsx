@@ -138,7 +138,7 @@ class Index extends React.Component {
         }, error => {
             this.setState({
                 submitLoading: false,
-                errorMsg: error
+                errorMsg: error.info
             })
         })
     }

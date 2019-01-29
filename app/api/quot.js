@@ -137,7 +137,8 @@ export function getPriceBtcQuot(codeList, callback) {
 let count = 0 //test
 function parseData(d) {
     const obj = {}
-    obj.date = new Date(parseInt(new Long(d.endTime.low, d.endTime.high, d.endTime.unsigned).toString()));
+    // obj.date = new Date(parseInt(new Long(d.endTime.low, d.endTime.high, d.endTime.unsigned).toString()));
+    obj.date = new Date(parseInt(new Long(d.startTime.low, d.startTime.high, d.startTime.unsigned).toString()));
     obj.open = +d.start;
     obj.high = +d.highest;
     obj.low = +d.lowest;

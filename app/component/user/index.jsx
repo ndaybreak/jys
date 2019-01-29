@@ -1,7 +1,7 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import { Icon, Modal, Button, Upload, message, Spin } from 'antd'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
+import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, truncateByPrecision } from '@/utils'
 import { setSessionData, removeSessionData } from '@/data'
 import '@/public/css/user.pcss';
 import userIconImg from '@/public/img/user_icon.png'
@@ -409,9 +409,9 @@ class User extends React.Component {
                                         {asset.coin_code}
                                         {/*<span className="full-name">({asset.coin_name})</span>*/}
                                     </div>
-                                    <div className="asset-col">{asset.total_balance}</div>
-                                    <div className="asset-col">{asset.available_balance}</div>
-                                    <div className="asset-col">{asset.frozen_balance}</div>
+                                    <div className="asset-col">{truncateByPrecision(asset.total_balance, 2)}</div>
+                                    <div className="asset-col">{truncateByPrecision(asset.available_balance, 2)}</div>
+                                    <div className="asset-col">{truncateByPrecision(asset.frozen_balance, 2)}</div>
                                     <div className="asset-col">
                                         <button className="btn btn-desposit" onClick={this.goLegalDesposit.bind(this, asset)}>Desposit</button>
                                         <button className="btn btn-withdrawal" onClick={this.goLegalWithdrawal.bind(this, asset)}>Withdrawal</button>

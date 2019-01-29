@@ -115,8 +115,9 @@ class Header extends React.Component {
             <div className="a-header">
                 <div className="header-wrap">
                     <div className="content clearfix">
-                        <div className="logo-wrap" onClick={this.goHome.bind(this)}>
-                        </div>
+                        <a href="index.html">
+                            <div className="logo-wrap"></div>
+                        </a>
                         <nav className="nav">
                             <a className={activeMenu === 'index' ? 'menu active' : 'menu'}  href="index.html">{intl.get('name')}</a>
                             {/*<a className={activeMenu === 'download' ? 'menu active' : 'menu'} href="download.html">{intl.get('download')}</a>*/}
