@@ -280,7 +280,7 @@ class User extends React.Component {
                         <div className="info-left">
                             <img src={user.type == 1 ? userIconImg : companyIcon} alt=""/>
                             <span>{user.email}</span>
-                            <img className="user-level" src={userLevelImg} alt="" onClick={this.showLevel.bind(this)}/>
+                            {/*<img className="user-level" src={userLevelImg} alt="" onClick={this.showLevel.bind(this)}/>*/}
                             {/*{user.is_merchant && (*/}
                                 {/*<img src={merchantLevelImg} alt=""/>*/}
                             {/*)}*/}
@@ -345,23 +345,23 @@ class User extends React.Component {
                         </div>
                     </div>
 
-                    <div className="title">{intl.get('referralRebate')}</div>
-                    <div className="clearfix">
-                        <div className="content-item recommend-left">
-                            <span className="recommend-label">{intl.get('myReferralId')}:</span>
-                            <span className="recommend-value">{this.state.recommendId}</span>
-                        </div>
-                        <div className="content-item">
-                            <img src={userRecommendImg} alt=""/>
-                            <span className="recommend-label">{intl.get('download_5')}:</span>
-                            <span className="recommend-value">{this.state.recommendFriends}</span>
-                        </div>
-                        {/*<div className="content-item recommend-item">*/}
-                            {/*<img src={userAssetImg} alt=""/>*/}
-                            {/*<span className="recommend-label">{intl.get('download_7')}:</span>*/}
-                            {/*<span className="recommend-value">{this.state.recommendValue} BTC</span>*/}
+                    {/*<div className="title">{intl.get('referralRebate')}</div>*/}
+                    {/*<div className="clearfix">*/}
+                        {/*<div className="content-item recommend-left">*/}
+                            {/*<span className="recommend-label">{intl.get('myReferralId')}:</span>*/}
+                            {/*<span className="recommend-value">{this.state.recommendId}</span>*/}
                         {/*</div>*/}
-                    </div>
+                        {/*<div className="content-item">*/}
+                            {/*<img src={userRecommendImg} alt=""/>*/}
+                            {/*<span className="recommend-label">{intl.get('download_5')}:</span>*/}
+                            {/*<span className="recommend-value">{this.state.recommendFriends}</span>*/}
+                        {/*</div>*/}
+                        {/*/!*<div className="content-item recommend-item">*!/*/}
+                            {/*/!*<img src={userAssetImg} alt=""/>*!/*/}
+                            {/*/!*<span className="recommend-label">{intl.get('download_7')}:</span>*!/*/}
+                            {/*/!*<span className="recommend-value">{this.state.recommendValue} BTC</span>*!/*/}
+                        {/*/!*</div>*!/*/}
+                    {/*</div>*/}
 
                     <div className="title">Digital Currency Assets</div>
                     <div className="asset-detail">

@@ -76,7 +76,7 @@ class Index extends React.Component {
                     <div className="clearfix modify-item">
                         <img src={userPwdImg} alt=""/>
                         <Box ref="password" type="password"
-                             placeholder="Please set your capital password(6 digit numbers)"
+                             placeholder="Please set your capital password(6 digit code)"
                              validates={['notNull', 'sixDigitNumber']}/>
                     </div>
                     <div className="clearfix modify-item">

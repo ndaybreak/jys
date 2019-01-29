@@ -100,7 +100,7 @@ class BoxNumber extends React.Component {
         const {placeholder, className, label, unit, step} = this.props
         return (
             <div className={'box-wrap box-number-wrap ' + (className ? className : '')}>
-                <span className="label">{label}</span>
+                <span className={'label ' + (label ? '' : 'hide')}>{label}</span>
                 <div className={'box-number'}>
                     <input ref="numberBox" className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number" placeholder={placeholder}
                            value={this.state.value} onChange={this.boxChange.bind(this)} step={step} onBlur={this.onBlur.bind(this)} maxLength={50}/>

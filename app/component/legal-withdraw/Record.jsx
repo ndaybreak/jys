@@ -116,7 +116,7 @@ class Record extends React.Component {
                   </div>
                   {this.state.data.map((item,i) => {
                       return (
-                          <div className="record-row" key={i}>
+                          <div className={'record-row ' + (i%2 === 1 ? 'row-odd' : '')} key={i}>
                               <div className="col-record col-date">{parseTime(item.create_time)}</div>
                               <div className="col-record">{item.order_number}</div>
                               <div className="col-record col-fee">{item.service_fee}</div>

@@ -21,8 +21,8 @@ const Banner = () => {
     return (
         <div className="blue-banner-wrap">
             <div className="banner-inner">
-                <div className="info-1">The Highly Trusted Platform For <span>Virtual Asset</span> Exchange</div>
-                <div className="info-2">Our mission is to build the world's highly trusted trading platform which bridges the gap between classic investors <br/>
+                <div className="info-1"> The Trusted Platform For <span>Virtual Asset</span> Exchange</div>
+                <div className="info-2">Our mission is to build the world's trusted trading platform which bridges the gap between classic investors <br/>
                     and the innovative virtual assets world</div>
                 <div className="features-wrap clearfix">
                     <div className="feature">

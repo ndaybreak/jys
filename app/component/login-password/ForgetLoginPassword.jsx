@@ -27,7 +27,6 @@ class ForgetLoginPassword extends React.Component {
             errorMsg: '',
             codeImg: '',
             codeErrorMsg: '',
-            serverCode: '',
             imageCode: ''
         }
     }
@@ -51,10 +50,6 @@ class ForgetLoginPassword extends React.Component {
             this.setState({
                 codeErrorMsg: intl.get('notNullErrorMsg')
             })
-        } else if (this.state.imageCode.toLowerCase() !== this.state.serverCode) {
-            this.setState({
-                codeErrorMsg: intl.get('captchaTip')
-            })
         } else {
             setSessionData('forgetLoginPassword', {
                 email: this.refs['email'].getValue(),
@@ -73,8 +68,7 @@ class ForgetLoginPassword extends React.Component {
             this.setState({
                 codeImg: 'data:image/png;base64,' + res.data.authCode,
                 loading: false,
-                showImageCodeDialog: true,
-                serverCode: res.data.code.toLowerCase()
+                showImageCodeDialog: true
             })
         })
     }

@@ -21,8 +21,7 @@ class Index extends React.Component {
             modalVisible: false,
             codeImg: '',
             code: '',
-            codeErrorMsg: '',
-            serverCode: ''
+            codeErrorMsg: ''
         }
     }
 
@@ -134,8 +133,7 @@ class Index extends React.Component {
             })
             getCodeForEmail({ email: this.state.userName }).then(res => {
                 this.setState({
-                    codeImg: 'data:image/png;base64,' + res.data.authCode,
-                    serverCode: res.data.code.toLowerCase()
+                    codeImg: 'data:image/png;base64,' + res.data.authCode
                 })
                 this.refs['loginCode'].focus()
             })
@@ -144,8 +142,7 @@ class Index extends React.Component {
     changeCodeImg() {
         getCodeForEmail({ email: this.state.userName }).then(res => {
             this.setState({
-                codeImg: 'data:image/png;base64,' + res.data.authCode,
-                serverCode: res.data.code.toLowerCase()
+                codeImg: 'data:image/png;base64,' + res.data.authCode
             })
         })
     }
@@ -153,10 +150,6 @@ class Index extends React.Component {
         if(!this.state.code) {
             this.setState({
                 codeErrorMsg: intl.get('notNullErrorMsg')
-            })
-        } else if(this.state.code.toLowerCase() !== this.state.serverCode) {
-            this.setState({
-                codeErrorMsg: intl.get('captchaTip')
             })
         } else {
             this.setState({
@@ -218,7 +211,8 @@ class Index extends React.Component {
                     <button className="btn-login-big" onClick={this.login.bind(this)}>{intl.get('login')}</button>
                 </div>
                 <div className="item-wrap other-wrap">
-                    <a className="register-link" href="register.html">{intl.get('register')}</a>
+                    {/*{intl.get('register')}*/}
+                    <a className="register-link" href="register.html">Registration</a>
                     <a className="forget-link" onClick={this.onClickModifyLoginPassword.bind(this)}>{intl.get('forgetPwd')}</a>
                 </div>
 

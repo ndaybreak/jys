@@ -54,7 +54,7 @@ export function checkAuth(list = []) {
     if(list.indexOf('auth') > -1 && !user.isAuth) {
         ui.tip({
             width: 310,
-            msg: 'Due to your KYC information is not verified, your account has no transaction / withdrawl / depoist authorities yet.'
+            msg: 'Your account has not been verified, no transactions are available yet.'
         })
         return false
     }

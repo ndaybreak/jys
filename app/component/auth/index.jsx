@@ -10,6 +10,7 @@ import videoDemoImg from '@/public/img/register-video-demo.png'
 import pdfImg from '@/public/img/icon_pdf.png'
 import {getCountryList, saveBasicAuthInfo, savePicAuthInfo, queryAuthInfo, getAuthTypeList, getAuthVideoCode} from '@/api'
 import Box from '@/component/common/ui/Box'
+import BoxNumber from '@/component/common/ui/BoxNumber'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
 import { refreshAccountInfo } from '@/utils/auth'
@@ -298,6 +299,7 @@ class Index extends React.Component {
                 return item.url
             }).join(','),
         }
+
         setSessionData('authBasicData', para)
     }
 
@@ -346,7 +348,7 @@ class Index extends React.Component {
             }).then(() => {
                 removeSessionData('authBasicData')
                 ui.tip({
-                    msg: 'Your KYC information send successfully and we will verify it as soon as possible.',
+                    msg: 'Your KYC information was sent successfully and will be verified as soon as possible.',
                     width: 300,
                     seconds: 5,
                     callback: () => {
@@ -449,7 +451,7 @@ class Index extends React.Component {
                                                placeholder="Area Code"
                                                validates={['isSelect']} defaultValue={this.state.def.areaCode}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
-                                    <Box ref="mobilePhone" type="number" className="phone-wrap" placeholder="Mobile Telephone No."
+                                    <Box ref="mobilePhone" className="phone-wrap" placeholder="Mobile Telephone No."
                                          validates={['notNull']} defaultValue={this.state.def.mobileTelephone}/>
                                 </div>
 
@@ -472,11 +474,11 @@ class Index extends React.Component {
                                                placeholder="Area Code"
                                                defaultValue={this.state.def.officeAreaCode}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
-                                    <Box ref="officePhone" type="number" className="phone-wrap" placeholder="Office Telephone No."
+                                    <Box ref="officePhone" className="phone-wrap" placeholder="Office Telephone No."
                                          defaultValue={this.state.def.officeTelephone}/>
                                 </div>
                                 <div className="clearfix">
-                                    <Box ref="faxNo" className="auth-box-left" type="number"
+                                    <Box ref="faxNo" className="auth-box-left"
                                          placeholder="Office Fax No."
                                          defaultValue={this.state.def.officeFax}/>
                                 </div>
@@ -523,7 +525,7 @@ class Index extends React.Component {
                                 </div>
                                 <div className="asset-info">
                                     <div>
-                                        For a individual, any one or more of the following documents issued or submitted within 12 months before the relevant date—
+                                        For an individual, any one or more of the following documents issued or submitted within 12 months before the relevant date—
                                     </div>
                                     <div>(1) a statement of account or a certificate issued by a custodian;</div>
                                     <div>(2) a certificate issued by an auditor or a certified public accountant;</div>

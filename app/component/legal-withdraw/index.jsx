@@ -113,7 +113,11 @@ class Index extends React.Component {
         this.setState({
             accountList: this.state.accountData[bank]
         })
-        this.refs.account.setValue(this.state.accountData[bank][0].id)
+        if(bank) {
+            this.refs.account.setValue(this.state.accountData[bank][0].id)
+        } else {
+            this.refs.account.setValue(undefined)
+        }
     }
 
     handleCancel() {

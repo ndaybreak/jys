@@ -50,6 +50,8 @@ class BoxSelect extends React.Component {
     setValue(val) {
         this.setState({
             value: val
+        }, () => {
+            val && this.validate()
         })
     }
 

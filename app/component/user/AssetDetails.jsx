@@ -30,10 +30,12 @@ class AssetDetails extends React.Component {
             }, {
                 id: 4,
                 value: 'AD'
-            }, {
-                id: 5,
-                value: 'OTC trade'
-            }, {
+            }
+            // , {
+            //     id: 5,
+            //     value: 'OTC trade'
+            // }
+            , {
                 id: 7,
                 value: 'System'
             }],
@@ -115,19 +117,22 @@ class AssetDetails extends React.Component {
                             <BoxSelect ref="coinCode"
                                        onChange={this.assetFilter.bind(this)}
                                        defaultValue={0}
+                                       placeholder="Please select currency"
                                        options={this.state.coinList} optValue="id" optLabel="coin_code"/>
                             <BoxSelect ref="type"
                                        onChange={this.assetFilter.bind(this)}
                                        defaultValue={0}
+                                       placeholder="Please select type"
                                        options={this.state.typeList} optValue="id" optLabel="value"/>
                             <BoxSelect ref="date"
                                        onChange={this.assetFilter.bind(this)}
                                        defaultValue={0}
+                                       placeholder="Please select time"
                                        options={this.state.dateList} optValue="id" optLabel="value"/>
                         </div>
                         <div className="table-detail">
                             <div className="clearfix th-row">
-                                <div className="col-detail">Coin</div>
+                                <div className="col-detail">Currency</div>
                                 <div className="col-detail">Balance</div>
                                 <div className="col-detail">Type</div>
                                 <div className="col-detail">Change</div>
@@ -151,6 +156,7 @@ class AssetDetails extends React.Component {
                         <Pagination className="detail-pagination"
                                     total={this.state.total}
                                     current={this.state.currPage}
+                                    pageSize={15}
                                     onChange={this.loadData.bind(this)} />
                     </div>
                 </Spin>

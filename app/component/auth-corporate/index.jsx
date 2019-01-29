@@ -436,7 +436,7 @@ class Index extends React.Component {
                 this.submitPic().then((info) => {
                     removeSessionData('authBasicData')
                     ui.tip({
-                        msg: 'Your KYC information send successfully and we will verify it as soon as possible.',
+                        msg: 'Your KYC information was sent successfully and will be verified as soon as possible.',
                         width: 300,
                         seconds: 5,
                         callback: () => {

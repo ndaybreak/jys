@@ -29,7 +29,6 @@ class Index extends React.Component {
             codeImg: '',
             imageCode: '',
             codeErrorMsg: '',
-            serverCode: '',
             invitedCode: '',
             isChecked: false,
             type: 1
@@ -156,8 +155,7 @@ class Index extends React.Component {
     changeCodeImg() {
         getCodeForEmail({ email: this.state.userName }).then(res => {
             this.setState({
-                codeImg: 'data:image/png;base64,' + res.data.authCode,
-                serverCode: res.data.code.toLowerCase()
+                codeImg: 'data:image/png;base64,' + res.data.authCode
             })
         })
     }
@@ -166,10 +164,6 @@ class Index extends React.Component {
         if(!this.state.imageCode) {
             this.setState({
                 codeErrorMsg: intl.get('notNullErrorMsg')
-            })
-        } else if(this.state.imageCode.toLowerCase() !== this.state.serverCode) {
-            this.setState({
-                codeErrorMsg: intl.get('captchaTip')
             })
         } else {
             this.setState({
@@ -249,12 +243,12 @@ class Index extends React.Component {
                                 onKeyUp={this.inputKeyUp.bind(this)} onBlur={this.passwordBlur.bind(this)}/>
                     </div>
                     {/*推荐人*/}
-                    <div className="item-wrap recommend-wrap">
-                        <img src={recommendImg} alt=""/>
-                        <input  className={'recommend'} autoComplete="new-password" type="text" placeholder={intl.get('referralId')}
-                                value={this.state.invitedCode} onChange={this.recommendChange.bind(this)}
-                                onKeyUp={this.inputKeyUp.bind(this)}/>
-                    </div>
+                    {/*<div className="item-wrap recommend-wrap">*/}
+                        {/*<img src={recommendImg} alt=""/>*/}
+                        {/*<input  className={'recommend'} autoComplete="new-password" type="text" placeholder={intl.get('referralId')}*/}
+                                {/*value={this.state.invitedCode} onChange={this.recommendChange.bind(this)}*/}
+                                {/*onKeyUp={this.inputKeyUp.bind(this)}/>*/}
+                    {/*</div>*/}
                     {/*协议*/}
                     <div className="checkbox-wrap">
                         <label style={{width: '30px', display: 'inline-block'}}>

@@ -78,7 +78,7 @@ class User extends React.Component {
         return (
             <div className="journalism-wrap">
                 <div className="clearfix">
-                    <span className="module-title">Journalism</span>
+                    <span className="module-title">News</span>
                     <a className="module-more hide" href="javascript:">more</a>
                 </div>
                 <div className="module-list">

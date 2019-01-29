@@ -66,6 +66,8 @@ let loadMorePara = Object.assign({latestTime: 0}, PARA, {number: 300})
 let chartType = 'line'
 let timeType = '1m'
 
+let initData = []
+
 const indicatorMap = {
     ema: {
         key: 'ema',
@@ -174,11 +176,19 @@ class CandleStickChartPanToLoadMore extends React.Component {
         loadMorePara.interval = timeType
         getIntervalQuot(PARA, data => {
             const originData = this.state.data
+            debugger
             if(isInit) {
                 isInit = false
+                initData = data
                 this.init(data)
-            } else if(data.length && data[data.length -1].date.getTime() !== this.state.data[this.state.data.length - 1].date.getTime()) {
-                this.append(originData.concat([data[data.length - 1]]))
+            } else if(data.length) {
+                if(data[data.length -1].date.getTime() !== this.state.data[this.state.data.length - 1].date.getTime()) {
+                    initData = initData.concat([data[data.length - 1]])
+                    this.append(initData, 1)
+                } else {
+                    initData.splice(initData.length - 1, 1, data[data.length - 1])
+                    this.append(initData, 0)
+                }
             }
         })
     }
@@ -282,7 +292,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
     saveCanvas(node) {
         this.canvas = node;
     };
-    append(newData) {
+    append(newData, count) {
         const {
             ema5,
             ema10,
@@ -323,7 +333,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
             xScale,
             xAccessor,
             displayXAccessor
-        } = xScaleProvider(calculatedData);
+        } = xScaleProvider(calculatedData.slice(0 - this.state.data.length - count));
 
         // console.log(head(linearData), last(linearData))
         // console.log(linearData.length)
@@ -383,6 +393,8 @@ class CandleStickChartPanToLoadMore extends React.Component {
             const indexCalculator = discontinuousTimeScaleProviderBuilder()
                 .initialIndex(Math.ceil(start))
                 .indexCalculator();
+
+            initData = calculatedData.concat(prevData)
             const { index } = indexCalculator(
                 calculatedData.slice(-rowsToDownload).concat(prevData)
             );

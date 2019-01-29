@@ -205,7 +205,7 @@ class Index extends React.Component {
                                  validates={['notNull']} defaultValue={this.state.def.fullName}/>
                             <Box ref="number" className="auth-box-right"
                                  placeholder="Bank Account Number" validates={['notNull']}
-                                 defaultValue={this.state.def.number}/>
+                                 defaultValue={this.state.def.number} maxLength={30}/>
                         </div>
 
                     </div>

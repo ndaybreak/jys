@@ -130,7 +130,7 @@ class Header extends React.Component {
                                     </ul>
                                 )}
                             </span>
-                            <a className={activeMenu === 'news' ? 'menu active' : 'menu'} href="news.html">{intl.get('news')}</a>
+                            {/*<a className={activeMenu === 'news' ? 'menu active' : 'menu'} href="news.html">{intl.get('news')}</a>*/}
                             <a className={activeMenu === 'help' ? 'menu active' : 'menu'} href="help.html">{intl.get('support')}</a>
                             {/*<span className={activeMenu === 'rule' ? 'menu active' : 'menu'}*/}
                                   {/*onMouseEnter={this.showSubmenu.bind(this, 'showRuleSubMenu')}*/}
