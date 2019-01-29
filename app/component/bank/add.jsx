@@ -212,7 +212,7 @@ class Index extends React.Component {
 
                     <div className="asset-part">
                         <div className="label">Upload bank bill（Please show the bank account No. clearly）</div>
-                        <div className="tip">Stox requires the bank account number and the name on the bank card be the same as the real name linked to your account. Otherwise, currency withdrawal is not allowed.
+                        <div className="tip">HKSTOx requires the bank account number and the name on the bank account be the same as the real name linked to your account. Otherwise, currency withdrawal is not allowed.
                         </div>
 
                         <div className="clearfix upload-wrap">

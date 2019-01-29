@@ -25,7 +25,12 @@ class User extends React.Component {
 
     componentDidMount() {
         this.queryOrders()
-        eventProxy.on('orderDone', this.queryOrders.bind(this))
+        // eventProxy.on('orderDone', this.queryOrders.bind(this))
+        setInterval(() => {
+            if(this.state.type == '24h') {
+                this.queryOrders(true)
+            }
+        }, 3000)
     }
 
     changeType(type) {

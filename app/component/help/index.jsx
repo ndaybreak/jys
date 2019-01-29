@@ -3,7 +3,7 @@ import '@/public/css/help.pcss';
 import { getCategorys } from '@/api'
 import HelpHeader from '@/component/help/HelpHeader'
 import Category from '@/component/help/Category'
-import { setSessionData } from '@/data'
+import { setLocalData } from '@/data'
 
 class Index extends React.Component {
     constructor(props) {
@@ -23,7 +23,7 @@ class Index extends React.Component {
                 categoryMap[item.id] = [item]
             }
         })
-        setSessionData('categoryMap', JSON.stringify(categoryMap))
+        setLocalData('categoryMap', JSON.stringify(categoryMap))
         return Object.keys(categoryMap).map(id => {
             return {
                 id: id,

@@ -5,7 +5,7 @@ import {getNewsSearch} from '@/api'
 import HelpHeader from '@/component/help/HelpHeader'
 import Breadcrumb from '@/component/common/Breadcrumb'
 import PaginationServer from '@/component/common/PaginationServer'
-import {getSessionData} from '@/data'
+import {getLocalData} from '@/data'
 import {getSearchPara, parseTime} from '@/utils'
 
 class Index extends React.Component {

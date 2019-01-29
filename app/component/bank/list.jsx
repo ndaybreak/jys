@@ -84,7 +84,7 @@ class List extends React.Component {
                 <Spin spinning={this.state.loading}>
                     <div className="info-part">
                         <div className="label">Payment Method</div>
-                        <div className="bank-tip">For security reasons,please use your own bank account</div>
+                        <div className="bank-tip">For security reasons, please use your own bank account</div>
                         {this.state.data.map((bank, i) => {
                             return (
                             <div className="bank-item" key={i}>

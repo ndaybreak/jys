@@ -14,8 +14,16 @@
       font-size: 16px;
       line-height: 44px;
       color: #000;
-      cursor: pointer;
       border-bottom: 1px solid #ededed;
+      .link {
+        transition: none;
+        color: #000;
+        display: inline-block;
+        &:hover {
+          color: #0DA9FF;
+          text-decoration: underline;
+        }
+      }
     }
     .item:hover {
       color: #0DA9FF;

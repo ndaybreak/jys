@@ -13,11 +13,12 @@ class Logo extends React.Component {
     initOutLinkButtons() {
         // FIXME facebook 和 领英超链接
         const outLinks = [
-            {iconPath: facebookIcon, linkPath: 'https://www.hkstox.com'},
+            // {iconPath: facebookIcon, linkPath: 'https://www.hkstox.com'},
             {iconPath: twitterIcon, linkPath: 'https://twitter.com/hkstox/'},
             {iconPath: telegramIcon, linkPath: 'https://t.me/joinchat/GwfM7gxO0UGXPFhvjCxzrw'},
             {iconPath: redditIcon, linkPath: 'https://www.reddit.com/user/hkstox/'},
-            {iconPath: linkinIcon, linkPath: 'https://www.hkstox.com'}].map((val, i) => {
+            // {iconPath: linkinIcon, linkPath: 'https://www.hkstox.com'}
+            ].map((val, i) => {
             return <div className={'out-link-wrap'} key={i}><a href={val.linkPath}><img
                 className={'out-link-img'}
                 src={val.iconPath}/>

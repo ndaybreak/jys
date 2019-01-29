@@ -6,7 +6,7 @@ import HelpHeader from '@/component/help/HelpHeader'
 import Category from '@/component/help-more/Category'
 import Breadcrumb from '@/component/common/Breadcrumb'
 import Pagination from '@/component/common/Pagination'
-import { getSessionData } from '@/data'
+import { getLocalData } from '@/data'
 import { getSearchPara } from '@/utils'
 
 class Index extends React.Component {
@@ -24,7 +24,7 @@ class Index extends React.Component {
     }
 
     componentDidMount() {
-        const categoryMap = getSessionData('categoryMap')
+        const categoryMap = getLocalData('categoryMap')
         const list = categoryMap[getSearchPara('categoryId')]
         this.setState({
             title: list[0].catalog,

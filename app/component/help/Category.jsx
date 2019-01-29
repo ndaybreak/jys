@@ -10,6 +10,8 @@ class Header extends React.Component {
             page: getPageName()
         }
     }
+
+    // onClick={this.toDetail.bind(this, item)}
     toDetail(item) {
         if(this.state.page === 'help') {
             window.location.href = 'help-detail.html?categoryId=' + item.id + '&titleId=' + item.info_id
@@ -28,13 +30,21 @@ class Header extends React.Component {
                 return 'news-more.html?categoryId=' + categoryId
             }
         }
+        const getDetailLink = (item) => {
+            if(this.state.page === 'help') {
+                return 'help-detail.html?categoryId=' + item.id + '&titleId=' + item.info_id
+            } else if(this.state.page === 'news') {
+                return 'news-detail.html?categoryId=' + item.id + '&titleId=' + item.info_id
+            }
+        }
         return (
             <div className="category">
                 <div className="title">{this.state.category.value}</div>
                 {this.state.category.data.slice(0, 6).map( (item, index) => {
                     return (
-                        <div className="item" key={this.state.category.id + '_' + item.info_id}
-                            onClick={this.toDetail.bind(this, item)}><a className="link" href="javascript:">{item.title}</a></div>
+                        <div className="item" key={this.state.category.id + '_' + item.info_id}>
+                            <a className="link" href={getDetailLink(item)}>{item.title}</a>
+                        </div>
                     )
                 })}
                 {this.state.category.data.length >6 && (
