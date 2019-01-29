@@ -175,8 +175,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
         loadMorePara.targetPair = targetPair
         loadMorePara.interval = timeType
         getIntervalQuot(PARA, data => {
-            const originData = this.state.data
-            debugger
+            // const originData = this.state.data
             if(isInit) {
                 isInit = false
                 initData = data

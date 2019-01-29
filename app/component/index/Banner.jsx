@@ -37,7 +37,7 @@ const Banner = () => {
                     </div>
                     <div className="feature">
                         <div className="feature-icon"><img src={featureImg_3} alt=""/></div>
-                        <div className="feature-info">Round-The-Clock Trading</div>
+                        <div className="feature-info">Recommend Registration Win</div>
                         <div className="feature-info">High Referral Rewards</div>
                     </div>
                 </div>

@@ -97,12 +97,34 @@ class Index extends React.Component {
         this.setState({
             accountList: this.state.accountData[bank]
         })
+
+        this.refs.account.setValue(undefined)
+        this.setState({
+            info: ''
+        })
+
+        // if(bank) {
+        //     const accountId = this.state.accountData[bank][0].id
+        //     this.refs.account.setValue(accountId)
+        //     this.accountChange(accountId)
+        // } else {
+        //     this.refs.account.setValue(undefined)
+        //     this.setState({
+        //         info: ''
+        //     })
+        // }
     }
 
     accountChange(accountId) {
-        this.setState({
-            info: getInfo(accountId, this.state.accountList)
-        })
+        if(accountId) {
+            this.setState({
+                info: getInfo(accountId, this.state.accountList)
+            })
+        } else {
+            this.setState({
+                info: ''
+            })
+        }
     }
 
     handleAssetChange(info) {
@@ -256,8 +278,7 @@ class Index extends React.Component {
                                            options={this.state.accountList} optValue="id" optLabel="companyName"/>
                             </div>
 
-                            <div className="bank-info">
-                                {this.state.info}
+                            <div className="bank-info" dangerouslySetInnerHTML={{__html: this.state.info}}>
                                 {/*<div className="bank-info-label">Payee</div>*/}
                                 {/*<div className="value">*/}
                                     {/*Our company name（Note: Our company name is a subsidiary wholly owned in trust by Coinsuper Fintech (HK) Co. Ltd.）*/}
