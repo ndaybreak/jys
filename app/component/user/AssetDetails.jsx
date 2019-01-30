@@ -20,17 +20,18 @@ class AssetDetails extends React.Component {
                 value: 'All types'
             }, {
                 id: 1,
-                value: 'Recharge'
+                value: 'Deposit'
             }, {
                 id: 2,
                 value: 'Withdraw'
             }, {
                 id: 3,
                 value: 'VC-Exchange'
-            }, {
-                id: 4,
-                value: 'AD'
             }
+            // , {
+            //     id: 4,
+            //     value: 'AD'
+            // }
             // , {
             //     id: 5,
             //     value: 'OTC trade'

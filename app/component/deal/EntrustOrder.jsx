@@ -114,9 +114,12 @@ class User extends React.Component {
         cancelCoinsOrder(this.state.cancelId).then(res => {
             this.cancel()
             eventProxy.trigger('orderDone')
-            this.queryOrders()
             ui.tip({
-                msg: intl.get('successTip')
+                seconds: 1,
+                msg: intl.get('successTip'),
+                callback: () => {
+                    this.queryOrders()
+                }
             })
         })
     }

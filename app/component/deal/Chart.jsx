@@ -127,7 +127,8 @@ class CandleStickChartPanToLoadMore extends React.Component {
             data: [],
             suffix: 1,
             indicatorImg: indicatorImgUp,
-            indicatorMap: indicatorMap
+            indicatorMap: indicatorMap,
+            targetPrecision: 2
         }
 
         eventProxy.on('coinsUpdate', (data) => {
@@ -620,7 +621,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                                 at="right"
                                 orient="right"
                                 rectWidth={80}
-                                displayFormat={format(".2f")}
+                                displayFormat={format("."+ this.state.targetPrecision +"f")}
                                 {...mouseCoordinate}/>
 
                             {/* 分时图 */}
@@ -634,7 +635,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                                                    wickStroke={this.fill.bind(this)} clip={false}/>
                             )}
 
-                            <OHLCTooltip origin={[0, -15]} textFill="#0bb1ff" labelFill="#0bb1ff"/>
+                            <OHLCTooltip origin={[0, -15]} textFill="#0bb1ff" labelFill="#0bb1ff" ohlcFormat={format("."+ this.state.targetPrecision +"f")}/>
 
                             <EdgeIndicator
                                 itemType="last"
@@ -642,6 +643,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                                 edgeAt="right"
                                 yAccessor={d => d.close}
                                 rectWidth={80}
+                                displayFormat={format("."+ this.state.targetPrecision +"f")}
                                 fill={d => (d.close > d.open ? "#51a314" : "#FF0000")}
                             />
 
@@ -655,7 +657,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                             {indicatorMap.ema.isSelected && (
                                 <GroupTooltip
                                     layout="horizontal"
-                                    origin={[400, -10]}
+                                    origin={[450, -10]}
                                     // verticalSize={20}
                                     width={90}
                                     onClick={e => console.log(e)}
@@ -742,7 +744,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                                 <MouseCoordinateY
                                     at="left"
                                     orient="left"
-                                    displayFormat={format(".2f")}
+                                    displayFormat={format(".4f")}
                                     {...mouseCoordinate}/>
 
                                 <MACDSeries yAccessor={d => d.macd}

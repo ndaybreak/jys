@@ -106,7 +106,7 @@ class ModifyEmail extends React.Component {
                 <div className="modify-title">Modify email</div>
                 <div className="modify-content">
                     <div className="tip tip-assets">
-                        You cannot withdraw assets within 24 hours after reset the capital password.
+                        You cannot withdraw assets within 24 hours after resetting the email.
                     </div>
                     <div className="error-line">
                         {this.state.errorMsg}

@@ -121,17 +121,20 @@ class Index extends React.Component {
     }
 
     validate() {
-        const value = this.state.withdrawValue
+        let value = this.state.withdrawValue
         let msg,
             addressMsg
         if(!value) {
             msg = intl.get('enterTip')
-        } else if(value > this.state.balance) {
-            msg = intl.get('availableTip')
-        } else if(value > (this.state.dayLimit - this.state.dayUsed)) {
-            msg = intl.get('withdrawDayLimit')
-        } else if(value < this.state.minQuantity) {
-            msg = intl.get('MinWithdraw') + this.state.minQuantity
+        } else {
+            value = parseFloat(value)
+            if(value > parseFloat(this.state.balance)) {
+                msg = intl.get('availableTip')
+            } else if(value > (this.state.dayLimit - this.state.dayUsed)) {
+                msg = intl.get('withdrawDayLimit')
+            } else if(value < this.state.minQuantity) {
+                msg = intl.get('MinWithdraw') + this.state.minQuantity
+            }
         }
 
         if(!this.state.address) {

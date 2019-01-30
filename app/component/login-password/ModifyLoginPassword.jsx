@@ -82,7 +82,7 @@ class ModifyLoginPassword extends React.Component {
                 }, error => {
                     this.setState({
                         loading: false,
-                        errorMsg: error
+                        errorMsg: error.info
                     })
                 })
         }
@@ -95,7 +95,7 @@ class ModifyLoginPassword extends React.Component {
                 <div className="modify-title">{intl.get('Modify login password')}</div>
                 <div className="modify-content">
                     <div className="tip tip-assets">
-                        You cannot withdraw assets within 24 hours after resetting the capital password.
+                        You cannot withdraw assets within 24 hours after resetting the login password.
                     </div>
                     <div className="error-line">
                         {this.state.errorMsg}

@@ -38,10 +38,10 @@ class Index extends React.Component {
                 {/*<div>ID or Passport Number: C668668(E)</div>*/}
                 {/*<div>Address: No. 100, Tim Qi Road, Admiralty, Hong Kong</div>*/}
                 <p>
-                    I/We confirm that all information and representations I/We provide to HKSTOX Limited (the <b>“HKSTOx”</b>) are true, correct and complete; and authorize HKSTOX to confirm and verify the information from any source HKSTOX considers appropriate, including but not limited to the conduct of any credit checks on me/us. HKSTOX is entitled to rely fully on such information and representations for all purposes, unless HKSTOX receives notice in writing of any change(s) from me/us. I/We confirm that I/we will notify HKSTOX immediately on any such changes of information and representations.
+                    I/We confirm that all information and representations I/We provide to HKSTOx Limited (the <b>“HKSTOx”</b>) are true, correct and complete; and authorize HKSTOx to confirm and verify the information from any source HKSTOx considers appropriate, including but not limited to the conduct of any credit checks on me/us. HKSTOx is entitled to rely fully on such information and representations for all purposes, unless HKSTOx receives notice in writing of any change(s) from me/us. I/We confirm that I/we will notify HKSTOx immediately on any such changes of information and representations.
                 </p>
                 <p>
-                    I/We confirm that I am/we are acting for my/our own account and as principal in relation to each transaction entered with HKSTOX and I/we shall also be the beneficiary of any of the transaction entered into with HKSTOX.
+                    I/We confirm that I am/we are acting for my/our own account and as principal in relation to each transaction entered with HKSTOx and I/we shall also be the beneficiary of any of the transaction entered into with HKSTOx.
                 </p>
                 <p>
                     I/We hereby certify, declare and acknowledge that I/we have fully understood the risk disclosure statements in the language of my/our choice (English or Chinese).  I/We was/were invited to read the risk disclosure statements, and to ask questions and gain independent advice if I/we so desired.
@@ -50,7 +50,7 @@ class Index extends React.Component {
                     I/We have read the (Information to Account Holders pursuant to the Personal Data (Privacy) Ordinance (Cap.486), understood and agree to them.
                 </p>
                 <p>
-                    I/We understand that the account is subject to final approval of HKSTOX as the case may be.
+                    I/We understand that the account is subject to final approval of HKSTOx as the case may be.
                 </p>
 
                 <button className="btn btn-agree" onClick={this.agree.bind(this)}>I Agree</button>
