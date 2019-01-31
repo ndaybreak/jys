@@ -226,7 +226,7 @@ class Index extends React.Component {
                     <div className="error-wrap">{this.state.errorMsg}</div>
                     <RadioGroup className="radio-wrap" onChange={this.radioChange.bind(this)} value={this.state.type}>
                         <Radio value={1}>Individual</Radio>
-                        <Radio value={2}>Corporate</Radio>
+                        <Radio value={2}>Corporation</Radio>
                     </RadioGroup>
                     {/*邮箱*/}
                     <div className="item-wrap username-wrap">

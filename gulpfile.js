@@ -26,22 +26,24 @@ gulp.task('zip', () =>
 gulp.task('test', function () {
 return gulp.src(webpackFile.proDirectory+'/**')
         .pipe(vsftp({
-            host: '10.11.62.99',
+            host: '54.255.182.11',
             user: 'root',
-            pass: 'ztjkadmin',
+            // pass: 'ztjkadmin',
+            key: '~/.ssh/globalstox_singapore.pem',
             cleanFiles: true,
-            remotePath: '/home/local/apache-tomcat-8.0.51/webapps/davao/',
+            remotePath: '/home/globalstox/davao/apache-tomcat-8.0.51/webapps/davao/',
         }));
 });
 /* 上传生产目录到生产环境 */
 gulp.task('prod', function () {
 return gulp.src(webpackFile.proDirectory+'/**')
         .pipe(vsftp({
-            host: '112.198.29.122',
-            user: 'root',
-            pass: '@pgmc@123',
+            host: '13.229.58.45',
+            user: 'globalstox',
+            // pass: '@pgmc@123',
             cleanFiles: true,
-            remotePath: '/usr/local/apache-tomcat-8.0.51/webapps/davao/',
+            key: '~/.ssh/singapore_exchange_online_globalstox.pem',
+            remotePath: '/home/globalstox/davao/apache-tomcat-8.0.51/webapps/davao/',
         }));
 });
 /* 上传生产目录到预生成环境 */
