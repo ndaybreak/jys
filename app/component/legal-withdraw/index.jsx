@@ -177,7 +177,7 @@ class Index extends React.Component {
                             <div className="available">Available: <span
                                 className="total">{this.state.available}</span><span
                                 className="currency">{this.state.currency}</span></div>
-                            <div className="limit">Limit Per Transaction: <span
+                            <div className="limit">Minimum Amount Per Transaction: <span
                                 className="value">{this.state.limit}</span></div>
                             <div className="clearfix" style={{paddingLeft: '202px'}}>
                                 <BoxNumber ref="amount" className="amount-box" step={this.state.precision}

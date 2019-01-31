@@ -122,7 +122,7 @@ class Header extends React.Component {
                             <a className={activeMenu === 'index' ? 'menu active' : 'menu'}  href="index.html">{intl.get('name')}</a>
                             {/*<a className={activeMenu === 'download' ? 'menu active' : 'menu'} href="download.html">{intl.get('download')}</a>*/}
                             <span className={activeMenu === 'deal' ? 'menu active' : 'menu'}
-                                  onMouseEnter={this.showSubmenu.bind(this, 'showDealSubMenu')}
+                                  onMouseEnter={this.showSubmenu.bind(this, 'showDealSubMenu')} onClick={this.showSubmenu.bind(this, 'showDealSubMenu')}
                                   onMouseLeave={this.hideSubmenu.bind(this, 'showDealSubMenu')}>{intl.get('dealCenter')}
                                 {this.state.showDealSubMenu && (
                                     <ul className="submenu-wrap">
