@@ -169,7 +169,7 @@ class Index extends React.Component {
                         <div className="tip">
                             Minimum Withdrawal：HK$100, Max daily withdrawal: HK$100,000 <br/>
                             Base Withdrawal Fee is 0.1% (Excluding Bank Fees）<br/>
-                            The withdraw bank account must have the same name as your Coinsuper account, asset arrival time depends on bank processing time.<br/>
+                            The withdraw bank account must have the same name as your HKSTOx account, asset arrival time depends on bank processing time.<br/>
                         </div>
                     </div>
                     <div className="info-part withdraw-info-part">

@@ -255,8 +255,8 @@ class Index extends React.Component {
             <Spin spinning={this.state.loading}>
                 <div className="legal-recharge-page">
                     <div className="tip-part">
-                        <div className="tip">Please follow the remittance address belw to remit. <br/>
-                            The time to deposit assets depends on the processing time of the bank. If the deposit application exceeds the working time of the bank on the same day, it may not be available until the next day.
+                        <div className="tip">We only accept Hong Kong dollars. <br/>
+                            <span style={{color: '#111111'}}>Please follow the remittance address belw to remit. The time to deposit assets depends on the processing time of the bank. If the deposit application exceeds the working time of the bank on the same day, it may not be available until the next day.</span>
                         </div>
                     </div>
                     {getSearchPara('isSubmit') !== 'true' && (
