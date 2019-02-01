@@ -2,7 +2,7 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import { Modal, Button } from 'antd';
 import ReactCodeInput from 'react-code-input'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isLogin, getPrecision, truncateByPrecision } from '@/utils'
+import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isLogin, getPrecision, truncateByPrecision, accMultiply, accDivide } from '@/utils'
 import { setSessionData, getSessionData, removeSessionData } from '@/data'
 import { getEntrustmentList, entrustmentTrade } from '@/api'
 import BoxNumber from '@/component/common/ui/BoxNumber'
@@ -53,7 +53,7 @@ class OrderSell extends React.Component {
         const quantity = this.refs['quantityBox'].getValue()
         if(quantity) {
             this.setState({
-                sum: price * quantity
+                sum: accMultiply(price, quantity)
             })
         }
         // this.setOtcPrice()
@@ -77,7 +77,7 @@ class OrderSell extends React.Component {
         const price = this.refs['priceBox'].getValue()
         if(price) {
             this.setState({
-                sum: price * quantity
+                sum: accMultiply(price, quantity)
             })
         }
 
@@ -96,7 +96,7 @@ class OrderSell extends React.Component {
         const price = this.refs['priceBox'].getValue()
         if(price) {
             this.setState({
-                quantity: sum / price
+                quantity: accDivide(sum, price)
             })
         }
     }
@@ -179,7 +179,10 @@ class OrderSell extends React.Component {
         } else {
             this.setState({
                 confirmVisible: true,
-                visible: false
+                visible: false,
+                price: this.refs['priceBox'].getValue(),
+                quantity: this.refs['quantityBox'].getValue(),
+                sum: this.refs['sumBox'].getValue()
             })
         }
     }

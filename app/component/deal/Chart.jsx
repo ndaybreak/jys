@@ -31,7 +31,8 @@ import {
     MouseCoordinateY
 } from "react-stockcharts/lib/coordinates";
 
-import { discontinuousTimeScaleProviderBuilder } from "react-stockcharts/lib/scale";
+import { last } from "react-stockcharts/lib/utils";
+import { discontinuousTimeScaleProviderBuilder, discontinuousTimeScaleProvider } from "react-stockcharts/lib/scale";
 import {
     OHLCTooltip,
     MovingAverageTooltip,
@@ -254,14 +255,18 @@ class CandleStickChartPanToLoadMore extends React.Component {
         const calculatedData = ema5(
             ema10(smaPrice5(rsiCalculator(macdCalculator(bb(dataToCalculate)))))
         );
-        const indexCalculator = discontinuousTimeScaleProviderBuilder().indexCalculator();
-
-        const { index } = indexCalculator(calculatedData);
+        // const indexCalculator = discontinuousTimeScaleProviderBuilder().indexCalculator();
+        //
+        // const { index } = indexCalculator(calculatedData);
         /* SERVER - END */
 
-        const xScaleProvider = discontinuousTimeScaleProviderBuilder().withIndex(
-            index
-        );
+        // const xScaleProvider = discontinuousTimeScaleProviderBuilder().withIndex(
+        //     index
+        // );
+
+        const xScaleProvider = discontinuousTimeScaleProvider
+            .inputDateAccessor(d => d.date);
+
         const {
             data: linearData,
             xScale,
@@ -318,16 +323,20 @@ class CandleStickChartPanToLoadMore extends React.Component {
         const calculatedData = ema5(
             ema10(smaPrice5(rsiCalculator(macdCalculator(bb(dataToCalculate)))))
         );
-        const indexCalculator = discontinuousTimeScaleProviderBuilder()
-            .initialIndex(initialIndex)
-            .indexCalculator();
-
-        const { index } = indexCalculator(calculatedData);
+        // const indexCalculator = discontinuousTimeScaleProviderBuilder()
+        //     .initialIndex(initialIndex)
+        //     .indexCalculator();
+        //
+        // const { index } = indexCalculator(calculatedData);
         /* SERVER - END */
 
-        const xScaleProvider = discontinuousTimeScaleProviderBuilder()
-            .initialIndex(initialIndex)
-            .withIndex(index);
+        // const xScaleProvider = discontinuousTimeScaleProviderBuilder()
+        //     .initialIndex(initialIndex)
+        //     .withIndex(index);
+
+        const xScaleProvider = discontinuousTimeScaleProvider.initialIndex(initialIndex)
+            .inputDateAccessor(d => d.date);
+
         const {
             data: linearData,
             xScale,
@@ -357,7 +366,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
         if (Math.ceil(start) === end) return;
         loadMorePara.latestTime = this.state.data[0].date.getTime()
         getIntervalReq(loadMorePara, data => {
-            data.splice(data.length - 1)
+            // data.splice(data.length - 1)
             const inputData = data
             const {
                 data: prevData,
@@ -390,19 +399,23 @@ class CandleStickChartPanToLoadMore extends React.Component {
             const calculatedData = ema5(
                 ema10(smaPrice5(rsiCalculator(macdCalculator(bb(dataToCalculate)))))
             );
-            const indexCalculator = discontinuousTimeScaleProviderBuilder()
-                .initialIndex(Math.ceil(start))
-                .indexCalculator();
+            // const indexCalculator = discontinuousTimeScaleProviderBuilder()
+            //     .initialIndex(Math.ceil(start))
+            //     .indexCalculator();
 
             initData = calculatedData.concat(prevData)
-            const { index } = indexCalculator(
-                calculatedData.slice(-rowsToDownload).concat(prevData)
-            );
+
+            // const { index } = indexCalculator(
+            //     calculatedData.slice(-rowsToDownload).concat(prevData)
+            // );
             /* SERVER - END */
 
-            const xScaleProvider = discontinuousTimeScaleProviderBuilder()
-                .initialIndex(Math.ceil(start))
-                .withIndex(index);
+            // const xScaleProvider = discontinuousTimeScaleProviderBuilder()
+            //     .initialIndex(Math.ceil(start))
+            //     .withIndex(index);
+
+            const xScaleProvider = discontinuousTimeScaleProvider.initialIndex(Math.ceil(start))
+                .inputDateAccessor(d => d.date);
 
             const {
                 data: linearData,
@@ -530,6 +543,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
         };
         const bbFill = "#e5e5f2";
 
+
         const {
             data,
             ema5,
@@ -543,6 +557,13 @@ class CandleStickChartPanToLoadMore extends React.Component {
             displayXAccessor,
             indicatorMap
         } = this.state;
+
+        // let xExtents = [0, 120]
+        // if(data.length > 1) {
+        //     const start = xAccessor(last(data));
+        //     const end = xAccessor(data[Math.max(0, data.length - 150)]);
+        //     xExtents = [start, end];
+        // }
 
         const subChartHeight = getSubChartHeight(indicatorMap)
 
@@ -597,7 +618,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                             this.saveCanvas(node);
                         }}
                         xExtents={[0, 120]}
-                        // zoomEvent={false}
+                        zoomEvent={false}
                     >
                         <Chart
                             id={1}
@@ -697,6 +718,14 @@ class CandleStickChartPanToLoadMore extends React.Component {
 
                             {!subChartHeight && (
                                 <XAxis axisAt="bottom" orient="bottom" {...xGrid}/>
+                            )}
+                            {!subChartHeight && (
+                                <MouseCoordinateX
+                                    at="bottom"
+                                    orient="bottom"
+                                    rectWidth={120}
+                                    displayFormat={timeFormat("%Y-%m-%d %H:%M")}
+                                    {...mouseCoordinate}/>
                             )}
                         </Chart>
 

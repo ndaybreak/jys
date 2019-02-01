@@ -441,7 +441,7 @@ export function accMultiply(arg1, arg2) {
     } catch (e) {
         r2 = 0
     };
-    return (arg1 * Math.pow(10, r1) * arg2 * Math.pow(10, r1)) / Math.pow(10, r1 + r2)
+    return (arg1 * Math.pow(10, r1) * arg2 * Math.pow(10, r2)) / Math.pow(10, r1 + r2)
 }
 
 // 返回值：arg1除以arg2的精确结果
@@ -518,4 +518,8 @@ export function truncateByPrecision(val, precision) {
     } else {
         return val.substring(0, index)
     }
+}
+
+export function isEmpty(val) {
+    return typeof val === "undefined" || val === null || val === ''
 }

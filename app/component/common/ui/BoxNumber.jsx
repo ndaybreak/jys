@@ -1,5 +1,5 @@
 import React from 'react';
-import { validate } from '@/utils'
+import { validate, isEmpty } from '@/utils'
 
 const getPrecision = (val) => {
     if(String(val).indexOf('.') === -1) {
@@ -40,7 +40,7 @@ class BoxNumber extends React.Component {
     }
 
     formatValue(val) {
-        if(val && !isNaN(val)) {
+        if(!isEmpty(val) && !isNaN(val)) {
             return parseFloat(parseFloat(val).toFixed(this.state.precision))
         } else {
             return ''

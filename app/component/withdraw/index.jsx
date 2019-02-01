@@ -78,7 +78,7 @@ class Index extends React.Component {
                 coinCode: item.coin_code,
                 withdraw_precision: res.data.single_limit.withdraw_precision,
                 fee: res.data.single_limit.fee_rate,
-                dayLimit: res.data.day_limit.coinTotal,
+                dayLimit: res.data.single_limit.max_quantity > res.data.day_limit.coinTotal ? res.data.day_limit.coinTotal : res.data.single_limit.max_quantity,
                 dayUsed: res.data.day_limit.coinUsed,
                 minQuantity: res.data.single_limit.min_quantity,
                 withdrawValue: '',
