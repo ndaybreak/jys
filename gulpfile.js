@@ -26,6 +26,7 @@ gulp.task('zip', () =>
 gulp.task('test', function () {
 return gulp.src(webpackFile.proDirectory+'/**')
         .pipe(vsftp({
+            // host: '13.229.58.243',
             host: '54.255.182.11',
             user: 'root',
             // pass: 'ztjkadmin',
