@@ -143,9 +143,9 @@ class AssetDetails extends React.Component {
                                 return (
                                     <div className="clearfix td-row" key={i}>
                                         <div className="col-detail">{item.coin_code}</div>
-                                        <div className="col-detail">{item.total_balance}</div>
+                                        <div className="col-detail col-right">{item.total_balance}</div>
                                         <div className={'col-detail ' + (item.total_balance_change > 0 ? 'up' : 'down')}>{item.operation_type}</div>
-                                        <div className={'col-detail ' + (item.total_balance_change > 0 ? 'up' : 'down')}>{item.total_balance_change}</div>
+                                        <div className={'col-detail col-right ' + (item.total_balance_change > 0 ? 'up' : 'down')}>{item.total_balance_change}</div>
                                         <div className="col-detail">{parseTime(item.time)}</div>
                                     </div>
                                 )
