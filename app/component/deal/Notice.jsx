@@ -76,7 +76,7 @@ class User extends React.Component {
             <div className="journalism-wrap notice-wrap">
                 <div className="clearfix">
                     <span className="module-title">Announcement</span>
-                    <a className="module-more" href="javascript:">more</a>
+                    {/*<a className="module-more" href="javascript:">more</a>*/}
                 </div>
                 <div className="module-list">
                     <ul>

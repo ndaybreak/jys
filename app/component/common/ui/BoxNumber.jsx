@@ -1,37 +1,46 @@
 import React from 'react';
-import { validate, isEmpty } from '@/utils'
+import { validate, isNumber, getPrecision, truncateByPrecision } from '@/utils'
 
-const getPrecision = (val) => {
-    if(String(val).indexOf('.') === -1) {
-        return 0
+const formatValue = (val, precision) => {
+    if(isNumber(val)) {
+        // return parseFloat(parseFloat(val).toFixed(precision))
+        return truncateByPrecision(val, precision, true)
+    } else {
+        return ''
     }
-    return (val + '').split('.')[1].length
 }
 
 class BoxNumber extends React.Component {
     constructor(props) {
-        super(props);
+        super(props)
+        if(typeof props.precision !== 'undefined') {
+            this.precision = props.precision
+        } else if(props.step) {
+            this.precision = getPrecision(props.step)
+        } else {
+            this.precision = 8
+        }
+
         this.state = {
             errorMsg: '',
             isValid: true,
-            step: props.step || 0.0000001,
-            precision: props.precision || (props.step ? getPrecision(props.step) : 8)
+            value: formatValue(props.value, this.precision)
         }
-        this.state.value = this.formatValue(this.props.value)
     }
 
     componentDidMount() {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(this.props.step !== prevProps.step) {
-            this.setState({
-                precision: getPrecision(this.props.step)
-            })
+        if(this.props.step !== prevProps.step && typeof this.props.precision === 'undefined') {
+            this.precision = getPrecision(this.props.step)
+        }
+        if(this.props.precision !== prevProps.precision) {
+            this.precision = this.props.precision
         }
         if(this.props.value !== prevProps.value) {
             this.setState({
-                value: this.formatValue(this.props.value)
+                value: formatValue(this.props.value, this.precision)
             })
         }
     }
@@ -39,26 +48,19 @@ class BoxNumber extends React.Component {
     componentWillUnmount() {
     }
 
-    formatValue(val) {
-        if(!isEmpty(val) && !isNaN(val)) {
-            return parseFloat(parseFloat(val).toFixed(this.state.precision))
-        } else {
-            return ''
-        }
-    }
-
     boxChange(e) {
-        let value = e.target.value
-        value = value.substring(0, value.split('.')[0].length + this.state.precision + 1)
-        value = value ? Math.abs(parseFloat(value)) : value
-        if(value === this.state.value) {
-            return
-        }
+        let value = formatValue(e.target.value, this.precision)
+        value = isNumber(value) ? Math.abs(value) : value
+        // if(value === this.state.value) {
+        //     return
+        // }
 
         this.setState({
-            value: new Number(value + '')
+            // value: new Number(value + '')
+            value: value
         }, () => {
-            this.props.onChange && this.props.onChange(value ? parseFloat(value) : 0)
+            // this.props.onChange && this.props.onChange(isNumber(value) ? parseFloat(value) : 0)
+            this.props.onChange && this.props.onChange(value)
             if(!this.props.disableTimelyValidate) {
                 this.validate()
             }
@@ -103,7 +105,7 @@ class BoxNumber extends React.Component {
                 <span className={'label ' + (label ? '' : 'hide')}>{label}</span>
                 <div className={'box-number'}>
                     <input ref="numberBox" className={'box-number-input ' + (this.state.isValid ? '' : 'box-invalid')} type="number" placeholder={placeholder}
-                           value={this.state.value} onChange={this.boxChange.bind(this)} step={step} onBlur={this.onBlur.bind(this)} maxLength={50}/>
+                           value={this.state.value} onChange={this.boxChange.bind(this)} step={step || 0.00000001} onBlur={this.onBlur.bind(this)} maxLength={50}/>
                     <span className="box-number-unit">{unit}</span>
                     <div className="box-error">
                         {!this.state.isValid && (

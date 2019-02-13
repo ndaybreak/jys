@@ -98,9 +98,25 @@ class User extends React.Component {
     }
 
     cancelOrder(id) {
-        this.setState({
-            cancelId: id,
-            visible: true
+        // this.setState({
+        //     cancelId: id,
+        //     visible: true
+        // })
+        ui.confirm({
+            msg: intl.get('tipCancelEntrustOrder'),
+            onOk: () => {
+                cancelCoinsOrder(id).then(res => {
+                    this.cancel()
+                    eventProxy.trigger('orderDone')
+                    ui.tip({
+                        seconds: 1,
+                        msg: intl.get('successTip'),
+                        callback: () => {
+                            this.queryOrders()
+                        }
+                    })
+                })
+            }
         })
     }
 
@@ -111,17 +127,17 @@ class User extends React.Component {
     }
 
     confirm() {
-        cancelCoinsOrder(this.state.cancelId).then(res => {
-            this.cancel()
-            eventProxy.trigger('orderDone')
-            ui.tip({
-                seconds: 1,
-                msg: intl.get('successTip'),
-                callback: () => {
-                    this.queryOrders()
-                }
-            })
-        })
+        // cancelCoinsOrder(this.state.cancelId).then(res => {
+        //     this.cancel()
+        //     eventProxy.trigger('orderDone')
+        //     ui.tip({
+        //         seconds: 1,
+        //         msg: intl.get('successTip'),
+        //         callback: () => {
+        //             this.queryOrders()
+        //         }
+        //     })
+        // })
     }
 
     checkValidDate(isStartTime, moment) {

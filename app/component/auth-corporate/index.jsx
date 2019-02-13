@@ -612,7 +612,7 @@ class Index extends React.Component {
                                     <div className="auth-tr clearfix">
                                         <div className="auth-th cell-first">Name</div>
                                         <div className="auth-th">Residential Address</div>
-                                        <div className="auth-th">Place of incorporation</div>
+                                        <div className="auth-th cell-place">Place of incorporation</div>
                                         <div className="auth-th">Director/Shareholder</div>
                                         <div className="auth-th">Shareholding (%)</div>
                                     </div>
@@ -621,7 +621,7 @@ class Index extends React.Component {
                                             <div className="auth-tr clearfix" key={i}>
                                                 <div className="auth-td cell-first"><input className={item.nameInvalid ? 'item-invalid' : ''} type="text" value={item.name} onChange={this.directorChange.bind(this, 'name', i)} maxLength={100}/></div>
                                                 <div className="auth-td"><input className={item.residentialAddressInvalid ? 'item-invalid' : ''} type="text" value={item.residentialAddress} onChange={this.directorChange.bind(this, 'residentialAddress', i)} maxLength={200}/></div>
-                                                <div className="auth-td"><input className={item.incorprationInvalid ? 'item-invalid' : ''} type="text" value={item.incorpration} onChange={this.directorChange.bind(this, 'incorpration', i)} maxLength={200}/></div>
+                                                <div className="auth-td cell-place"><input className={item.incorprationInvalid ? 'item-invalid' : ''} type="text" value={item.incorpration} onChange={this.directorChange.bind(this, 'incorpration', i)} maxLength={200}/></div>
                                                 <div className="auth-td">
                                                     <BoxSelect className={'director-select-wrap ' + (item.directorShareholderInvalid ? 'item-invalid' : '')}
                                                                placeholder="Please select"

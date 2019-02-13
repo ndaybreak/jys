@@ -152,7 +152,7 @@ class Index extends React.Component {
             return;
         }
         if (info.file.status === 'done') {
-            const state = {loading: false}
+            const state = {loading: false, picOneError: ''}
             state[imgUrl] = info.file.response.data.fileUrl
             this.setState(state)
         }

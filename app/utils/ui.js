@@ -6,7 +6,9 @@ function Tip(params={}) {
     if(document.getElementById('davaoTip')) {
         return
     }
-    let secondsToGo = params.seconds || 3;
+    let secondsToGo = params.seconds || 3
+    let manualClosed = false
+    
     function Content() {
         return (
             <div id="davaoTip">
@@ -22,17 +24,24 @@ function Tip(params={}) {
         width: (params.width || 209) + "px",
         centered: true,
         content: <Content/>,
-        footer: ' '
+        footer: ' ',
+        onCancel: () => {
+            manualClosed = true
+            modal.destroy()
+            params.callback && params.callback()
+        }
     });
     setInterval(() => {
         secondsToGo -= 1;
         modal.update({
             content: <Content/>
-    });
+        });
     }, 1000);
     setTimeout(() => {
-        modal.destroy()
-        params.callback && params.callback()
+        if(!manualClosed) {
+            modal.destroy()
+            params.callback && params.callback()
+        }
     }, secondsToGo * 1000);
 }
 

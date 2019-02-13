@@ -1,14 +1,26 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import { Modal, Button } from 'antd';
+import {Modal, Button} from 'antd';
 import ReactCodeInput from 'react-code-input'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isLogin, getPrecision, truncateByPrecision, accMultiply, accDivide } from '@/utils'
-import { setSessionData, getSessionData, removeSessionData } from '@/data'
-import { getEntrustmentList, entrustmentTrade } from '@/api'
+import {
+    jumpUrl,
+    validate,
+    getSearchPara,
+    ui,
+    kebabCaseData2Camel,
+    isLangZH,
+    isLogin,
+    getPrecision,
+    truncateByPrecision,
+    accMultiply,
+    accDivide
+} from '@/utils'
+import {setSessionData, getSessionData, removeSessionData} from '@/data'
+import {getEntrustmentList, entrustmentTrade} from '@/api'
 import BoxNumber from '@/component/common/ui/BoxNumber'
 // import { getTargetPairsQuot } from '@/api/quot'
 import eventProxy from '@/utils/eventProxy'
-import { checkAuth } from '@/utils/auth'
+import {checkAuth} from '@/utils/auth'
 
 class OrderBuy extends React.Component {
     constructor(props) {
@@ -26,7 +38,7 @@ class OrderBuy extends React.Component {
 
     componentDidMount() {
         eventProxy.on('priceSelect', price => {
-            if(this.refs['priceBox']) {
+            if (this.refs['priceBox']) {
                 this.setState({
                     price: price
                 })
@@ -56,15 +68,20 @@ class OrderBuy extends React.Component {
             price: price
         })
         const quantity = this.refs['quantityBox'].getValue()
-        if(quantity) {
+        const sum = this.refs['sumBox'].getValue()
+        if (quantity) {
             this.setState({
                 sum: accMultiply(price, quantity)
+            })
+        } else if(sum) {
+            this.setState({
+                quantity: accDivide(sum, price)
             })
         }
         // this.setOtcPrice(price)
 
-        if(this.state.errorBox == 'price') {
-            if(this.refs['priceBox'].validate()) {
+        if (this.state.errorBox == 'price') {
+            if (this.refs['priceBox'].validate()) {
                 this.setState({
                     errorMsg: ''
                 })
@@ -77,29 +94,30 @@ class OrderBuy extends React.Component {
             quantity: quantity
         })
         const price = this.refs['priceBox'].getValue()
-        if(price) {
+        if (price) {
             this.setState({
                 sum: accMultiply(price, quantity)
             })
         }
 
-        if(this.state.errorBox == 'quantity') {
-            if(this.refs['quantityBox'].validate()) {
+        if (this.state.errorBox == 'quantity') {
+            if (this.refs['quantityBox'].validate()) {
                 this.setState({
                     errorMsg: ''
                 })
             }
         }
     }
+
     sumBoxChange(sum) {
-        if(this.props.type !== 'one') {
+        if (this.props.type !== 'one') {
             return
         }
         this.setState({
             sum: sum
         })
         const price = this.refs['priceBox'].getValue()
-        if(price) {
+        if (price) {
             this.setState({
                 quantity: accDivide(sum, price)
             })
@@ -108,12 +126,12 @@ class OrderBuy extends React.Component {
 
     changeTotal(percent) {
         const available = this.props.available
-        if(available) {
-            let sum = truncateByPrecision(parseFloat(available) * percent, getPrecision(this.props.targetPrecision))
+        if (available) {
+            let sum = truncateByPrecision(parseFloat(available) * percent, getPrecision(this.props.targetPrecision), true)
             this.setState({
                 sum: sum
             })
-            if(this.props.type === 'one') {
+            if (this.props.type === 'one') {
                 this.sumBoxChange(sum)
             }
         }
@@ -126,20 +144,20 @@ class OrderBuy extends React.Component {
     validate() {
         let errorMsg,
             box = ''
-        if(this.refs['priceBox'] && !this.refs['priceBox'].validate()) {
+        if (this.refs['priceBox'] && !this.refs['priceBox'].validate()) {
             errorMsg = intl.get('priceTip')
             box = 'price'
-        } else if(this.refs['quantityBox'] && !this.refs['quantityBox'].validate()) {
+        } else if (this.refs['quantityBox'] && !this.refs['quantityBox'].validate()) {
             errorMsg = intl.get('amountTip')
             box = 'quantity'
-        } else if(!this.refs['sumBox'].validate()) {
+        } else if (!this.refs['sumBox'].validate()) {
             errorMsg = intl.get('totalTip')
             box = 'sum'
-        } else if(this.refs['sumBox'].getValue() < this.props.minSum) {
+        } else if (this.refs['sumBox'].getValue() < this.props.minSum) {
             errorMsg = intl.get('minTotalTip') + this.props.minSum
             box = 'sum'
             this.refs['sumBox'].setInvalid()
-        } else if(this.refs['sumBox'].getValue() > this.props.available) {
+        } else if (this.refs['sumBox'].getValue() > new Number(this.props.available)) {
             errorMsg = intl.get('availableTip')
             box = 'sum'
             this.refs['sumBox'].setInvalid()
@@ -151,7 +169,7 @@ class OrderBuy extends React.Component {
             errorMsg: errorMsg,
             errorBox: box
         })
-        if(errorMsg) {
+        if (errorMsg) {
             return false
         } else {
             return true
@@ -159,10 +177,10 @@ class OrderBuy extends React.Component {
     }
 
     handleBuy() {
-        if(!checkAuth([ 'auth', 'questionnaire', 'capitalPassword'])) {
+        if (!checkAuth(['auth', 'questionnaire', 'capitalPassword'])) {
             return
         }
-        if(this.validate()) {
+        if (this.validate()) {
             this.setState({
                 visible: true,
                 passwordMsg: '',
@@ -179,7 +197,7 @@ class OrderBuy extends React.Component {
     }
 
     handleOk() {
-        if(this.state.password.length < 6) {
+        if (this.state.password.length < 6) {
             this.setState({
                 passwordMsg: intl.get('pwdTip')
             })
@@ -205,6 +223,7 @@ class OrderBuy extends React.Component {
             confirmVisible: false
         })
     }
+
     confirm() {
         this.setState({
             loading: true
@@ -219,7 +238,7 @@ class OrderBuy extends React.Component {
             quantity: isOne ? this.refs['quantityBox'].getValue() : 0,
             price: isOne ? this.refs['priceBox'].getValue() : 0
         }
-        if(!isOne) {
+        if (!isOne) {
             para.totalAmount = this.refs['sumBox'].getValue()
         }
 
@@ -255,21 +274,32 @@ class OrderBuy extends React.Component {
     }
 
     render() {
-        const { type, target, targetPrecision, base, basePrecision, available} = this.props
+        const {type, target, targetPrecision, base, basePrecision, available} = this.props
         return (
             <div className={'info-left ' + (type === 'one' ? '' : 'info-market')}>
                 <div style={{'height': '12px'}}><span className="order-error">{this.state.errorMsg}</span></div>
-                <BoxNumber ref="priceBox" className="box-price" value={this.state.price} label={intl.get('price') + ':'} unit={target} step={targetPrecision} onChange={this.priceBoxChange.bind(this)} validates={['notNull']} disableTimelyValidate={true}/>
+                <BoxNumber ref="priceBox" className="box-price" value={this.state.price} label={intl.get('price') + ':'}
+                           unit={target} step={targetPrecision} onChange={this.priceBoxChange.bind(this)}
+                           validates={['notNull']} disableTimelyValidate={true}/>
                 {/*<div className="valuation">{intl.get('estimated')}: {this.state.otcPrice}</div>*/}
-                <BoxNumber ref="quantityBox" className="box-quantity" value={this.state.quantity} label={intl.get('amount') + ' :'} unit={base} step={basePrecision} onChange={this.quantityBoxChange.bind(this)} validates={['notNull']} disableTimelyValidate={true}/>
+                <BoxNumber ref="quantityBox" className="box-quantity" value={this.state.quantity}
+                           label={intl.get('amount') + ' :'} unit={base} step={basePrecision}
+                           onChange={this.quantityBoxChange.bind(this)} validates={['notNull']}
+                           disableTimelyValidate={true}/>
 
-                <BoxNumber ref="sumBox" className="box-sum" label={intl.get('total') + ':'} value={this.state.sum} unit={target} step='0.01' precision={8} onChange={this.sumBoxChange.bind(this)} validates={['notNull']} disableTimelyValidate={true}/>
+                <BoxNumber ref="sumBox" className="box-sum" label={intl.get('total') + ':'} value={this.state.sum}
+                           unit={target} step='0.01' precision={8} onChange={this.sumBoxChange.bind(this)}
+                           validates={['notNull']} disableTimelyValidate={true}/>
 
                 <div className="percent-wrap clearfix">
-                    <span className={'percent-item ' + (this.state.percent == 0.25 ? 'active' : '')} onClick={this.changeTotal.bind(this, 0.25)}>25%</span>
-                    <span className={'percent-item ' + (this.state.percent == 0.5 ? 'active' : '')} onClick={this.changeTotal.bind(this, 0.5)}>50%</span>
-                    <span className={'percent-item ' + (this.state.percent == 0.75 ? 'active' : '')} onClick={this.changeTotal.bind(this, 0.75)}>75%</span>
-                    <span className={'percent-item ' + (this.state.percent == 1 ? 'active' : '')} onClick={this.changeTotal.bind(this, 1)}>100%</span>
+                    <span className={'percent-item ' + (this.state.percent == 0.25 ? 'active' : '')}
+                          onClick={this.changeTotal.bind(this, 0.25)}>25%</span>
+                    <span className={'percent-item ' + (this.state.percent == 0.5 ? 'active' : '')}
+                          onClick={this.changeTotal.bind(this, 0.5)}>50%</span>
+                    <span className={'percent-item ' + (this.state.percent == 0.75 ? 'active' : '')}
+                          onClick={this.changeTotal.bind(this, 0.75)}>75%</span>
+                    <span className={'percent-item ' + (this.state.percent == 1 ? 'active' : '')}
+                          onClick={this.changeTotal.bind(this, 1)}>100%</span>
                 </div>
 
                 {isLogin() && (
@@ -277,13 +307,16 @@ class OrderBuy extends React.Component {
                         <div className="available-wrap clearfix">
                             {intl.get('available')}： {available} {target}
                         </div>
-                        <button className="btn order-btn btn-buy" onClick={this.handleBuy.bind(this)}>{intl.get('buyBtn')}</button>
+                        <button className="btn order-btn btn-buy"
+                                onClick={this.handleBuy.bind(this)}>{intl.get('buyBtn')}</button>
                     </div>
                 )}
 
                 {!isLogin() && (
                     <div className="empty">
-                        <a href="register.html">{intl.get('register')}</a> | <a href="login.html?from=deal">{intl.get('login')}</a> <span className="buy-span">{intl.get('buy')}</span>
+                        <a href="register.html">{intl.get('register')}</a> | <a
+                        href="login.html?from=deal">{intl.get('login')}</a> <span
+                        className="buy-span">{intl.get('buy')}</span>
                     </div>
                 )}
 
@@ -295,7 +328,8 @@ class OrderBuy extends React.Component {
                     onOk={this.handleOk.bind(this)}
                     onCancel={this.handleCancel.bind(this)}
                     footer={[
-                        <Button key="back" className="btn-cancel" onClick={this.handleCancel.bind(this)}>{intl.get('cancelBtn')}</Button>,
+                        <Button key="back" className="btn-cancel"
+                                onClick={this.handleCancel.bind(this)}>{intl.get('cancelBtn')}</Button>,
                         <Button key="submit" className="btn-submit" type="primary" onClick={this.handleOk.bind(this)}>
                             {intl.get('confirmBtn')}
                         </Button>,
@@ -305,7 +339,8 @@ class OrderBuy extends React.Component {
                         <div className="title">{intl.get('capitalPasswordTip')}</div>
                         <div className="submit-div">
                             {this.state.visible && (
-                                <ReactCodeInput className="password-value" type='password' fields={6} onChange={this.passwordChange.bind(this)}/>
+                                <ReactCodeInput className="password-value" type='password' fields={6}
+                                                onChange={this.passwordChange.bind(this)}/>
                             )}
                         </div>
                         <div className="error">
@@ -322,8 +357,10 @@ class OrderBuy extends React.Component {
                     onOk={this.confirm.bind(this)}
                     onCancel={this.cancelConfirm.bind(this)}
                     footer={[
-                        <Button key="back" className="btn-cancel" onClick={this.cancelConfirm.bind(this)}>{intl.get('cancelBtn')}</Button>,
-                        <Button key="submit" className="btn-submit" type="primary" loading={this.state.loading} onClick={this.confirm.bind(this)}>
+                        <Button key="back" className="btn-cancel"
+                                onClick={this.cancelConfirm.bind(this)}>{intl.get('cancelBtn')}</Button>,
+                        <Button key="submit" className="btn-submit" type="primary" loading={this.state.loading}
+                                onClick={this.confirm.bind(this)}>
                             {intl.get('confirmBtn')}
                         </Button>,
                     ]}

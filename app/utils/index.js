@@ -430,6 +430,8 @@ export function accSub(arg1, arg2) {
 
 // 返回值：arg1乘以arg2的精确结果
 export function accMultiply(arg1, arg2) {
+    arg1 = isNumber(arg1) ? arg1 : 0
+    arg2 = isNumber(arg2) ? arg2 : 0
     var r1, r2;
     try {
         r1 = arg1.toString().split(".")[1].length
@@ -441,7 +443,7 @@ export function accMultiply(arg1, arg2) {
     } catch (e) {
         r2 = 0
     };
-    return (arg1 * Math.pow(10, r1) * arg2 * Math.pow(10, r2)) / Math.pow(10, r1 + r2)
+    return (arg1 * Math.pow(10, r1)) * (arg2 * Math.pow(10, r2)) / Math.pow(10, r1 + r2)
 }
 
 // 返回值：arg1除以arg2的精确结果
@@ -451,12 +453,12 @@ export function accDivide(arg1, arg2) {
         r1 = arg1.toString().split(".")[1].length
     } catch (e) {
         r1 = 0
-    };
+    }
     try {
         r2 = arg2.toString().split(".")[1].length
     } catch (e) {
         r2 = 0
-    };
+    }
     m = Math.pow(10, Math.max(r1, r2));
     return (arg1 * m) / (arg2 * m)
 }
@@ -496,30 +498,48 @@ export function toFixed(val, precision) {
     return val
 }
 export function getPrecision(val) {
-    if(String(val).indexOf('.') === -1) {
+    // if(String(val).indexOf('.') === -1) {
+    //     return 0
+    // }
+    // return (val + '').split('.')[1].length
+    try {
+        return val.toString().split(".")[1].length
+    } catch (e) {
         return 0
     }
-    return (val + '').split('.')[1].length
 }
 
-// 按精度截取或补零
-export function truncateByPrecision(val, precision) {
+// 按精度截取或补零, 默认补零
+export function truncateByPrecision(val, precision, notAddZero) {
+    if(!isNumber(val)) {
+        return val
+    }
     val = String(val)
-    let index = val.indexOf('.')
-    if(index === -1) {
-        val += '.00000000'
-        index = val.indexOf('.')
+    let dotIndex = val.indexOf('.')
+    if(notAddZero) {
+        if(dotIndex === -1) {
+            return val
+        }
     } else {
-        val += '0000000'
+        if(dotIndex === -1) {
+            val += '.00000000'
+            dotIndex = val.indexOf('.')
+        } else {
+            val += '0000000'
+        }
     }
 
     if(precision) {
-        return val.substring(0, index) + val.substring(index, index + precision + 1)
+        return val.substring(0, dotIndex) + val.substring(dotIndex, dotIndex + precision + 1)
     } else {
-        return val.substring(0, index)
+        return val.substring(0, dotIndex)
     }
 }
 
 export function isEmpty(val) {
     return typeof val === "undefined" || val === null || val === ''
+}
+
+export function isNumber(val) {
+    return !isEmpty(val) && !isNaN(val)
 }

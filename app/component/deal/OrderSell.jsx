@@ -104,7 +104,7 @@ class OrderSell extends React.Component {
     changeTotal(percent) {
         const available = this.props.available
         if(available) {
-            let quantity = truncateByPrecision(parseFloat(available) * percent, getPrecision(this.props.basePrecision))
+            let quantity = truncateByPrecision(parseFloat(available) * percent, getPrecision(this.props.basePrecision), true)
             this.setState({
                 quantity: quantity
             })
@@ -132,7 +132,7 @@ class OrderSell extends React.Component {
             errorMsg = intl.get('minTotalTip') + this.props.minSum
             box = 'sum'
             this.refs['sumBox'].setInvalid()
-        } else if(this.refs['quantityBox'].getValue() > this.props.available) {
+        } else if(this.refs['quantityBox'].getValue() > new Number(this.props.available)) {
             errorMsg = intl.get('availableTip')
             box = 'sum'
             this.refs['quantityBox'].setInvalid()

@@ -164,24 +164,24 @@ class Index extends React.Component {
         return amountValid && numberValid && picValid
     }
 
-    submitPic() {
-        const para = {
-            authPathwayId: this.refs['authType'].getValue(),
-            countryCredentialsId: this.refs['countryCredentialsId'].getValue(),
-            credentialFrontPicAddr: this.state.picOneImgUrl,
-            credentialBackPicAddr: this.state.picTwoImgUrl,
-            verifyVideo: this.state.videoUrl
-        }
-        return new Promise((resolve, reject) => {
-            savePicAuthInfo(para).then(res => {
-                resolve(res.info)
-            }, error => {
-                this.setState({
-                    loading: false
-                })
-            })
-        })
-    }
+    // submitPic() {
+    //     const para = {
+    //         authPathwayId: this.refs['authType'].getValue(),
+    //         countryCredentialsId: this.refs['countryCredentialsId'].getValue(),
+    //         credentialFrontPicAddr: this.state.picOneImgUrl,
+    //         credentialBackPicAddr: this.state.picTwoImgUrl,
+    //         verifyVideo: this.state.videoUrl
+    //     }
+    //     return new Promise((resolve, reject) => {
+    //         savePicAuthInfo(para).then(res => {
+    //             resolve(res.info)
+    //         }, error => {
+    //             this.setState({
+    //                 loading: false
+    //             })
+    //         })
+    //     })
+    // }
 
     handleNext() {
         if (this.validateBasicInfo()) {
