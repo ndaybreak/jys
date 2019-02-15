@@ -605,7 +605,7 @@ class Index extends React.Component {
                             </div>
 
                             <div className="list-one-part">
-                                <div className="label">Information on directors and all shareholders holding more than 10% shares
+                                <div className="label">Information on Directors and All Shareholders Holding More Than 10% Shares
                                     <a className="link" href="javascript:" onClick={this.addTr.bind(this)} style={{float: 'right','textDecoration': 'underline'}}>Add</a>
                                 </div>
                                 <div className="auth-table">
@@ -638,7 +638,7 @@ class Index extends React.Component {
                             </div>
 
                             <div className="list-two-part">
-                                <div className="label">Information of the person authorized to give instruction on Customer’s behalf
+                                <div className="label">Information of The Person Authorized to Give Instruction on Customer’s Behalf
                                 </div>
                                 <div className="auth-table">
                                     <div className="auth-tr clearfix">

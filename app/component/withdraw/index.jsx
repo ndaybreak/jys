@@ -5,7 +5,7 @@ import ReactCodeInput from 'react-code-input'
 import Breadcrumb from '@/component/common/Breadcrumb'
 import RechargeSelect from '@/component/recharge/RechargeSelect'
 import { Icon, Modal, Button, Select } from 'antd'
-import { jumpUrl, validate, ui, getSearchPara } from '@/utils'
+import { jumpUrl, validate, ui, getSearchPara, accAdd } from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import '@/public/css/withdraw.pcss';
 import codeImgDefault from '@/public/img/二维码占位符.png'
@@ -100,7 +100,8 @@ class Index extends React.Component {
         if(value === defaultValue || this.state.fee === defaultValue || !value) {
             actualVal = defaultValue
         } else {
-            actualVal = parseFloat((value - this.state.fee).toFixed(8))
+            // actualVal = parseFloat((value + this.state.fee).toFixed(8))
+            actualVal = accAdd(value, this.state.fee)
         }
         this.setState({
             withdrawValue: value,
@@ -265,7 +266,7 @@ class Index extends React.Component {
                         </div>
                         <div className="fee-line">
                             {intl.get('feed')}：<span className="value">{this.state.fee}</span><span className="coin-code" style={{marginRight: '130px'}}>{this.state.coinCode}</span>
-                            {intl.get('receiveAmount')}：<span className="value">{this.state.actualValue}</span><span className="coin-code">{this.state.coinCode}</span>
+                            Total amount：<span className="value">{this.state.actualValue}</span><span className="coin-code">{this.state.coinCode}</span>
                         </div>
                         <div className="limit-line">
                             {intl.get('limitDescription')} |
