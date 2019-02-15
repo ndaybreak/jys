@@ -133,7 +133,7 @@ class Index extends React.Component {
             return;
         }
         if (info.file.status === 'done') {
-            const state = {loading: false, picList: this.state.picList}
+            const state = {loading: false, picList: this.state.picList, picError: ''}
             state.picList.push(info.file.response.data.fileUrl)
             this.setState(state)
         }

@@ -137,7 +137,7 @@ class AssetDetails extends React.Component {
                                 <div className="col-detail">Balance</div>
                                 <div className="col-detail">Type</div>
                                 <div className="col-detail">Change</div>
-                                <div className="col-detail">Times</div>
+                                <div className="col-detail">Time</div>
                             </div>
                             {this.state.data.map((item, i) => {
                                 return (

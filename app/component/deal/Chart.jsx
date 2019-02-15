@@ -457,7 +457,9 @@ class CandleStickChartPanToLoadMore extends React.Component {
 
     changeType(type) {
         chartType = type
-        this.loadData()
+        setTimeout(() => {
+            this.loadData()
+        }, 300)
     }
     changeTimeType(type) {
         timeType = type
@@ -624,7 +626,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                             id={1}
                             height={370 - subChartHeight}
                             yExtents={[d => [d.high, d.low], ema5.accessor(), ema10.accessor()]}
-                            padding={{ top: 0, bottom: 20 }}
+                            padding={{ top: 15, bottom: 30 }}
                         >
                             <XAxis
                                 axisAt="bottom"

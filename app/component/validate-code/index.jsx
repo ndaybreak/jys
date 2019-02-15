@@ -150,7 +150,7 @@ class Index extends React.Component {
             setToken(res.data.token).then(res => {
                 removeSessionData('authBasicData')
                 ui.simpleConfirm({
-                    msg: 'Your account is in effect, please continue to submit your KYC information (after your KYC information has been verified, your account will have the right to deposit, withdrawal and transation)',
+                    msg: 'Your account is in effect, please continue to submit your KYC information (after your KYC information has been verified, your account will have the right to deposit, withdrawal and transaction)',
                     onOk: () => {
                         if (data.type == 1) {
                             jumpUrl('auth.html')

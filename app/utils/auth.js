@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 import intl from 'react-intl-universal'
 import { getAccountInfo } from '@/api'
-import { ui, jumpUrl } from '@/utils'
+import { ui, jumpUrl, isJson } from '@/utils'
 
 const TokenKey = 'stoxToken'
 const UserKey = 'stoxUser'
@@ -35,7 +35,12 @@ export function removeToken() {
 }
 
 export function getUser() {
-    return JSON.parse(Cookies.get(UserKey))
+    const user = Cookies.get(UserKey)
+    if(isJson(user)) {
+        return JSON.parse(user)
+    } else {
+        jumpUrl('index.html')
+    }
 }
 function setUser(user) {
     user.isAuth = user.auth_application_status === 2 // 未提交0，拒绝1，审核通过2 ,审核中3

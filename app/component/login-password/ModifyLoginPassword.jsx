@@ -37,12 +37,12 @@ class ModifyLoginPassword extends React.Component {
         if (result1 && result2 && resultOld) {
             if (this.refs['newPassword'].getValue() === this.refs['oldPassword'].getValue()) {
                 this.setState({
-                    errorMsg: 'The new password cannot be the same as the old password.'
+                    errorMsg: 'The new password cannot be set as the old one'
                 })
                 return false
             } else if (this.refs['newPassword'].getValue() !== this.refs['confirmPassword'].getValue()) {
                 this.setState({
-                    errorMsg: intl.get('Different about the two new password')
+                    errorMsg: 'The two new passwords are inconsistent'
                 })
                 return false
             } else {

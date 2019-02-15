@@ -32,7 +32,7 @@ class Index extends React.Component {
         if (result1 && result2) {
             if (this.refs['password'].getValue() !== this.refs['confirmPassword'].getValue()) {
                 this.setState({
-                    errorMsg: 'Entered passwords differ!'
+                    errorMsg: 'The two new passwords are inconsistent'
                 })
                 return false
             } else {
@@ -76,7 +76,7 @@ class Index extends React.Component {
                     <div className="clearfix modify-item">
                         <img src={userPwdImg} alt=""/>
                         <Box ref="password" type="password"
-                             placeholder="Please set your capital password(6 digit code)"
+                             placeholder="Please set your capital password(6 digit number)"
                              validates={['notNull', 'sixDigitNumber']}/>
                     </div>
                     <div className="clearfix modify-item">
