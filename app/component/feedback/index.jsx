@@ -1,7 +1,7 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import { Icon, Modal, Button, Upload, message, Spin } from 'antd'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH } from '@/utils'
+import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, getConfig } from '@/utils'
 import { setSessionData, getSessionData, removeSessionData } from '@/data'
 import '@/public/css/feedback.pcss';
 import previewImg from '@/public/img/放大镜up.png'
@@ -11,7 +11,7 @@ import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
 
-const uploadUrl = process.env.BASE_API + '/file/public/uploadImg?'
+const uploadUrl = getConfig().BASE_API + '/file/public/uploadImg?'
 
 function beforeUpload(file) {
     const isImg = file.type.indexOf('image') >= 0;

@@ -5,10 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run devBuildEntry && webpack-dev-server --devtool eval --progress --colors --profile --config config/webpack/webpack.dev.conf.js",
-    "p:test": "npm run build:test && gulp test",
-    "p:prod": "npm run build:prod && gulp prod",
-    "build:test": "SET NODE_ENV=test && webpack --progress --colors --config config/webpack/webpack.prod.conf.js",
-    "build:prod": "SET NODE_ENV=prod && webpack --progress --colors --config config/webpack/webpack.prod.conf.js",
+    "build": "SET NODE_ENV=prod && webpack --progress --colors --config config/webpack/webpack.prod.conf.js",
+    "p:test": "npm run build && gulp test",
+    "p:prod": "npm run build && gulp prod",
     "devBuildEntry": "node config/entry/entryBuild.js"
   },
   "keywords": [],

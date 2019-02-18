@@ -543,3 +543,29 @@ export function isEmpty(val) {
 export function isNumber(val) {
     return !isEmpty(val) && !isNaN(val)
 }
+
+let webConfig
+export function getConfig() {
+    if(webConfig) {
+        return webConfig
+    }
+    const host = window.location.host
+    const isLocal = host.indexOf('localhost') > -1
+    const isHttp = window.location.protocol === 'http:'
+    if(isLocal) {
+        webConfig = {
+            BASE_API: 'http://54.255.182.11:8080/DaVaoBusiness',
+            QUAT_API: 'ws://54.255.182.11:19999/quot'
+        }
+    } else {
+        webConfig = {
+            BASE_API: '/DaVaoBusiness'
+        }
+        if(isHttp) {
+            webConfig.QUAT_API = 'ws://' + window.location.host + '/quot'
+        } else {
+            webConfig.QUAT_API = 'wss://' + window.location.host + '/quot'
+        }
+    }
+    return webConfig
+}

@@ -1,4 +1,5 @@
-﻿var Long = require("long")
+﻿import { getConfig } from '@/utils'
+var Long = require("long")
 // 创建ProtoBuf
 let ProtoBuf = dcodeIO.ProtoBuf
 let protoFile = ProtoBuf.loadProtoFile('resource/QuotModule.proto')
@@ -22,7 +23,7 @@ content.request = request
 function createWebSocket(options) {
   let promise = new Promise(function(resolve, reject) {
     websocket && websocket.close()
-    let websocket = options.websocket = new WebSocket(process.env.QUAT_API)
+    let websocket = options.websocket = new WebSocket(getConfig().QUAT_API)
     websocket.binaryType = 'arraybuffer'
     // 连接成功建立的回调方法
     websocket.onopen = function() {

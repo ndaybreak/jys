@@ -26,8 +26,8 @@ gulp.task('zip', () =>
 gulp.task('test', function () {
 return gulp.src(webpackFile.proDirectory+'/**')
         .pipe(vsftp({
-            // host: '13.229.58.243',
-            host: '54.255.182.11',
+            host: '13.229.58.243',
+            // host: '54.255.182.11',
             user: 'root',
             // pass: 'ztjkadmin',
             key: '~/.ssh/globalstox_singapore.pem',
@@ -39,7 +39,7 @@ return gulp.src(webpackFile.proDirectory+'/**')
 gulp.task('prod', function () {
 return gulp.src(webpackFile.proDirectory+'/**')
         .pipe(vsftp({
-            host: '13.229.58.45',
+            // host: '13.229.58.45',
             user: 'globalstox',
             // pass: '@pgmc@123',
             cleanFiles: true,

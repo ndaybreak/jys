@@ -5,7 +5,7 @@ import Breadcrumb from '@/component/common/Breadcrumb'
 import RechargeSelect from '@/component/recharge/RechargeSelect'
 import { Icon, Modal, Button, Select, Upload } from 'antd'
 import BoxNumber from '@/component/common/ui/BoxNumber'
-import { jumpUrl, validate, ui, getSearchPara } from '@/utils'
+import { jumpUrl, validate, ui, getSearchPara, getConfig } from '@/utils'
 import { vcRecharge } from '@/api'
 import '@/public/css/recharge.pcss';
 import codeImgDefault from '@/public/img/二维码占位符.png'
@@ -15,7 +15,7 @@ import deleteImg from '@/public/img/删除.png'
 import { getRechargeAddress } from '@/api'
 import {message} from "antd/lib/index";
 
-const uploadUrl = process.env.BASE_API + '/file/public/uploadImg?'
+const uploadUrl = getConfig().BASE_API + '/file/public/uploadImg?'
 const isSubmit = !!getSearchPara('address')
 // const isSubmit = true
 
