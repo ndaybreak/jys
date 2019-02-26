@@ -582,8 +582,9 @@ ul, ol {
     }
 
     .link-block-wrap {
-      padding-right: 50px;
+      padding-right: 5px;
       padding-top: 6px;
+      min-width: 164px;
 
       .link-block-title {
         margin-left: 12px;
@@ -1226,4 +1227,67 @@ a {
 }
 .btn-confirm {
   border: none;
+}
+
+.color-green {
+  color: #51A314;
+}
+.sto-loading-wrap {
+  position: fixed;
+  z-index: 900;
+  background-color: rgba(222, 222, 222, 0.1);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  vertical-align: middle;
+  .ant-spin-spinning {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -23px;
+    margin-left: -29px;
+  }
+}
+
+.auth-modal {
+  .ant-modal-close {
+    display: inline-block;
+    .anticon {
+      display: inline-block;
+      top: 0px;
+      right: 0;
+      font-size: 20px;
+    }
+  }
+  .ant-modal-confirm-title {
+    text-align: left;
+  }
+  .ant-modal-confirm-btns {
+    display: none;
+  }
+}
+.auth-result {
+  padding-bottom: 30px;
+  line-height: 2.5;
+}
+.auth-item {
+  .auth-label {
+    float: left;
+    width: 70%;
+  }
+  .auth-value {
+    float: left;
+    width: 30%;
+    text-align: center;
+  }
+  .btn-auth {
+    width:62px;
+    height:25px;
+    background:rgba(13,169,255,1);
+    font-size:14px;
+    color: white;
+    border: none;
+  }
 }

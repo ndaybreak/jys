@@ -553,9 +553,13 @@ export function getConfig() {
     const isLocal = host.indexOf('localhost') > -1
     const isHttp = window.location.protocol === 'http:'
     if(isLocal) {
+        // webConfig = {
+        //     BASE_API: 'http://54.255.182.11:8080/DaVaoBusiness',
+        //     QUAT_API: 'ws://54.255.182.11:19999/quot'
+        // }
         webConfig = {
-            BASE_API: 'http://54.255.182.11:8080/DaVaoBusiness',
-            QUAT_API: 'ws://54.255.182.11:19999/quot'
+            BASE_API: 'http://13.229.89.62/DaVaoBusiness',
+            QUAT_API: 'ws://13.229.89.62/quot'
         }
     } else {
         webConfig = {
@@ -568,4 +572,12 @@ export function getConfig() {
         }
     }
     return webConfig
+}
+
+export function isIE() {
+    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+    var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 //判断是否IE<11浏览器
+    var isEdge = userAgent.indexOf("Edge") > -1 && !isIE //判断是否IE的Edge浏览器
+    var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1
+    return isIE || isEdge || isIE11
 }

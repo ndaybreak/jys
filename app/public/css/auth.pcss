@@ -350,10 +350,10 @@
   height: 219px;
 }
 .video-content {
-  padding: 25px 0px 10px 0px;
+  padding: 0px;
   text-align: center;
   width: 383px;
-  margin: 0 auto;
+  margin: 25px auto 10px auto;
 }
 .btn-video-upload {
   margin-top: 15px;
@@ -367,4 +367,42 @@
 }
 .phone-wrap {
   width: 197px;
+}
+
+.video-tool-wrap {
+  height: 41px;
+  background: rgba(17,17,17,1);
+  text-align: left;
+  float: left;
+  width: 100%;
+}
+.video {
+  float: left;
+}
+.btn-record {
+  border: none;
+  width: 33px;
+  height: 33px;
+  margin-top: 4px;
+  margin-left: 20px;
+}
+.btn-record-start {
+  background: url("../img/record_start.png");
+}
+.btn-record-stop {
+  background: url("../img/record_stop.png");
+}
+.btn-video-upload {
+  margin-top: 5px;
+  font-size: 15px;
+  background-color: transparent;
+  color: white;
+  height: 26px;
+  padding: 0 10px;
+  margin-right: 9px;
+  &:hover,
+  &:focus {
+    background-color: transparent;
+    color: white;
+  }
 }

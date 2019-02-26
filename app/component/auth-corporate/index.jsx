@@ -1,17 +1,26 @@
 import React from 'react';
 import intl from 'react-intl-universal'
 import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
-import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isPdf, getConfig} from '@/utils'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, isPdf, getConfig, isIE} from '@/utils'
 import {setSessionData, getSessionData, removeSessionData} from '@/data'
 import '@/public/css/auth-corporate.pcss';
 import previewImg from '@/public/img/放大镜up.png'
 import deleteImg from '@/public/img/删除.png'
 import videoDemoImg from '@/public/img/register-video-demo.png'
 import pdfImg from '@/public/img/icon_pdf.png'
-import {getCountryList, saveCompanyBasicAuthInfo, saveCompanyPicAuthInfo, queryCompanyAuthInfo, getAuthTypeList, getAuthVideoCode} from '@/api'
+import chromeIcon from '@/public/img/icon_chrome.png'
+import {
+    getCountryList,
+    saveCompanyBasicAuthInfo,
+    saveCompanyPicAuthInfo,
+    queryCompanyAuthInfo,
+    getAuthTypeList,
+    getAuthVideoCode
+} from '@/api'
 import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
 import BoxSelect from '@/component/common/ui/BoxSelect'
+import http from "axios"
 
 const uploadUrl = getConfig().BASE_API + '/file/public/uploadImg?'
 
@@ -50,6 +59,30 @@ function beforeVideoUpload(file) {
     //     message.error(intl.get('pic5MTip'));
     // }
     return isVideo;
+}
+
+function captureCamera(callback) {
+    navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: { width: 383, height: 219
+        }
+    }).then(function(camera) {
+        callback(camera)
+    }).catch(function(error) {
+        ui.tip({
+            msg: 'Sorry, unable to capture your camera.'
+        })
+        console.error(error)
+    })
+}
+
+// this function is used to generate random file name
+function getFileName(fileExtension) {
+    var d = new Date()
+    var year = d.getUTCFullYear()
+    var month = d.getUTCMonth()
+    var date = d.getUTCDate()
+    return 'STOx-' + year + month + date + '-' + (Math.random() * new Date().getTime()).toString(36).replace(/\./g, '') + '.' + fileExtension
 }
 
 const directorDefault = {
@@ -161,13 +194,15 @@ class Index extends React.Component {
             }, {
                 id: 2,
                 value: 'Shareholder'
-            }]
+            }],
+            isRecording: false
         }
+        this.recorder = null
     }
 
     fillData() {
         let data = getSessionData('authBasicData')
-        if(!data) {
+        if (!data) {
             return
         }
         let state = {
@@ -217,7 +252,7 @@ class Index extends React.Component {
             })
         })
 
-        if(isSubmit) {
+        if (isSubmit) {
             getAuthVideoCode().then(res => {
                 this.setState({
                     videoCode: res.data.headingCode
@@ -278,28 +313,30 @@ class Index extends React.Component {
         const corporationTypeValid = this.refs['corporationType'].validate()
         const bankValid = this.refs['bank'].validate()
         const picValid = !!this.state.picList.length
-        if(picValid) {
+        if (picValid) {
             this.setState({
                 picError: ''
             })
         } else {
             this.setState({
-                picError: 'Please upload picture'
+                picError: 'Please upload file'
             })
         }
 
         const attrs = ['name', 'residentialAddress', 'incorpration', 'directorShareholder', 'shareholding']
+
         function isEmptyRow(item) {
             return !item[attrs[0]] && !item[attrs[1]] && !item[attrs[2]] && !item[attrs[3]] && !item[attrs[4]]
         }
+
         let infoValid = true
         const infoList = this.state.infoList
         const allEmpty = infoList.every(item => {
             return isEmptyRow(item)
         })
-        if(allEmpty) {
+        if (allEmpty) {
             infoList.forEach((item, i) => {
-                if(i === 0) {
+                if (i === 0) {
                     attrs.forEach(attr => {
                         item[attr + 'Invalid'] = true
                     })
@@ -312,9 +349,9 @@ class Index extends React.Component {
             infoValid = false
         } else {
             infoList.forEach(item => {
-                if(!isEmptyRow(item)) {
+                if (!isEmptyRow(item)) {
                     attrs.forEach(attr => {
-                        if(!item[attr]) {
+                        if (!item[attr]) {
                             item[attr + 'Invalid'] = true
                             infoValid = false
                         }
@@ -326,7 +363,7 @@ class Index extends React.Component {
                 }
             })
         }
-        if(infoValid) {
+        if (infoValid) {
             this.setState({
                 infoError: ''
             })
@@ -337,7 +374,7 @@ class Index extends React.Component {
         }
 
         const behalfValid = this.state.authorizedName || this.state.position || this.state.mobile || this.state.passport
-        if(behalfValid) {
+        if (behalfValid) {
             this.setState({
                 behalfError: ''
             })
@@ -357,12 +394,20 @@ class Index extends React.Component {
         const countryCredentialsIdValid = this.refs['countryCredentialsId'].validate()
         const picOneValid = !!this.state.picOneImgUrl
         const picTwoValid = !!this.state.picTwoImgUrl
-        const videoValid = !!this.state.videoUrl
-        this.setState({
+        const state = {
             picOneError: picOneValid ? '' : intl.get('uploadPhotoTip'),
-            picTwoError: picTwoValid ? '' : intl.get('uploadPhotoTip'),
-            videoError: videoValid ? '' : 'Please upload video'
-        })
+            picTwoError: picTwoValid ? '' : intl.get('uploadPhotoTip')
+        }
+
+        let videoValid = true
+        if(this.state.isRecording) {
+            videoValid = false
+            state.videoError = 'Recording video'
+        } else if(!this.state.videoUrl) {
+            videoValid = false
+            state.videoError = 'Please upload video'
+        }
+        this.setState(state)
 
         return authTypeValid && countryCredentialsIdValid && picOneValid && picTwoValid && videoValid
     }
@@ -492,6 +537,128 @@ class Index extends React.Component {
         });
     }
 
+    handleRecord() {
+        if(this.state.isRecording) {
+            this.stopRecord()
+        } else {
+            if(isIE() || typeof MediaRecorder === 'undefined') {
+                ui.simpleConfirm({
+                    width: 500,
+                    msg: 'Your browser does not support recording. You can: <br/>\n' +
+                    '            A. Use <img src="'+ chromeIcon +'" alt=""/> <span class="color-green">Chrome browser (chrome 53 and above)</span><br/>' +
+                    '            B. Use your own mobile phone or other recording equipment to record and upload video files to HKSTOx.'
+                })
+                return
+            }
+            this.startRecord()
+        }
+    }
+
+    startRecord() {
+        this.setState({
+            isRecording: true
+        })
+        captureCamera(camera => {
+            const video = this.refs.video
+            video.autoplay = true
+            video.controls = false
+            // video.muted = true;
+            video.srcObject = camera
+
+            this.recorder = RecordRTC(camera, {
+                type: 'video'
+            })
+            this.recorder.startRecording()
+            // release camera on stopRecording
+            this.recorder.camera = camera
+        });
+    }
+
+    stopRecord() {
+        this.recorder.stopRecording(() => {
+            // get recorded blob
+            var blob = this.recorder.getBlob();
+
+            // generating a random file name
+            var fileName = getFileName('webm')
+
+            // we need to upload "File" --- not "Blob"
+            var fileObject = new File([blob], fileName, {
+                type: 'video/webm'
+            })
+            const isLt100M = fileObject.size / 1024 / 1024 < 100
+            if (!isLt100M) {
+                message.error('The max size of the file is 100MB')
+                this.setState({
+                    isRecording: false
+                })
+                this.recorder.camera.stop();
+                this.recorder.destroy();
+                this.recorder = null;
+                return
+            }
+
+            this.setState({
+                loading: true,
+                isRecording: false
+            })
+            const video = this.refs.video
+            video.autoplay = false
+            video.srcObject = null
+            // 布尔属性，指明了视频里的音频的默认设置。设置后，音频会初始化为静音。默认值是false,意味着视频播放的时候音频也会播放 。
+            // video.muted = false
+            video.volume = 1
+
+            var formData = new FormData();
+            // recorded data
+            formData.append('file', fileObject);
+
+            // file name
+            // formData.append('video-filename', fileObject.name);
+
+            http({
+                url: uploadUrl + 'type=4', // replace with your own server URL
+                data: formData,
+                method: 'POST'
+            }).then(response => {
+                if (response.data.code === '0') {
+                    ui.tip({
+                        msg: 'successfully uploaded'
+                    })
+                    // file path on server
+                    var fileDownloadURL = response.data.data.fileUrl
+
+                    // preview uploaded file in a VIDEO element
+                    video.src = fileDownloadURL
+                    this.setState({
+                        loading: false,
+                        videoUrl: fileDownloadURL,
+                        videoError: ''
+                    })
+                } else {
+                    ui.tip({
+                        msg: response.data.info
+                    })
+                }
+            })
+
+            // release camera
+            this.recorder.camera.stop();
+            this.recorder.destroy();
+            this.recorder = null;
+        })
+    }
+
+    // pauseRecord() {
+    //     console.log('pauseRecord')
+    //     this.recorder.pauseRecording()
+    // }
+    //
+    // resumeRecord() {
+    //     console.log('resumeRecord')
+    //     this.recorder.resumeRecording()
+    // }
+
     addTr() {
         this.setState({
             infoList: this.state.infoList.concat([Object.assign({}, directorDefault)])
@@ -508,14 +675,14 @@ class Index extends React.Component {
     directorChange(key, i, e) {
         const list = this.state.infoList
         let value = ''
-        if(key === 'directorShareholder') {
+        if (key === 'directorShareholder') {
             value = e
         } else {
             value = e.target.value
         }
         list[i][key] = value
 
-        if(value && list[i][key + 'Invalid']) {
+        if (value && list[i][key + 'Invalid']) {
             list[i][key + 'Invalid'] = false
         }
 
@@ -531,7 +698,7 @@ class Index extends React.Component {
     }
 
     render() {
-        const {picSignImgUrl, picOneImgUrl, picTwoImgUrl, picThreeImgUrl, previewVisible, previewImage, videoUrl} = this.state
+        const { picOneImgUrl, picTwoImgUrl, previewVisible, previewImage, videoUrl} = this.state
 
         return (
             <Spin spinning={this.state.loading}>
@@ -571,7 +738,8 @@ class Index extends React.Component {
                                                placeholder="Area Code"
                                                validates={['isSelect']} defaultValue={this.state.def.areaCodeId}
                                                options={this.state.countryList} optValue="id" optLabel="area_code"/>
-                                    <Box ref="contactNumber" className="phone-wrap" placeholder="Contact No." type="number"
+                                    <Box ref="contactNumber" className="phone-wrap" placeholder="Contact No."
+                                         type="number"
                                          validates={['notNull']} defaultValue={this.state.def.contactNumber}/>
                                 </div>
 
@@ -605,8 +773,10 @@ class Index extends React.Component {
                             </div>
 
                             <div className="list-one-part">
-                                <div className="label">Information on Directors and All Shareholders Holding More Than 10% Shares
-                                    <a className="link" href="javascript:" onClick={this.addTr.bind(this)} style={{float: 'right','textDecoration': 'underline'}}>Add</a>
+                                <div className="label">Information on Directors and All Shareholders Holding More Than
+                                    10% Shares
+                                    <a className="link" href="javascript:" onClick={this.addTr.bind(this)}
+                                       style={{float: 'right', 'textDecoration': 'underline'}}>Add</a>
                                 </div>
                                 <div className="auth-table">
                                     <div className="auth-tr clearfix">
@@ -619,17 +789,35 @@ class Index extends React.Component {
                                     {this.state.infoList.map((item, i) => {
                                         return (
                                             <div className="auth-tr clearfix" key={i}>
-                                                <div className="auth-td cell-first"><input className={item.nameInvalid ? 'item-invalid' : ''} type="text" value={item.name} onChange={this.directorChange.bind(this, 'name', i)} maxLength={100}/></div>
-                                                <div className="auth-td"><input className={item.residentialAddressInvalid ? 'item-invalid' : ''} type="text" value={item.residentialAddress} onChange={this.directorChange.bind(this, 'residentialAddress', i)} maxLength={200}/></div>
-                                                <div className="auth-td cell-place"><input className={item.incorprationInvalid ? 'item-invalid' : ''} type="text" value={item.incorpration} onChange={this.directorChange.bind(this, 'incorpration', i)} maxLength={200}/></div>
+                                                <div className="auth-td cell-first"><input
+                                                    className={item.nameInvalid ? 'item-invalid' : ''} type="text"
+                                                    value={item.name}
+                                                    onChange={this.directorChange.bind(this, 'name', i)}
+                                                    maxLength={100}/></div>
+                                                <div className="auth-td"><input
+                                                    className={item.residentialAddressInvalid ? 'item-invalid' : ''}
+                                                    type="text" value={item.residentialAddress}
+                                                    onChange={this.directorChange.bind(this, 'residentialAddress', i)}
+                                                    maxLength={200}/></div>
+                                                <div className="auth-td cell-place"><input
+                                                    className={item.incorprationInvalid ? 'item-invalid' : ''}
+                                                    type="text" value={item.incorpration}
+                                                    onChange={this.directorChange.bind(this, 'incorpration', i)}
+                                                    maxLength={200}/></div>
                                                 <div className="auth-td">
-                                                    <BoxSelect className={'director-select-wrap ' + (item.directorShareholderInvalid ? 'item-invalid' : '')}
-                                                               placeholder="Please select"
-                                                               defaultValue={item.directorShareholder}
-                                                               onChange={this.directorChange.bind(this, 'directorShareholder', i)}
-                                                               options={this.state.directorList} optValue="id" optLabel="value" allowClear={true}/>
+                                                    <BoxSelect
+                                                        className={'director-select-wrap ' + (item.directorShareholderInvalid ? 'item-invalid' : '')}
+                                                        placeholder="Please select"
+                                                        defaultValue={item.directorShareholder}
+                                                        onChange={this.directorChange.bind(this, 'directorShareholder', i)}
+                                                        options={this.state.directorList} optValue="id" optLabel="value"
+                                                        allowClear={true}/>
                                                 </div>
-                                                <div className="auth-td"><input className={item.shareholdingInvalid ? 'item-invalid' : ''} type="text" value={item.shareholding} onChange={this.directorChange.bind(this, 'shareholding', i)} maxLength={50}/></div>
+                                                <div className="auth-td"><input
+                                                    className={item.shareholdingInvalid ? 'item-invalid' : ''}
+                                                    type="text" value={item.shareholding}
+                                                    onChange={this.directorChange.bind(this, 'shareholding', i)}
+                                                    maxLength={50}/></div>
                                             </div>
                                         )
                                     })}
@@ -638,7 +826,8 @@ class Index extends React.Component {
                             </div>
 
                             <div className="list-two-part">
-                                <div className="label">Information of The Person Authorized to Give Instruction on Customer’s Behalf
+                                <div className="label">Information of The Person Authorized to Give Instruction on
+                                    Customer’s Behalf
                                 </div>
                                 <div className="auth-table">
                                     <div className="auth-tr clearfix">
@@ -648,10 +837,19 @@ class Index extends React.Component {
                                         <div className="auth-th">Passport/I.D. no.</div>
                                     </div>
                                     <div className="auth-tr clearfix">
-                                        <div className="auth-td cell-first"><input type="text" value={this.state.authorizedName} onChange={this.inputChange.bind(this, 'authorizedName')} maxLength={100}/></div>
-                                        <div className="auth-td"><input type="text" value={this.state.position} onChange={this.inputChange.bind(this, 'position')} maxLength={100}/></div>
-                                        <div className="auth-td"><input type="text" value={this.state.mobile} onChange={this.inputChange.bind(this, 'mobile')} maxLength={100}/></div>
-                                        <div className="auth-td"><input type="text" value={this.state.passport} onChange={this.inputChange.bind(this, 'passport')} maxLength={100}/></div>
+                                        <div className="auth-td cell-first"><input type="text"
+                                                                                   value={this.state.authorizedName}
+                                                                                   onChange={this.inputChange.bind(this, 'authorizedName')}
+                                                                                   maxLength={100}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.position}
+                                                                        onChange={this.inputChange.bind(this, 'position')}
+                                                                        maxLength={100}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.mobile}
+                                                                        onChange={this.inputChange.bind(this, 'mobile')}
+                                                                        maxLength={100}/></div>
+                                        <div className="auth-td"><input type="text" value={this.state.passport}
+                                                                        onChange={this.inputChange.bind(this, 'passport')}
+                                                                        maxLength={100}/></div>
                                     </div>
                                 </div>
                                 <div className="error-line">{this.state.behalfError}</div>
@@ -673,8 +871,14 @@ class Index extends React.Component {
                             </div>
 
                             <div className="list-one-part">
-                                <div className="label">Are there serving or veteran soldiers, government employees and officials among the shareholders who hold more than 25% of the shares? Or the immediate family members of more than one person? If yes, please note:</div>
-                                <textarea className="big-box" value={this.state.explainInfo} onChange={this.inputChange.bind(this, 'explainInfo')} name="" id="" cols="30" rows="6" style={{width: '100%',padding: '10px'}} placeholder="Example: 1. (The shareholders themselves meet the above requirements) Shareholder name ,shareholding ratio , position , certificate type , certificate number. &#10;Example: 2. (The immediate relatives of shareholders meet the above requirements) Shareholder name + shareholding ratio + family relationship with shareholders + position + certificate type + certificate number"></textarea>
+                                <div className="label">Are there serving or veteran soldiers, government employees and
+                                    officials among the shareholders who hold more than 25% of the shares? Or the
+                                    immediate family members of more than one person? If yes, please note:
+                                </div>
+                                <textarea className="big-box" value={this.state.explainInfo}
+                                          onChange={this.inputChange.bind(this, 'explainInfo')} name="" id="" cols="30"
+                                          rows="6" style={{width: '100%', padding: '10px'}}
+                                          placeholder="Example: 1. (The shareholders themselves meet the above requirements) Shareholder name ,shareholding ratio , position , certificate type , certificate number. &#10;Example: 2. (The immediate relatives of shareholders meet the above requirements) Shareholder name + shareholding ratio + family relationship with shareholders + position + certificate type + certificate number"></textarea>
                             </div>
 
                             <div className="asset-part">
@@ -683,12 +887,18 @@ class Index extends React.Component {
                                 <div className="tip">In principle, all electronic certification materials require
                                     Chinese or English versions. If they are not in the above two languages, please
                                     provide the official version issued by the formal translation company with personal
-                                    signature or seal. <br/>Uploads must be JPEG (.jpg.jpeg.jpe.jfif and.jif), PNG or PDF
+                                    signature or seal. <br/>Uploads must be JPEG (.jpg.jpeg.jpe.jfif and.jif), PNG or
+                                    PDF
                                 </div>
                                 <div className="asset-info">
                                     <div>
-                                        A. For a trust corporation, corporation or partnership, the most recent audited financial statement prepared within 16 months before the relevant date in respect of the trust corporation (or a trust of which it acts as a trustee), corporation or partnership; <br/>
-                                        B. For a trust corporation , corporation or partnership, any one or more of the following documents issued or submitted within 12 months before the relevant date—
+                                        A. For a trust corporation, corporation or partnership, the most recent audited
+                                        financial statement prepared within 16 months before the relevant date in
+                                        respect of the trust corporation (or a trust of which it acts as a trustee),
+                                        corporation or partnership; <br/>
+                                        B. For a trust corporation , corporation or partnership, any one or more of the
+                                        following documents issued or submitted within 12 months before the relevant
+                                        date—
                                     </div>
                                     <div>(1) a statement of account or a certificate issued by a custodian;</div>
                                     <div>(2) a certificate issued by an auditor or a certified public accountant;</div>
@@ -779,7 +989,8 @@ class Index extends React.Component {
                             </div>
                             {/*正面*/}
                             <div className="clearfix">
-                                <div className="label">Please upload your credentials and facial photos <span className="sub-title">(size of the picture is not more than 5MB)</span></div>
+                                <div className="label">Please upload your credentials and facial photos <span
+                                    className="sub-title">(size of the picture is not more than 5MB)</span></div>
                                 <div className="pic-item pic-one">
                                     <div className="pic-label">{intl.get('auth_11')}</div>
                                     {/*<div className="sub-label">{intl.get('auth_12')}</div>*/}
@@ -872,23 +1083,23 @@ class Index extends React.Component {
                                 <div className="video-wrap">
                                     <div className="label">Please Upload The Video File</div>
                                     <div className="video-tip">
-                                        <div>Video file content includes: </div>
+                                        <div>Video file content includes:</div>
                                         <div>(1) Clear display of the applicant's face</div>
-                                        <div>(2) Hand-held ID Personal Information Page + Handwritten` Signature (Date and Time) </div>
+                                        <div>(2) Hand-held ID Personal Information Page + Handwritten` Signature (Date
+                                            and Time)
+                                        </div>
                                         <div>(3) Read aloud the 6 digits randomly generated by the platform and
                                             <span style={{color: '#111111'}}> "I have read thoroughly all the legal terms released on the website of www.hkstox.io including but not limited to the 'Terms of Service' and the 'Privacy Policy'. I have fully understood and agreed with these legal terms. I hereby undertake that all the certificates, materials and information I submitted and provided are true, complete, legal and effective without any fraud, false statement or omission which would make any statement herein misleading. I have complete awareness and understanding that  I might lose most or even all of my investment due to uncertainty of the financial markets in any jurisdiction. I hereby undertake that all of my actions in relation to my account such as buy or sell actions are entirely taken according to my own wishes and decision."</span>
                                         </div>
                                     </div>
                                     <div className="video-code">{this.state.videoCode}</div>
                                     <div className="video-content">
-                                        {!videoUrl && (
-                                            <img src={videoDemoImg} alt="" className="video-demo-img"/>
-                                        )}
-                                        {videoUrl && (
-                                            <video className="video" src={videoUrl} controls="controls" width="383px" height="219px"></video>
-                                        )}
-                                        <div>
-                                            <span className="pic-tip" style={{float: 'left',marginTop: '15px'}}>{this.state.videoError}</span>
+                                        <img src={videoDemoImg} alt="" className={'video-demo-img ' + ((videoUrl || this.state.isRecording) ? 'hide' : '')}/>
+                                        <video className={'video ' + (this.state.isRecording ? '' : 'hide')} ref="video" controls="controls"></video>
+                                        <video className={'video ' + ((videoUrl && !this.state.isRecording) ? '' : 'hide')} src={videoUrl} controls="controls"></video>
+                                        <div className="video-tool-wrap">
+                                            <button onClick={this.handleRecord.bind(this)} className={'btn btn-record ' + (this.state.isRecording ? 'btn-record-stop' : 'btn-record-start')}></button>
+
                                             <Upload
                                                 name="file"
                                                 className="upload-video-wrap"
@@ -897,10 +1108,11 @@ class Index extends React.Component {
                                                 beforeUpload={beforeVideoUpload}
                                                 onChange={this.handleVideoChange.bind(this)}
                                             >
-                                                <Button className="btn-video-upload">
-                                                    <Icon type="upload" /> Click to Upload
-                                                </Button>
+                                                <Button className="btn-video-upload">Upload</Button>
                                             </Upload>
+                                        </div>
+                                        <div>
+                                            <span className="pic-tip" style={{float: 'left',marginTop: '15px'}}>{this.state.videoError}</span>
                                         </div>
 
                                         <Button className="btn-submit" type="primary" onClick={this.submit.bind(this)}>Submit</Button>
@@ -911,13 +1123,13 @@ class Index extends React.Component {
                         </div>
                     )}
 
-                    <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel.bind(this)}>
+                        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel.bind(this)}>
                         <img alt="example" style={{width: '100%'}} src={previewImage}/>
-                    </Modal>
-                </div>
-            </Spin>
-        );
-    }
-}
+                        </Modal>
+                        </div>
+                        </Spin>
+                        );
+                        }
+                        }
 
-export default Index;
+                        export default Index

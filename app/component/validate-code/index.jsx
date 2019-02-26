@@ -2,6 +2,8 @@ import React from 'react';
 import intl from 'react-intl-universal'
 import {Icon, Modal, Button} from 'antd'
 import '@/public/css/validate-code.pcss';
+import correctIcon from '@/public/img/icon_correct.png'
+import chromeIcon from '@/public/img/icon_chrome.png'
 import ReactCodeInput from 'react-code-input'
 import {jumpUrl, validate, getSearchPara, ui} from '@/utils'
 import {setToken, getUser, refreshAccountInfo, removeToken} from '@/utils/auth'
@@ -150,7 +152,16 @@ class Index extends React.Component {
             setToken(res.data.token).then(res => {
                 removeSessionData('authBasicData')
                 ui.simpleConfirm({
-                    msg: 'Your account is in effect, please continue to submit your KYC information (after your KYC information has been verified, your account will have the right to deposit, withdrawal and transaction)',
+                    width: 680,
+                    title: '<img src="'+ correctIcon +'"/> Your account is in effect',
+                    msg: '<div>' +
+                    '            Please continue to submit your KYC information (after your KYC information has been verified, your account will have the right to\n' +
+                    '            <span class="color-green"> deposit</span>,<span class="color-green"> withdrawal</span> and<span class="color-green"> transaction</span>).<br/><br/>\n' +
+                    '            In the KYC process, you need to upload the applicant\'s video files. You can: <br/>\n' +
+                    '            A. If you have a camera and microphone available on your device and use\n' +
+                    '            <img src="'+ chromeIcon +'" alt=""/> <span class="color-green">Chrome browser (chrome 53 and above)</span>, our HKSTOx will provide recording. <br/>\n' +
+                    '            B. Use your own mobile phone or other recording equipment to record and upload video files to HKSTOx.\n' +
+                    '        </div>',
                     onOk: () => {
                         if (data.type == 1) {
                             jumpUrl('auth.html')

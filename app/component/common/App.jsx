@@ -69,6 +69,8 @@ class App extends React.Component {
                 if(isLogin()) {
                     refreshAccountInfo().then(res => {
                         this.setState({ initDone: true })
+                    }, error => {
+                        this.setState({ initDone: true })
                     })
                 } else {
                     this.setState({ initDone: true })

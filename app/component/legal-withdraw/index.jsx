@@ -85,7 +85,9 @@ class Index extends React.Component {
             this.setState({
                 currency: getSearchPara('code'),
                 available: res.data.availableBalance,
-                limit: res.data.min_quantity,
+                withdrawableAmount: res.data.available,
+                minVal: res.data.min_quantity,
+                maxVal: Math.min(res.data.available, res.data.max_quantity),
                 rate: format2Percentage(res.data.fee_rate),
                 precision: res.data.withdraw_precision
             })
@@ -96,7 +98,19 @@ class Index extends React.Component {
     validateBasicInfo() {
         const bankValid = this.refs['bank'].validate()
         const accountValid = this.refs['account'].validate()
-        const amountValid = this.refs['amount'].validate()
+        const refsAmount = this.refs['amount']
+        let amountValid = refsAmount.validate()
+
+        if(amountValid) {
+            const value = parseFloat(refsAmount.getValue())
+            if(value > (this.state.maxVal)) {
+                refsAmount.setErrorMsg(intl.get('withdrawDayLimit'))
+                amountValid = false
+            } else if(value < this.state.minVal) {
+                refsAmount.setErrorMsg(intl.get('MinWithdraw') + this.state.minVal)
+                amountValid = false
+            }
+        }
 
         return bankValid && accountValid && amountValid
     }
@@ -167,8 +181,6 @@ class Index extends React.Component {
                 <div className="legal-recharge-page">
                     <div className="tip-part">
                         <div className="tip">
-                            Minimum Withdrawal：HK$100, Max daily withdrawal: HK$100,000 <br/>
-                            Base Withdrawal Fee is 0.1% (Excluding Bank Fees）<br/>
                             The withdraw bank account must have the same name as your HKSTOx account, asset arrival time depends on bank processing time.<br/>
                         </div>
                     </div>
@@ -177,8 +189,12 @@ class Index extends React.Component {
                             <div className="available">Available: <span
                                 className="total">{this.state.available}</span><span
                                 className="currency">{this.state.currency}</span></div>
-                            <div className="limit">Minimum Amount Per Transaction: <span
-                                className="value">{this.state.limit}</span></div>
+                            <div className="limit">Minimum Amount:
+                                <span className="value">{this.state.minVal}</span>
+                            </div>
+                            <div className="limit">Withdrawable Amount:
+                                <span className="value">{this.state.withdrawableAmount}</span>
+                            </div>
                             <div className="clearfix" style={{paddingLeft: '202px'}}>
                                 <BoxNumber ref="amount" className="amount-box" step={this.state.precision}
                                      placeholder="Please enter withdrawal amount" onChange={this.amountChange.bind(this)}

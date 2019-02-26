@@ -1,10 +1,10 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import { getMarketCoinQuot, getTargetPairsQuot } from '@/api/quot'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, parseTime } from '@/utils'
-import { getCommissionList, getAssetList, getCoinAssetLog, getCoinList } from '@/api'
+import {getMarketCoinQuot, getTargetPairsQuot} from '@/api/quot'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, parseTime, truncateByPrecision} from '@/utils'
+import {getCommissionList, getAssetList, getCoinAssetLog, getCoinList} from '@/api'
 import BoxSelect from '@/component/common/ui/BoxSelect'
-import { Pagination, Spin } from 'antd';
+import {Pagination, Spin} from 'antd';
 
 class AssetDetails extends React.Component {
     constructor(props) {
@@ -28,18 +28,18 @@ class AssetDetails extends React.Component {
                 id: 3,
                 value: 'VC-Exchange'
             }
-            // , {
-            //     id: 4,
-            //     value: 'AD'
-            // }
-            // , {
-            //     id: 5,
-            //     value: 'OTC trade'
-            // }
-            , {
-                id: 7,
-                value: 'System'
-            }],
+                // , {
+                //     id: 4,
+                //     value: 'AD'
+                // }
+                // , {
+                //     id: 5,
+                //     value: 'OTC trade'
+                // }
+                , {
+                    id: 7,
+                    value: 'System'
+                }],
             dateList: [{
                 id: 0,
                 value: 'All times'
@@ -86,15 +86,15 @@ class AssetDetails extends React.Component {
             operationType: this.refs.type.getValue() || ''
         }
         const dateType = this.refs.date.getValue()
-        if(dateType) {
+        if (dateType) {
             let date = new Date()
-            if(dateType === 1) {
+            if (dateType === 1) {
                 date.setDate(date.getDate() - 1)
-            } else if(dateType === 2) {
+            } else if (dateType === 2) {
                 date.setDate(date.getDate() - 3)
-            } else if(dateType === 3) {
+            } else if (dateType === 3) {
                 date.setDate(date.getDate() - 7)
-            } else if(dateType === 4) {
+            } else if (dateType === 4) {
                 date.setDate(date.getDate() - 30)
             }
             para.startTime = date.getTime()
@@ -111,7 +111,7 @@ class AssetDetails extends React.Component {
     render() {
         return (
             <div className="davao-confirm-wrap details-wrap">
-                <div className="title">Variation details </div>
+                <div className="title">Variation details</div>
                 <Spin spinning={this.state.loading}>
                     <div className="content">
                         <div className="clearfix">
@@ -134,9 +134,9 @@ class AssetDetails extends React.Component {
                         <div className="table-detail">
                             <div className="clearfix th-row">
                                 <div className="col-detail">Currency</div>
-                                <div className="col-detail">Balance</div>
+                                <div className="col-detail" style={{paddingLeft: '39px'}}>Balance</div>
                                 <div className="col-detail">Type</div>
-                                <div className="col-detail">Change</div>
+                                <div className="col-detail" style={{paddingLeft: '39px'}}>Change</div>
                                 <div className="col-detail">Time</div>
                             </div>
                             {this.state.data.map((item, i) => {
@@ -145,7 +145,9 @@ class AssetDetails extends React.Component {
                                         <div className="col-detail">{item.coin_code}</div>
                                         <div className="col-detail col-right">{item.total_balance}</div>
                                         <div className={'col-detail ' + (item.total_balance_change > 0 ? 'up' : 'down')}>{item.operation_type}</div>
-                                        <div className={'col-detail col-right ' + (item.total_balance_change > 0 ? 'up' : 'down')}>{item.total_balance_change}</div>
+                                        <div className={'col-detail col-right ' + (item.total_balance_change > 0 ? 'up' : 'down')}>
+                                            {(item.total_balance_change > 0 ? '+' : '') + (item.isVC === 2 ? truncateByPrecision(item.total_balance_change, 2) : item.total_balance_change)}
+                                        </div>
                                         <div className="col-detail">{parseTime(item.time)}</div>
                                     </div>
                                 )
@@ -158,7 +160,7 @@ class AssetDetails extends React.Component {
                                     total={this.state.total}
                                     current={this.state.currPage}
                                     pageSize={15}
-                                    onChange={this.loadData.bind(this)} />
+                                    onChange={this.loadData.bind(this)}/>
                     </div>
                 </Spin>
             </div>

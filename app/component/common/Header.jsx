@@ -121,16 +121,17 @@ class Header extends React.Component {
                         <nav className="nav">
                             <a className={activeMenu === 'index' ? 'menu active' : 'menu'}  href="index.html">{intl.get('name')}</a>
                             {/*<a className={activeMenu === 'download' ? 'menu active' : 'menu'} href="download.html">{intl.get('download')}</a>*/}
-                            <span className={activeMenu === 'deal' ? 'menu active' : 'menu'}
-                                  onMouseEnter={this.showSubmenu.bind(this, 'showDealSubMenu')} onClick={this.showSubmenu.bind(this, 'showDealSubMenu')}
-                                  onMouseLeave={this.hideSubmenu.bind(this, 'showDealSubMenu')}>{intl.get('dealCenter')}
-                                {this.state.showDealSubMenu && (
-                                    <ul className="submenu-wrap">
-                                        {/*<li><a className="sub-menu" href="index.html">OTC</a></li>*/}
-                                        <li><a className="sub-menu" href="deal.html">{intl.get('coinsDeal')}</a></li>
-                                    </ul>
-                                )}
-                            </span>
+                            {/*<span className={activeMenu === 'deal' ? 'menu active' : 'menu'}*/}
+                                  {/*onMouseEnter={this.showSubmenu.bind(this, 'showDealSubMenu')} onClick={this.showSubmenu.bind(this, 'showDealSubMenu')}*/}
+                                  {/*onMouseLeave={this.hideSubmenu.bind(this, 'showDealSubMenu')}>{intl.get('dealCenter')}*/}
+                                {/*{this.state.showDealSubMenu && (*/}
+                                    {/*<ul className="submenu-wrap">*/}
+                                        {/*/!*<li><a className="sub-menu" href="index.html">OTC</a></li>*!/*/}
+                                        {/*<li><a className="sub-menu" href="deal.html">{intl.get('coinsDeal')}</a></li>*/}
+                                    {/*</ul>*/}
+                                {/*)}*/}
+                            {/*</span>*/}
+                            <a className={activeMenu === 'deal' ? 'menu active' : 'menu'}  href="deal.html">Trade</a>
                             {/*<a className={activeMenu === 'news' ? 'menu active' : 'menu'} href="news.html">{intl.get('news')}</a>*/}
                             <a className={activeMenu === 'help' ? 'menu active' : 'menu'} href="help.html">{intl.get('support')}</a>
                             {/*<span className={activeMenu === 'rule' ? 'menu active' : 'menu'}*/}

@@ -98,6 +98,13 @@ class BoxNumber extends React.Component {
         })
     }
 
+    setErrorMsg(msg) {
+        this.setState({
+            isValid: false,
+            errorMsg: msg
+        })
+    }
+
     render() {
         const {placeholder, className, label, unit, step} = this.props
         return (

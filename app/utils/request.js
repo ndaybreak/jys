@@ -1,86 +1,97 @@
 import axios from 'axios'
-import { isLangZH, ui, jumpUrl, getPage, getConfig } from '@/utils'
-import { getToken, removeToken } from '@/utils/auth'
+import {isLangZH, ui, jumpUrl, getPage, getConfig, getPageName} from '@/utils'
+import {getToken, removeToken} from '@/utils/auth'
 import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
 // create an axios instance
 const service = axios.create({
-  // baseURL: process.env.BASE_API, // api的base_url
-  baseURL: getConfig().BASE_API, // api的base_url
-  timeout: 5000 // request timeout
+    // baseURL: process.env.BASE_API, // api的base_url
+    baseURL: getConfig().BASE_API, // api的base_url
+    timeout: 5000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(config => {
-  // Do something before request is sent
-  if (getToken()) {
-    // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-    // config.headers['X-Token'] = getToken()
-    // config.headers['content-type'] = 'application/x-www-form-urlencoded'
-    config.headers['content-type'] = 'application/json'
-    // config.data = config.data || {}
-    // config.params = config.params || {}
-    // config.params.adminToken = store.getters.token
-    // config.data.adminToken = store.getters.token
-    config.headers['token'] = getToken()
-  }
-  config.headers['deviceType'] = 3
-  config.headers['lang'] = isLangZH() ? 0 : 1
-  return config
+    // Do something before request is sent
+    if (getToken()) {
+        // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+        // config.headers['X-Token'] = getToken()
+        // config.headers['content-type'] = 'application/x-www-form-urlencoded'
+        config.headers['content-type'] = 'application/json'
+        // config.data = config.data || {}
+        // config.params = config.params || {}
+        // config.params.adminToken = store.getters.token
+        // config.data.adminToken = store.getters.token
+        config.headers['token'] = getToken()
+    }
+    config.headers['deviceType'] = 3
+    config.headers['lang'] = isLangZH() ? 0 : 1
+    return config
 }, error => {
-  // Do something with request error
-  console.log(error) // for debug
-  Promise.reject(error)
+    // Do something with request error
+    console.log(error) // for debug
+    Promise.reject(error)
 })
 
 // respone interceptor
 service.interceptors.response.use(
-  // response => response,
-  /**
-   * 下面的注释为通过在response里，自定义code来标示请求状态
-   * 当code返回如下情况则说明权限有问题，登出并返回到登录页
-   * 如想通过xmlhttprequest来状态码标识 逻辑可写在下面error中
-   * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
-   */
-  response => {
-    const res = response.data
-    if (res.code && res.code !== '0') {
-      if (res.code === '-1') { // token过期
-          ui.tip({
-              width: 280,
-              msg: res.info,
-              callback: () => {
-                  removeToken()
-                  // jumpUrl('login.html', {from: getPage()})
-                  jumpUrl('index.html')
-              }
-          })
-      } else if (res.code === '10001') { // token过期
-          ui.confirm({
-              msg: res.info,
-              onOk: () => {
-                  removeToken()
-                  jumpUrl('forget-login-password.html')
-              }
-          })
-      }
-      return Promise.reject(res)
-    } else {
-      if (res.code) {
-        return response.data
-      } else {
-        return response
-      }
-    }
-  },
-  error => {
-    console.log('err' + error) // for debug
-    // Message({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
-    //   alert(error.message)
-    return Promise.reject(error)
-  })
+    // response => response,
+    /**
+     * 下面的注释为通过在response里，自定义code来标示请求状态
+     * 当code返回如下情况则说明权限有问题，登出并返回到登录页
+     * 如想通过xmlhttprequest来状态码标识 逻辑可写在下面error中
+     * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
+     */
+    response => {
+        const res = response.data
+        if (res.code && res.code !== '0') {
+            if (res.code === '-1') { // token过期
+                ui.tip({
+                    width: 280,
+                    msg: res.info,
+                    callback: () => {
+                        removeToken()
+                        // jumpUrl('login.html', {from: getPage()})
+                        jumpUrl('index.html')
+                    }
+                })
+            } else if (res.code === '10001') {
+                ui.confirm({
+                    msg: res.info,
+                    onOk: () => {
+                        removeToken()
+                        jumpUrl('forget-login-password.html')
+                    }
+                })
+            }
+            return Promise.reject(res)
+        } else {
+            if (res.code) {
+                return response.data
+            } else {
+                return response
+            }
+        }
+    },
+    error => {
+        ui.tip({
+            width: 250,
+            msg: 'Request timed out, please try again later',
+            callback: () => {
+                var page = getPageName()
+                if (page !== 'index') {
+                    jumpUrl('index.html')
+                }
+            }
+        })
+        console.log('err' + error) // for debug
+        // Message({
+        //   message: error.message,
+        //   type: 'error',
+        //   duration: 5 * 1000
+        // })
+        //   alert(error.message)
+        // return Promise.reject(error)
+        return Promise.reject('Network Error!')
+    })
 
 export default service

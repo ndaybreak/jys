@@ -530,3 +530,52 @@ export function modifyEmailToServer(para) {
         params: para
     })
 }
+
+// 检查敏感信息是否有修改(登录密码、资金密码、邮箱)；只针对提现。
+export function isSensitiveInfoChange() {
+    return request({
+        url: '/withdrawCash/isAllowWithdraw',
+        method: 'get'
+    })
+}
+// 检查允许删除支付账号
+export function isAllowDelPayAccountInfo(id) {
+    return request({
+        url: '/pay/isAllowDelPayAccountInfo',
+        method: 'get',
+        params: { id }
+    })
+}
+// 检查图形验证码的正确性
+// email的使用情况（登录、注册、忘记密码）
+export function isCodeCorrect(code, email) {
+    return request({
+        url: '/verification/account/getCodeForToken',
+        method: 'get',
+        params: {
+            code: code,
+            email: email
+        }
+    })
+}
+// 查看账号权限
+export function getAccountPermission(coinId) {
+    return request({
+        url: '/account/getAccountPermission',
+        method: 'get',
+        params: {
+            isMoneyPassword: true,
+            authApplicationStatus: true,
+            cantradeKyc: true,
+            coinId: coinId
+        }
+    })
+}
+// 提现确认时的检查
+export function checkWithdraw(query) {
+    return request({
+        url: '/withdrawCash/checkWithdraw',
+        method: 'get',
+        params: query
+    })
+}

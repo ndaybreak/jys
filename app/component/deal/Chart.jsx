@@ -623,6 +623,7 @@ class CandleStickChartPanToLoadMore extends React.Component {
                         zoomEvent={false}
                     >
                         <Chart
+                            className="testing"
                             id={1}
                             height={370 - subChartHeight}
                             yExtents={[d => [d.high, d.low], ema5.accessor(), ema10.accessor()]}

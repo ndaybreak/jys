@@ -120,7 +120,7 @@ class Record extends React.Component {
                               <div className="col-record col-date">{parseTime(item.create_time)}</div>
                               <div className="col-record">{item.order_number}</div>
                               <div className="col-record col-fee">{item.service_fee}</div>
-                              <div className="col-record col-amount">{item.actual_quantity}</div>
+                              <div className="col-record col-amount">{item.amount}</div>
                               <div className="col-record">{getStatus(item.status)}</div>
                           </div>
                       )

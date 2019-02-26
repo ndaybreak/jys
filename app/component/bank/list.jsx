@@ -17,7 +17,8 @@ import {
     getAuthTypeList,
     getAuthVideoCode,
     getBankList,
-    deleteBank
+    deleteBank,
+    isAllowDelPayAccountInfo
 } from '@/api'
 import Box from '@/component/common/ui/Box'
 import BoxDate from '@/component/common/ui/BoxDate'
@@ -56,25 +57,31 @@ class List extends React.Component {
     }
 
     handleDelete(bank) {
-        ui.confirm({
-            msg: 'Are you sure to delete it?',
-            onOk: () => {
-                removeSessionData('isValidateCodeSend')
-                jumpUrl('validate-code.html', {
-                    from: 'bank-list',
-                    id: bank.id
-                })
-                // deleteBank(bank.id).then(res => {
-                //     console.log(res)
-                //     ui.tip({
-                //         msg: 'Operation success!',
-                //         width: 230,
-                //         callback: () => {
-                //             this.loadData()
-                //         }
-                //     })
-                // })
-            }
+        isAllowDelPayAccountInfo(bank.id).then(res => {
+            ui.confirm({
+                msg: 'Are you sure to delete it?',
+                onOk: () => {
+                    removeSessionData('isValidateCodeSend')
+                    jumpUrl('validate-code.html', {
+                        from: 'bank-list',
+                        id: bank.id
+                    })
+                    // deleteBank(bank.id).then(res => {
+                    //     console.log(res)
+                    //     ui.tip({
+                    //         msg: 'Operation success!',
+                    //         width: 230,
+                    //         callback: () => {
+                    //             this.loadData()
+                    //         }
+                    //     })
+                    // })
+                }
+            })
+        }, error => {
+            ui.simpleConfirm({
+                msg: error.info
+            })
         })
     }
 

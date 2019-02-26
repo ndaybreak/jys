@@ -64,6 +64,19 @@ class Box extends React.Component {
         return result.pass
     }
 
+    setInvalid() {
+        this.setState({
+            isValid: false
+        })
+    }
+
+    setErrorMsg(msg) {
+        this.setState({
+            isValid: false,
+            errorMsg: msg
+        })
+    }
+
     render() {
         const {placeholder, className, defaultValue, type} = this.props
         return (

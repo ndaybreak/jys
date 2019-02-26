@@ -152,17 +152,18 @@ class OrderSell extends React.Component {
     }
 
     handleSell() {
-        if(!checkAuth([ 'auth', 'questionnaire', 'capitalPassword'])) {
-            return
-        }
-        if(this.validate()) {
-            this.setState({
-                visible: true,
-                passwordMsg: '',
-                password: '',
-                loading: false
-            })
-        }
+        checkAuth({
+            isTrade: true
+        }).then(() => {
+            if(this.validate()) {
+                this.setState({
+                    visible: true,
+                    passwordMsg: '',
+                    password: '',
+                    loading: false
+                })
+            }
+        })
     }
 
     handleCancel() {

@@ -221,7 +221,7 @@ class Index extends React.Component {
             answerQuestions(answers).then(res => {
                 refreshAccountInfo().then(res => {
                     ui.tip({
-                        msg: 'Congratulations on passing the investment test. You can already trade on the platform. ',
+                        msg: 'Congratulations on passing the investment test. You can do transaction now. ',
                         width: 300,
                         callback: () => {
                             jumpUrl('deal.html')
@@ -231,8 +231,8 @@ class Index extends React.Component {
             }, error => {
                 if(error.code === '2') {
                     ui.confirm({
-                        msg: 'According to the results of the questionnaire you filled in, you are not satisfied with the investment requirements. \n' +
-                        'Would you like to retest it? ',
+                        msg: 'According to the results of the questionnaire, you do not meet the investment conditions. \n' +
+                        'Do you want to retest?',
                         okText: 'Retest',
                         cancelText: 'No',
                         onOk: () => {

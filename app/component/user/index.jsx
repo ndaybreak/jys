@@ -1,8 +1,8 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import { Icon, Modal, Button, Upload, message, Spin } from 'antd'
-import { jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, truncateByPrecision } from '@/utils'
-import { setSessionData, removeSessionData } from '@/data'
+import {Icon, Modal, Button, Upload, message, Spin} from 'antd'
+import {jumpUrl, validate, getSearchPara, ui, kebabCaseData2Camel, isLangZH, truncateByPrecision} from '@/utils'
+import {setSessionData, removeSessionData} from '@/data'
 import '@/public/css/user.pcss';
 import userIconImg from '@/public/img/user_icon.png'
 import companyIcon from '@/public/img/icon_company.png'
@@ -17,9 +17,9 @@ import userBankImg from '@/public/img/user_bank.png'
 import userEmailImg from '@/public/img/user_email.png'
 import userRecommendImg from '@/public/img/user_recommend.png'
 import userAssetImg from '@/public/img/user_asset.png'
-import { getCommissionList, getAssetList, getCoinAssetLog, getCoinList, getBankList } from '@/api'
-import { getUser, checkAuth } from '@/utils/auth'
-import { getPriceBtcQuot, getTargetPairsQuot } from '@/api/quot'
+import {getCommissionList, getAssetList, getCoinAssetLog, getCoinList, getBankList, isSensitiveInfoChange} from '@/api'
+import {getUser, checkAuth} from '@/utils/auth'
+import {getPriceBtcQuot, getTargetPairsQuot} from '@/api/quot'
 import AssetDetails from './AssetDetails'
 
 const user = getUser()
@@ -45,9 +45,9 @@ const getAssets = (data) => {
     const resultFiat = []
     const resultVC = []
     data.forEach(item => {
-        if(item.isVC === 1) {
+        if (item.isVC === 1) {
             resultVC.push(item)
-        } else if(item.isVC === 2) {
+        } else if (item.isVC === 2) {
             resultFiat.push(item)
         }
     })
@@ -105,27 +105,27 @@ class User extends React.Component {
         //     })
         // })
             .then((totalBtc) => {
-            let para = {
-                // isOnce: true
-            }
-            para.targetPairs = [{
-                targetCoinCode: 'BTC',
-                mainCoinCode: 'USDT'
-            }]
-            // getTargetPairsQuot(para, data => {
-            //     let value = 0
-            //     if(isLangZH()) {
-            //         value = '￥ ' + (totalBtc * data[0].rmbPrice).toFixed(2)
-            //     } else {
-            //         value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
-            //     }
-            //     value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
-            //
-            //     this.setState({
-            //         total: value
-            //     })
-            // })
-        })
+                let para = {
+                    // isOnce: true
+                }
+                para.targetPairs = [{
+                    targetCoinCode: 'BTC',
+                    mainCoinCode: 'USDT'
+                }]
+                // getTargetPairsQuot(para, data => {
+                //     let value = 0
+                //     if(isLangZH()) {
+                //         value = '￥ ' + (totalBtc * data[0].rmbPrice).toFixed(2)
+                //     } else {
+                //         value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
+                //     }
+                //     value = '$ ' + (totalBtc * data[0].legalTenderPrice).toFixed(2)
+                //
+                //     this.setState({
+                //         total: value
+                //     })
+                // })
+            })
         this.setState({
             userLevelImg: getUserLevelImg(user.customer_level),
             merchantLevelImg: getMerchantLevelImg(user.merchant_level)
@@ -133,7 +133,7 @@ class User extends React.Component {
     }
 
     goAuth(isVerifying, e) {
-        if(isVerifying) {
+        if (isVerifying) {
             ui.tip({
                 width: 330,
                 msg: 'Your KYC information is under review. Please wait patiently.  '
@@ -141,7 +141,7 @@ class User extends React.Component {
             return
         }
         removeSessionData('authBasicData')
-        if(user.type == 1) {
+        if (user.type == 1) {
             jumpUrl('auth.html')
         } else {
             jumpUrl('auth-corporate.html')
@@ -161,9 +161,9 @@ class User extends React.Component {
     }
 
     openModifyPage(page) {
-        if(page === 'capitalPassword') {
+        if (page === 'capitalPassword') {
             jumpUrl('set-capital-password.html')
-        } else if(page === 'modifyLoginPassword') {
+        } else if (page === 'modifyLoginPassword') {
             jumpUrl('modify-login-password.html')
         }
     }
@@ -182,75 +182,64 @@ class User extends React.Component {
     }
 
     goDesposit(item) {
-        if(!checkAuth(['auth', 'capitalPassword'])) {
-            return
-        }
-        jumpUrl('recharge.html', {
-            id: item.id,
-            code: item.coin_code
+        checkAuth({
+            isDeposit: true,
+            coinId: item.id
+        }).then(() => {
+            jumpUrl('recharge.html', {
+                id: item.id,
+                code: item.coin_code
+            })
         })
     }
 
     goWithdrawal(item) {
-        if(!checkAuth(['auth', 'capitalPassword'])) {
-            return
-        }
-        jumpUrl('withdraw.html', {
-            id: item.id,
-            code: item.coin_code
-        })
-    }
-    goLegalDesposit(item) {
-        if(!checkAuth(['auth', 'capitalPassword'])) {
-            return
-        }
-        getBankList(item.id).then(res => {
-            if(!res.data.length) {
-                ui.confirm({
-                    msg: 'You need to bind an available bank account first. ',
-                    onOk: () => {
-                        jumpUrl('bank-add.html')
-                    }
-                })
-            } else if(res.data.every(item => {
-                return item.state === 0
-            })) {
-                ui.tip({
-                    msg: 'Your bank account information is under review. Please wait patiently. '
-                })
-            } else {
-                jumpUrl('legal-recharge.html', {
+        checkAuth({
+            isWithdraw: true,
+            coinId: item.id
+        }).then(() => {
+            isSensitiveInfoChange().then(res => {
+                jumpUrl('withdraw.html', {
                     id: item.id,
                     code: item.coin_code
                 })
-            }
+            }, error => {
+                ui.simpleConfirm({
+                    msg: error.info
+                })
+            })
+        })
+    }
+
+    goLegalDesposit(item) {
+        checkAuth({
+            isFiat: true,
+            isDeposit: true,
+            coinId: item.id
+        }).then(() => {
+            jumpUrl('legal-recharge.html', {
+                id: item.id,
+                code: item.coin_code
+            })
         })
     }
 
     goLegalWithdrawal(item) {
-        if(!checkAuth(['auth', 'capitalPassword'])) {
-            return
-        }
-        getBankList(item.id).then(res => {
-            if(!res.data.length) {
-                ui.confirm({
-                    msg: 'You need to bind an available bank account first. ',
-                    onOk: () => {
-                        jumpUrl('bank-add.html')
-                    }
-                })
-            } else if(res.data.every(item => {
-                return item.state === 0
-            })) {
-                ui.tip({
-                    msg: 'Your bank account information is under review. Please wait patiently. '
-                })
-            } else {
+        checkAuth({
+            isFiat: true,
+            isWithdraw: true,
+            coinId: item.id
+        }).then(() => {
+            isSensitiveInfoChange().then(res => {
                 jumpUrl('legal-withdraw.html', {
                     id: item.id,
                     code: item.coin_code
                 })
-            }
+            }, error => {
+                ui.simpleConfirm({
+                    msg: error.info
+                })
+            })
         })
     }
 
@@ -271,7 +260,7 @@ class User extends React.Component {
     }
 
     render() {
-        const { userLevelImg, merchantLevelImg, isMerchant } = this.state
+        const {userLevelImg, merchantLevelImg, isMerchant} = this.state
 
         return (
             <div className="user-page">
@@ -282,7 +271,7 @@ class User extends React.Component {
                             <span>{user.email}</span>
                             {/*<img className="user-level" src={userLevelImg} alt="" onClick={this.showLevel.bind(this)}/>*/}
                             {/*{user.is_merchant && (*/}
-                                {/*<img src={merchantLevelImg} alt=""/>*/}
+                            {/*<img src={merchantLevelImg} alt=""/>*/}
                             {/*)}*/}
                             {user.auth_application_status === 2 && (
                                 <button className="btn btn-authed">{intl.get('verified')}</button>
@@ -291,23 +280,25 @@ class User extends React.Component {
                                 <button className="btn btn-auth" onClick={this.goAuth.bind(this, false)}>GO KYC</button>
                             )}
                             {user.auth_application_status === 3 && (
-                                <button className="btn btn-auth" onClick={this.goAuth.bind(this, true)}>{intl.get('verifying')}</button>
+                                <button className="btn btn-auth"
+                                        onClick={this.goAuth.bind(this, true)}>{intl.get('verifying')}</button>
                             )}
                             {/*{user.is_merchant && (*/}
-                                {/*<button className="btn btn-agent">{intl.get('merchantCorner')}</button>*/}
+                            {/*<button className="btn btn-agent">{intl.get('merchantCorner')}</button>*/}
                             {/*)}*/}
                         </div>
                         <div className="info-right">
                             <div className="asset-line">
                                 {/*{intl.get('myFunds')}*/}
-                                <a className="info-link link-detail" href="javascript:" onClick={this.showVariationDetails.bind(this)}>History of Asset Change</a>
+                                <a className="info-link link-detail" href="javascript:"
+                                   onClick={this.showVariationDetails.bind(this)}>History of Asset Change</a>
                                 {/*<a className="info-link link-recharge" href="recharge.html">{intl.get('deposit')}</a>*/}
                                 {/*<a className="info-link" href="withdraw.html">{intl.get('withdrawal')}</a>*/}
                             </div>
                             {/*<div>*/}
-                                {/*{intl.get('estimatedValue')}:*/}
-                                {/*/!*{this.state.totalBtc} BTC*!/*/}
-                                {/*<span className="legal-value">{this.state.total}</span>*/}
+                            {/*{intl.get('estimatedValue')}:*/}
+                            {/*/!*{this.state.totalBtc} BTC*!/*/}
+                            {/*<span className="legal-value">{this.state.total}</span>*/}
                             {/*</div>*/}
                         </div>
                     </div>
@@ -318,49 +309,53 @@ class User extends React.Component {
                         <div className="content-item item-left">
                             <img src={userPwdImg} alt=""/>
                             <span>{intl.get('loginPwd')}</span>
-                            <button className="btn btn-primary btn-update" onClick={this.openModifyPage.bind(this, 'modifyLoginPassword')}>{intl.get('modify')}</button>
+                            <button className="btn btn-primary btn-update"
+                                    onClick={this.openModifyPage.bind(this, 'modifyLoginPassword')}>{intl.get('modify')}</button>
                         </div>
                         <div className="content-item">
                             <img src={userPwdImg} alt=""/>
                             <span>{intl.get('capitalPassword')}</span>
-                            <button className="btn btn-primary btn-update" onClick={this.openModifyPage.bind(this, 'capitalPassword')}>{user.hasMoneyPwd ? 'Reset' : 'Add'}</button>
+                            <button className="btn btn-primary btn-update"
+                                    onClick={this.openModifyPage.bind(this, 'capitalPassword')}>{user.hasMoneyPwd ? 'Reset' : 'Add'}</button>
                         </div>
                     </div>
                     <div className="clearfix">
                         {/*<div className="content-item item-left">*/}
-                            {/*<img src={userPhoneImg} alt=""/>*/}
-                            {/*<span>{intl.get('bindPhone')}</span>*/}
-                            {/*<button className="btn btn-primary btn-update"*/}
-                                    {/*onClick={this.modifyPhone.bind(this)}>{user.info ? intl.get('modify') : 'Add'}</button>*/}
+                        {/*<img src={userPhoneImg} alt=""/>*/}
+                        {/*<span>{intl.get('bindPhone')}</span>*/}
+                        {/*<button className="btn btn-primary btn-update"*/}
+                        {/*onClick={this.modifyPhone.bind(this)}>{user.info ? intl.get('modify') : 'Add'}</button>*/}
                         {/*</div>*/}
                         <div className="content-item item-left">
                             <img src={userBankImg} alt=""/>
                             <span>Bank Accounts</span>
-                            <button className="btn btn-primary btn-update" onClick={this.bindBank.bind(this)}>Edit</button>
+                            <button className="btn btn-primary btn-update" onClick={this.bindBank.bind(this)}>Edit
+                            </button>
                         </div>
                         <div className="content-item">
                             <img src={userEmailImg} alt=""/>
                             <span>{intl.get('bindEmail')}</span>
-                            <button className="btn btn-primary btn-update" onClick={this.modifyEmail.bind(this)}>{intl.get('modify')}</button>
+                            <button className="btn btn-primary btn-update"
+                                    onClick={this.modifyEmail.bind(this)}>{intl.get('modify')}</button>
                         </div>
                     </div>
 
                     {/*<div className="title">{intl.get('referralRebate')}</div>*/}
                     {/*<div className="clearfix">*/}
-                        {/*<div className="content-item recommend-left">*/}
-                            {/*<span className="recommend-label">{intl.get('myReferralId')}:</span>*/}
-                            {/*<span className="recommend-value">{this.state.recommendId}</span>*/}
-                        {/*</div>*/}
-                        {/*<div className="content-item">*/}
-                            {/*<img src={userRecommendImg} alt=""/>*/}
-                            {/*<span className="recommend-label">{intl.get('download_5')}:</span>*/}
-                            {/*<span className="recommend-value">{this.state.recommendFriends}</span>*/}
-                        {/*</div>*/}
-                        {/*/!*<div className="content-item recommend-item">*!/*/}
-                            {/*/!*<img src={userAssetImg} alt=""/>*!/*/}
-                            {/*/!*<span className="recommend-label">{intl.get('download_7')}:</span>*!/*/}
-                            {/*/!*<span className="recommend-value">{this.state.recommendValue} BTC</span>*!/*/}
-                        {/*/!*</div>*!/*/}
+                    {/*<div className="content-item recommend-left">*/}
+                    {/*<span className="recommend-label">{intl.get('myReferralId')}:</span>*/}
+                    {/*<span className="recommend-value">{this.state.recommendId}</span>*/}
+                    {/*</div>*/}
+                    {/*<div className="content-item">*/}
+                    {/*<img src={userRecommendImg} alt=""/>*/}
+                    {/*<span className="recommend-label">{intl.get('download_5')}:</span>*/}
+                    {/*<span className="recommend-value">{this.state.recommendFriends}</span>*/}
+                    {/*</div>*/}
+                    {/*/!*<div className="content-item recommend-item">*!/*/}
+                    {/*/!*<img src={userAssetImg} alt=""/>*!/*/}
+                    {/*/!*<span className="recommend-label">{intl.get('download_7')}:</span>*!/*/}
+                    {/*/!*<span className="recommend-value">{this.state.recommendValue} BTC</span>*!/*/}
+                    {/*/!*</div>*!/*/}
                     {/*</div>*/}
 
                     <div className="title">Digital Currency Assets</div>
@@ -384,15 +379,19 @@ class User extends React.Component {
                                     <div className="asset-col">{asset.available_balance}</div>
                                     <div className="asset-col">{asset.frozen_balance}</div>
                                     <div className="asset-col">
-                                        <button className="btn btn-desposit" onClick={this.goDesposit.bind(this, asset)}>Desposit</button>
-                                        <button className="btn btn-withdrawal" onClick={this.goWithdrawal.bind(this, asset)}>Withdrawal</button>
+                                        <button className="btn btn-desposit"
+                                                onClick={this.goDesposit.bind(this, asset)}>Desposit
+                                        </button>
+                                        <button className="btn btn-withdrawal"
+                                                onClick={this.goWithdrawal.bind(this, asset)}>Withdrawal
+                                        </button>
                                     </div>
                                 </div>
                             )
                         })}
                     </div>
 
-                    <div className="title">Fiat Currency Assets </div>
+                    <div className="title">Fiat Currency Assets</div>
                     <div className="asset-detail">
                         <div className="clearfix asset-item th-row">
                             <div className="asset-col">Coin</div>
@@ -413,8 +412,12 @@ class User extends React.Component {
                                     <div className="asset-col">{truncateByPrecision(asset.available_balance, 2)}</div>
                                     <div className="asset-col">{truncateByPrecision(asset.frozen_balance, 2)}</div>
                                     <div className="asset-col">
-                                        <button className="btn btn-desposit" onClick={this.goLegalDesposit.bind(this, asset)}>Desposit</button>
-                                        <button className="btn btn-withdrawal" onClick={this.goLegalWithdrawal.bind(this, asset)}>Withdrawal</button>
+                                        <button className="btn btn-desposit"
+                                                onClick={this.goLegalDesposit.bind(this, asset)}>Desposit
+                                        </button>
+                                        <button className="btn btn-withdrawal"
+                                                onClick={this.goLegalWithdrawal.bind(this, asset)}>Withdrawal
+                                        </button>
                                     </div>
                                 </div>
                             )
@@ -453,11 +456,11 @@ class User extends React.Component {
                             {/*<div className="level-col level-col-5">{intl.get('level_lower')}</div>*/}
                         </div>
                         {/*<div className="clearfix level-body">*/}
-                            {/*<div className="level-col level-col-1"><img src={userLevel3Img} alt=""/></div>*/}
-                            {/*<div className="level-col level-col-2">{intl.get('level_higher')}</div>*/}
-                            {/*<div className="level-col level-col-3">{intl.get('level_has')}</div>*/}
-                            {/*/!*<div className="level-col level-col-4">{intl.get('level_has')}</div>*!/*/}
-                            {/*/!*<div className="level-col level-col-5">{intl.get('level_higher')}</div>*!/*/}
+                        {/*<div className="level-col level-col-1"><img src={userLevel3Img} alt=""/></div>*/}
+                        {/*<div className="level-col level-col-2">{intl.get('level_higher')}</div>*/}
+                        {/*<div className="level-col level-col-3">{intl.get('level_has')}</div>*/}
+                        {/*/!*<div className="level-col level-col-4">{intl.get('level_has')}</div>*!/*/}
+                        {/*/!*<div className="level-col level-col-5">{intl.get('level_higher')}</div>*!/*/}
                         {/*</div>*/}
                     </div>
                 </Modal>
@@ -465,7 +468,7 @@ class User extends React.Component {
                 <Modal
                     className="modal-confirm-davao modal-big"
                     visible={this.state.detailsVisible}
-                    width={870}
+                    width={930}
                     style={{top: 100}}
                     onCancel={this.handleDetailsClose.bind(this)}
                     footer=''

@@ -1,6 +1,6 @@
 import React from 'react';
 import intl from 'react-intl-universal'
-import { jumpUrl, isLangZH } from '@/utils'
+import { jumpUrl, isLangZH, ui } from '@/utils'
 import { getMarketCoinQuot, getTargetPairsQuot } from '@/api/quot'
 import { getRecommendCoins, getCoin2CoinList } from '@/api'
 
